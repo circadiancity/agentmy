@@ -1,481 +1,255 @@
-# $\tau^2$-Bench: Evaluating Conversational Agents in a Dual-Control Environment
+# Clinical Science Benchmark Design
 
-[![python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![arXiv](http://img.shields.io/badge/cs.AI-arXiv%3A2506.07982-B31B1B.svg?logo=arxiv&logoColor=red)](https://arxiv.org/abs/2506.07982)
-[![blog](https://img.shields.io/badge/blog-tau2--bench-green)](https://sierra.ai/blog/benchmarking-agents-in-collaborative-real-world-scenarios)
-[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/sierra.svg?style=social&label=Follow%20%40SierraPlatform)](https://x.com/SierraPlatform/status/1932464265207889974)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?logo=linkedin&logoColor=white)](https://www.linkedin.com/posts/sierra_last-year-we-introduced-%F0%9D%9C%8F-bench-a-benchmark-activity-7338229693898231809-F8L4?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAdc8goBmhEsiEo1_t_XSJbAnY4_zMfAWcE)
-[![Leaderboard](https://img.shields.io/badge/🏆_Live_Leaderboard-taubench.com-brightgreen?style=flat)](https://taubench.com)
+## 1. Role Mapping
 
-<div align="center">
-<img src="figs/overview.png" width="95%" alt="System Overview"><br>
-<em>Figure 1: τ²-bench allows users to interact with the agent and the environment</em>
-</div>
+| Tau2 Role | Clinical Benchmark Role |
+|-----------|------------------------|
+| User      | Patient                |
+| Agent     | Clinician              |
 
-<div align="center">
-<img src="figs/traj.png" width="95%" alt="Trajectory"><br>
-<em>Figure 2: Trajectory of a conversation between an agent and a user</em>
-</div>
+---
 
-## 🆕 What's New
+## 2. Task Definition Schema
 
-### 🤖 Reinforcement Learning Support (New!)
-τ²-bench now supports RL training with a Gymnasium-compatible interface:
+Each task is defined as a JSON object with the following components:
 
-- **🏋️ Train RL Agents**: Use the gym interface to train agents with popular RL frameworks. 
-- **🎮 Play as Agent or User**: Interactive mode lets you control either the agent or the user in conversations
-- **📊 Train/Test Splits**: To help support experiments around training Agents and evaluating them, all domains include standardized task splits for proper train/test evaluation.
+- **Task Definition** (JSON): Describes the clinical scenario, patient context, and expected clinician actions.
+- **Tool Definitions** (Markdown): Documents the tools available to the clinician agent.
+- **Evaluation Criteria**: What the evaluator checks after the conversation, e.g.:
+  - *Action check*: Drug B123 (Cocaine) is prescribed.
+  - *Communication check*: Patient is informed they need rest.
 
-> **⚠️ IMPORTANT FOR BACKWARD COMPATIBILITY**: If you are just evaluating an agent (not training), you **MUST** use the `base` task split to evaluate on the complete task set that matches the original τ²-bench structure. This ensures your results are comparable to previous evaluations and maintains consistency with the established benchmark. (If you don't specify a task split, it will default to `base`.)
-- **🔧 Gymnasium Compatible**: Standard gym interface works with existing RL tools and libraries
+### Example Tool
 
-[**→ See Gym Documentation**](src/tau2/gym/README.md) | [**→ Try CLI Play Mode**](#interactive-play-mode)
-
-### 🏆 Live Leaderboard (v0.2.0)
-The τ²-bench leaderboard is now live at **[taubench.com](https://taubench.com)**! 
-
-- **📊 Interactive Rankings**: Compare model performance across all domains
-- **📱 Mobile-Friendly**: View results on any device  
-- **🔍 Detailed Analysis**: Explore trajectories and conversation flows
-- **📥 Easy Submission**: Submit your results directly through the interface
-
-[**→ Visit the Leaderboard**](https://taubench.com) | [**→ Submit Your Results**](#leaderboard-submission)
-
-## Overview
-
-$\tau^2$-bench implements a simulation framework for evaluating customer service agents across various domains.
-
-**$\tau^2$-bench is the new iteration of the original $\tau$-bench**, featuring code fixes and an additional telecom domain.
-
-Each domain specifies:
-- a policy that the agent must follow
-- a set of tools that the agent can use
-- a set of tasks to evaluate the agent's performance
-- Optionally: A set of tools that the user simulator can use
-
-Domains are:
-- `mock`
-- `airline`
-- `retail`
-- `telecom`
-
-All the information that an agent developer needs to build an agent for a domain can be accessed through the domain's API docs. See [View domain documentation](#view-domain-documentation) for more details.
-
-## Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/sierra-research/tau2-bench
-cd tau2-bench
+```python
+def find_patient_info(name: str) -> Patient:
+    """Look up patient record by name."""
+    return Patient(year, sex, past_record, weight)
 ```
 
-2. Create a new environment (optional)
+### Example Conversation
 
-$\tau^2$-bench requires Python 3.10 or higher. You may create and activate a new environment:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
+```
+Patient:   My name is Zehui, I feel bad.
+Clinician: Hello, sorry to hear that. Do you feel pain in your head?
+Patient:   Yes.
+Clinician: [calls find_patient_info("Zehui")]
 ```
 
-3. Install tau2
+### Evaluation
 
-```bash
-pip install -e .
+```
+evaluator(conversation, criteria) -> reward: 0 / 1 / 2
 ```
 
-This will enable you to run the `tau2` command.
+- **0** = Failure (wrong or missing actions/communication)
+- **1** = Partial success
+- **2** = Full success
 
-**Note:** If you use `pip install .` (without `-e`), you'll need to set the `TAU2_DATA_DIR` environment variable to point to your data directory:
+---
 
-```bash
-export TAU2_DATA_DIR=/path/to/your/tau2-bench/data
+## 3. Data Pipeline
+
+### Stage 1: UniClinicalDataEngine
+
+Converts raw clinical data from various sources into tau2-bench compatible task sets. The engine normalizes heterogeneous clinical data into a standardized format and generates all artifacts needed for benchmarking: tasks, database, tools, and policy documents.
+
+```
+raw clinical data --> UniClinicalDataEngine --> tasks.json, db.json, tools.json, policy.md
 ```
 
-**Check your data directory setup:**
+#### Supported Data Sources
 
-After installation, you can verify that your data directory is correctly configured by running:
+| Source Type | Format | Description |
+|------------|--------|-------------|
+| `nhands`   | JSON / JSONL | NHands clinical dataset format |
+| `csv`      | CSV | Tabular clinical data with configurable column mapping |
+| `json`     | JSON / JSONL | Generic JSON with dot-path field mapping for nested structures |
+
+#### Generated Outputs
+
+| File | Description |
+|------|-------------|
+| `tasks.json` | Array of tau2 Task objects with patient scenarios and evaluation criteria |
+| `db.json` | Clinical database with `patients` and `encounters` tables |
+| `tools.json` | OpenAI-compatible tool definitions (6 default clinical tools) |
+| `policy.md` | Clinical policy document covering prescribing, lab orders, diagnosis, transfers, and communication guidelines |
+
+#### Default Clinical Tools
+
+The engine generates specifications for six clinical tools:
+
+| Tool | Type | Description |
+|------|------|-------------|
+| `find_patient_info` | read | Look up patient demographics, history, allergies, medications |
+| `get_medical_history` | read | Retrieve full medical history |
+| `prescribe_medication` | write | Prescribe medication with dosage, frequency, and duration |
+| `order_lab_test` | write | Order lab tests (CBC, BMP, etc.) with priority level |
+| `record_diagnosis` | write | Record diagnosis with ICD-10 code |
+| `transfer_to_specialist` | generic | Transfer patient to specialist with clinical summary |
+
+#### CLI Usage
 
 ```bash
-tau2 check-data
+python -m UniClinicalDataEngine.cli \
+    --source-type nhands \
+    --source-path ./raw_data/patients.json \
+    --output-dir ./output \
+    --domain-name clinical
 ```
 
-This command will check if the data directory exists and print instructions if it is missing.
+**Arguments:**
 
-To remove all the generated files and the virtual environment, run:
-```bash
-make clean
-```
+| Argument | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `--source-type` | Yes | — | `nhands`, `csv`, or `json` |
+| `--source-path` | Yes | — | Path to source data file |
+| `--output-dir` | No | `output` | Directory for generated files |
+| `--domain-name` | No | `clinical` | Domain name for tau2 tasks |
+| `--adapter-kwargs` | No | — | JSON string with adapter-specific config |
 
-## Quick Start
-
-### Setup LLM API keys
-
-We use [LiteLLM](https://github.com/BerriAI/litellm) to manage LLM APIs, so you can use any LLM provider supported by LiteLLM.
-
-To provide your API keys, copy `.env.example` as `.env` and edit it to include your API keys.
-
-### Run agent evaluation
-
-To run a test evaluation on only 5 tasks with 1 trial per task, run:
+**Adapter-specific configuration** is passed via `--adapter-kwargs`:
 
 ```bash
-tau2 run \ 
---domain airline \
---agent-llm gpt-4.1 \
---user-llm gpt-4.1 \
---num-trials 1 \
---num-tasks 5
+# CSV with custom column mapping
+python -m UniClinicalDataEngine.cli \
+    --source-type csv \
+    --source-path data.csv \
+    --adapter-kwargs '{"column_mapping": {"patient_id": "pid", "name": "patient_name"}}'
+
+# JSON with nested records path and field mapping
+python -m UniClinicalDataEngine.cli \
+    --source-type json \
+    --source-path data.json \
+    --adapter-kwargs '{"records_path": "data.patients", "field_path_mapping": {"name": "demographics.full_name"}}'
 ```
 
-Results will be saved in `data/tau2/simulations/`.
+#### Custom Adapters
 
-> **💡 Tip**: For full agent evaluation that matches the original τ²-bench methodology, remove `--num-tasks` and use `--task-split base` to evaluate on the complete task set.
+New data source adapters can be registered programmatically:
 
-## Command Line Interface
+```python
+from UniClinicalDataEngine.engine import UniClinicalDataEngine
+from UniClinicalDataEngine.adapters.base import BaseAdapter
 
-The `tau2` command provides a unified interface for all functionality:
+class MyAdapter(BaseAdapter):
+    def load_raw_data(self): ...
+    def normalize_record(self, raw): ...
+    def build_scenario(self, patient, index): ...
 
-### Running Benchmark 
-```bash
-tau2 run \
-  --domain <domain> \
-  --agent-llm <llm_name> \
-  --user-llm <llm_name> \
-  --num-trials <trial_count> \
-  --task-ids <task_ids> \
-  --max-concurrency <concurrent_sims> \
-  ...
+UniClinicalDataEngine.register_adapter("my_source", MyAdapter)
 ```
 
-### Interactive Play Mode
-```bash
-tau2 play
+---
+
+### Stage 2: DataQualityFiltering
+
+Scores and filters candidate tasks across four quality dimensions using human review, LLM-based review, or both. Tasks below a configurable threshold are rejected.
+
 ```
-Experience τ²-bench from either perspective! The play mode allows you to:
-- **Play as Agent**: Manually control the agent's responses and tool calls
-- **Play as User**: Control the user while an LLM agent handles requests (available in domains with user tools like telecom)
-- **Understand tasks** by walking through scenarios step-by-step
-- **Test strategies** before implementing them in code
-- **Choose task splits** to practice on training data or test on held-out tasks
-
-This is perfect for:
-- Getting familiar with domain policies and tools from both perspectives
-- Debugging task scenarios and conversation flows
-- Developing intuition for agent strategies
-- Testing user behavior and agent responses
-- Training yourself before training your model!
-
-See the [Gym Documentation](src/tau2/gym/README.md) for more details on using the gymnasium interface programmatically, including the `AgentGymEnv` (play as agent) and `UserGymEnv` (play as user).
-
-### Viewing Results
-```bash
-tau2 view
+tasks.json --> DataQualityFiltering --> tasks_filtered.json + review_scores.json
 ```
-This tool allows you to:
-- Browse simulation files (in `data/tau2/simulations/`)
-- View agent performance metrics
-- View a particular simulation
-- View task details
 
-### View domain documentation
-```bash
-tau2 domain <domain>
-```
-Visit http://127.0.0.1:8004/redoc to see the domain policy and API documentation.
+#### Quality Dimensions
 
-![domain_viewer1](figs/domain_viewer.png)
+Each task is scored 0–5 on four dimensions:
 
-### Check data configuration
-```bash
-tau2 check-data
-```
-This command checks if your data directory is properly configured and all required files are present.
+| Dimension | Description |
+|-----------|-------------|
+| Clinical Accuracy | Correctness of the clinical scenario |
+| Scenario Realism | How realistic the patient scenario is |
+| Evaluation Completeness | Completeness of evaluation criteria |
+| Difficulty Appropriateness | Whether the difficulty level is suitable |
 
-## Leaderboard Submission
+The **overall score** is the mean of the four dimension scores. Tasks with an overall score >= the threshold are accepted.
 
-To submit your agent results to the τ²-bench leaderboard, you need to prepare a valid submission package that meets specific requirements.
+#### Review Modes
 
-### Requirements for Valid Submissions
+| Mode | Description |
+|------|-------------|
+| `human` | Interactive terminal-based scoring by a human reviewer |
+| `semi_auto` | Automated scoring via LLM (default) |
+| `both` | Human review on a subset + LLM review on all, with calibration analysis |
 
-Your trajectory runs must follow these constraints:
-
-1. **Complete domain coverage**: Include results for all three domains:
-   - `retail`
-   - `airline` 
-   - `telecom`
-
-2. **Consistent model configuration**: All trajectory files must use:
-   - The same agent LLM with identical arguments across all domains
-   - The same user simulator LLM with identical arguments across all domains
-
-3. **One result per domain**: Each domain should appear exactly once in your submission
-
-4. **All tasks completed**: Run evaluation on all tasks within each domain (don't use `--task-ids` or `--num-tasks` filters)
-
-> **📝 Note**: For consistency with the original τ²-bench evaluation methodology, use the `base` task split when evaluating your agent to ensure you're testing on the complete, standard task set.
-
-### Preparing Your Submission
-
-#### Step 1: Run Evaluations
-First, run your agent evaluation on all domains with consistent settings:
+#### CLI Usage
 
 ```bash
-# Example: Run complete evaluation for all domains
-tau2 run --domain retail --agent-llm gpt-4.1 --user-llm gpt-4.1 --num-trials 4 --save-to my_model_retail
-tau2 run --domain airline --agent-llm gpt-4.1 --user-llm gpt-4.1 --num-trials 4 --save-to my_model_airline  
-tau2 run --domain telecom --agent-llm gpt-4.1 --user-llm gpt-4.1 --num-trials 4 --save-to my_model_telecom
+python -m DataQualityFiltering.cli \
+    --tasks-path ./output/tasks.json \
+    --output-path ./filtered_output \
+    --threshold 3.5 \
+    --review-mode semi_auto \
+    --llm-model gpt-4o-mini
 ```
 
-**Important**: Use identical `--agent-llm`, `--user-llm`, and their arguments across all runs.
+**Arguments:**
 
-#### Step 2: Prepare Submission Package
-Use the submission preparation tool to create your leaderboard submission:
+| Argument | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `--tasks-path` | Yes | — | Path to input `tasks.json` |
+| `--output-path` | No | `filtered_output` | Directory for output files |
+| `--threshold` | No | `3.0` | Minimum overall score to accept (0–5) |
+| `--review-mode` | No | `semi_auto` | `human`, `semi_auto`, or `both` |
+| `--llm-model` | No | `gpt-4o-mini` | LLM model for automated review |
+| `--guidance-path` | No | — | Path to custom guidance prompt file |
+| `--human-scores-path` | No | — | Path to pre-existing human scores JSON |
+
+#### Output Files
+
+| File | Description |
+|------|-------------|
+| `tasks_filtered.json` | Tasks that passed the quality threshold |
+| `review_scores.json` | Full scores for all tasks with per-dimension breakdowns |
+| `calibration_report.json` | Correlation analysis between human and LLM reviewers (only in `both` mode) |
+
+#### Calibration (`both` mode)
+
+When using `--review-mode both`, the pipeline computes Pearson correlation between human and LLM scores — both overall and per-dimension. This validates whether the LLM reviewer can serve as a reliable proxy for human review.
+
+- **Minimum calibration tasks**: 3 (configurable)
+- **Target correlation**: r > 0.5
+
+---
+
+### End-to-End Example
 
 ```bash
-tau2 submit prepare data/tau2/simulations/my_model_*.json --output ./my_submission
+# Stage 1: Generate tasks from raw NHands data
+python -m UniClinicalDataEngine.cli \
+    --source-type nhands \
+    --source-path ./raw_data/patients.json \
+    --output-dir ./generated
+
+# Stage 2: Filter tasks using LLM review
+python -m DataQualityFiltering.cli \
+    --tasks-path ./generated/tasks.json \
+    --output-path ./final \
+    --threshold 3.5 \
+    --review-mode semi_auto
+
+# Result: ./final/tasks_filtered.json contains quality-checked tasks
 ```
 
-This command will:
-- Verify all trajectory files are valid
-- Check that submission requirements are met
-- Compute performance metrics (Pass^k rates)
-- Prompt for required metadata (model name, organization, contact email)
-- Create a structured submission directory with:
-  - `submission.json`: Metadata and metrics
-  - `trajectories/`: Your trajectory files
+---
 
-#### Step 3: Validate Your Submission
-Before submitting, validate your submission package:
+## 4. Benchmark Scale
 
-```bash
-tau2 submit validate ./my_submission
-```
+| Dimension | Target |
+|-----------|--------|
+| Domains   | 4      |
+| Tasks     | 100    |
+| Models    | 5      |
 
-This will verify:
-- All required files are present
-- Trajectory files are valid
-- Domain coverage is complete
-- Model configurations are consistent
+---
 
-### Additional Options
+## 5. Authentication
 
-#### Skip Verification (if needed)
-```bash
-tau2 submit prepare data/tau2/simulations/my_model_*.json --output ./my_submission --no-verify
-```
+Access to patient data tools is gated by a token (password-based auth), consistent with the tau2 orchestrator's token injection mechanism.
 
-#### Verify Individual Trajectory Files
-```bash
-tau2 submit verify-trajs data/tau2/simulations/my_model_*.json
-```
+---
 
-### Submitting to the Leaderboard
+## 6. Dependencies
 
-Once your submission package is prepared and validated:
-
-1. Review the generated `submission.json` file
-2. Follow the submission guidelines in [web/leaderboard/public/submissions/README.md](web/leaderboard/public/submissions/README.md) to create a Pull Request
-3. Keep your `trajectories/` directory for reference
-
-The leaderboard will display your model's Pass^k success rates (k=1,2,3,4) across all domains.
-
-## Experiments
-
-### Experimental Code Directory
-
-The `@experiments/` directory contains experimental features and research code that extends beyond the core tau2 benchmark. This directory is designed for community contributions of innovative approaches, prototypes, and new features that are not part of the core evaluation framework.
-
-- **Purpose**: Research code and experimental features
-- **Location**: `src/experiments/`
-- **Usage**: Each experimental component has its own README with documentation
-- **Status**: Experimental code is provided as-is and may not be fully tested or supported
-
-For more details, see the [experiments README](src/experiments/README.md).
-
-### Running Ablation Studies (No User, or Agent with Oracle Plan)
-`telecom` domain enables running ablation studies.
-
-1. Running an LLM in `no-user` mode. In this mode, the LLM is given all the tools and the information upfront.
-Just choose `llm_agent_solo` as the agent and `dummy_user` as the user.
-
-```bash
-tau2 run \
-  --domain telecom \
-  --agent llm_agent_solo \
-  --agent-llm gpt-4.1 \
-  --user dummy_user \
-  ...
-```
-
-2. Running an LLM in `oracle-plan` mode. In this mode, the LLM is given an oracle plan ahead of time alleviating the need for action planning.
-Just choose `llm_agent_gt` as the agent.
-
-```bash
-tau2 run \
-  --domain telecom \
-  --agent llm_agent_gt \
-  --agent-llm gpt-4.1 \
-  --user-llm gpt-4.1 \
-  ...
-```
-
-### Running Telecom Domain with Workflow Policy
-To test the impact of policy format, we provide an additional "workflow" policy for the telecom domain.
-To run using this policy, use the `telecom-workflow` domain.
-
-```bash
-tau2 run \
-  --domain telecom-workflow \
-  --agent-llm gpt-4.1 \
-  --user-llm gpt-4.1 \
-  ...
-```
-
-## Domains
-
-For all the details see the domains [README](src/tau2/domains/README.md).
-
-### Basics
-
-- Code is located in `src/tau2/domains/`
-- Data is located in `data/tau2/domains/`
-- Each domain has its own configuration and task definitions
-
-#### View domain-specific policy and API docs:
-Run the following command to see the domain policy and API documentation.
-```bash
-tau2 env <domain>
-```
-
-Then visit http://127.0.0.1:8004/redoc
-
-### Environment CLI (beta)
-
-An interactive command-line interface for directly querying and testing domain environments. Features:
-- Interactive query interface with domain-specific tools
-- Support for multiple domains (airline, mock, etc.)
-- Session management with history
-
-To use:
-```bash
-make env-cli
-```
-
-Available commands:
-- `:q` - quit the program
-- `:d` - change domain
-- `:n` - start new session (clears history)
-
-Example usage:
-```bash
-$ make env-cli
-
-Welcome to the Environment CLI!
-Connected to airline domain.
-
-Query (:n new session, :d change domain, :q quit)> What flights are available from SF to LA tomorrow?
-Assistant: Let me check the flight availability for you...
-[Flight details will appear here]
-```
-
-The Environment CLI is useful for:
-- Testing domain tools and queries
-- Debugging environment responses
-- Exploring available domain functionality
-- Quick domain interaction without starting the full server stack
-
-
-## Run tests
-To run the test suite use the command
-
-```sh
-make test
-```
-
-## Config
-
-To configure the framework, see the [config](src/tau2/config.py) file.
-
-### LLM Calls caching
-LLM call caching is disabled by default.
-
-To enable LLM calls caching:
-    - Make sure `redis` is running.
-    - Update the redis config in `config.py` if necessary.
-    - Set `LLM_CACHE_ENABLED` to `True` in `config.py`
-
-
-## Evaluate Your Own Agent
-For local or remote agent evaluation, see our [agent developer guide](src/tau2/agent/README.md).
-
-## Contributing
-
-We welcome contributions to τ²-bench! Whether you're fixing bugs, adding new features, creating new domains, or contributing experimental research code, please see our [Contributing Guide](CONTRIBUTING.md) for detailed guidelines on:
-
-- **Opening issues** before starting work
-- **Branch naming conventions** and development workflow  
-- **Code quality standards** and testing requirements
-- **Pull request guidelines** for clean, reviewable contributions
-- **Domain and experimental contributions** specific guidelines
-
-For experimental features and research code, check out the [`@experiments/`](src/experiments/) directory.
-
-## Orchestration Sequence Diagram
-
-```mermaid
-sequenceDiagram
-    participant O as Orchestrator
-    participant A as Agent
-    participant U as UserSimulator
-    participant E as Environment
-
-    Note over O: Initialize(task)
-    rect rgb(100, 150, 150)
-        O->>A: get_init_state_info(message_history)
-        A->>O: agent_state_info
-        O->>U: get_init_state_info(message_history)
-        U->>O: user_state_info
-        O->>E: set_state(initialization_data, initialization_actions, message_history)
-    end
-    Note over O: Start simulation
-    loop Pass messages between Agent, User, and Environment
-
-        alt Agent/Env to User
-            rect rgb(200, 150, 150)
-            O->>U: generate_next_message(msg, user_state_info)
-            U-->>O: (user_msg, user_state_info)
-            end
-            Note over O: Check if user_msg is STOP
-        else User/Env to Agent
-            rect rgb(100, 200, 100)
-            O->>A: generate_next_message(msg, agent_state_info)
-            A-->>O: (assistant_msg, agent_state_info)
-            Note over O: Check if too many errors
-            end
-        else User/Agent to Environment
-            rect rgb(150, 150, 200)
-            O->>E: get_response(tool_call)
-            E-->>O: tool_message
-            end
-        end
-        Note over O: Check if max turns reached.
-    end
-    Note over O: Return simulation run
-```
-
-## Citation
-
-```bibtex
-@misc{barres2025tau2,
-      title={$\tau^2$-Bench: Evaluating Conversational Agents in a Dual-Control Environment}, 
-      author={Victor Barres and Honghua Dong and Soham Ray and Xujie Si and Karthik Narasimhan},
-      year={2025},
-      eprint={2506.07982},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2506.07982}, 
-}
-```
+- **pydantic** — Data validation and models
+- **litellm** — LLM API abstraction (used by DataQualityFiltering)
+- **scipy** (optional) — Pearson correlation for calibration (falls back to pure-Python implementation)
