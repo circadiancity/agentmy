@@ -2,13 +2,15 @@
 
 from pathlib import Path
 
-DOMAIN_NAME = "clinical_neurology"
-DATA_DIR = Path(__file__).parent.parent.parent.parent.parent / "data" / "tau2" / "domains" / "clinical" / "neurology"
+from tau2.utils.utils import DATA_DIR
 
-TASKS_PATH = DATA_DIR / "tasks.json"
-SPLIT_TASKS_PATH = DATA_DIR / "split_tasks.json"
-POLICY_PATH = DATA_DIR / "policy.md"
-DB_PATH = DATA_DIR / "db.json"
+DOMAIN_NAME = "clinical_neurology"
+NEURO_DATA_DIR = DATA_DIR / "tau2" / "domains" / "clinical" / "neurology"
+
+TASKS_PATH = NEURO_DATA_DIR / "tasks.json"
+SPLIT_TASKS_PATH = NEURO_DATA_DIR / "split_tasks.json"
+POLICY_PATH = NEURO_DATA_DIR / "policy.md"
+DB_PATH = NEURO_DATA_DIR / "db.json"
 
 NEURO_KEYWORDS = [
     "brain", "neuro", "seizure", "stroke", "headache", "migraine",

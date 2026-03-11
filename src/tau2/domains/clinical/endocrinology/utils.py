@@ -2,13 +2,15 @@
 
 from pathlib import Path
 
-DOMAIN_NAME = "clinical_endocrinology"
-DATA_DIR = Path(__file__).parent.parent.parent.parent.parent / "data" / "tau2" / "domains" / "clinical" / "endocrinology"
+from tau2.utils.utils import DATA_DIR
 
-TASKS_PATH = DATA_DIR / "tasks.json"
-SPLIT_TASKS_PATH = DATA_DIR / "split_tasks.json"
-POLICY_PATH = DATA_DIR / "policy.md"
-DB_PATH = DATA_DIR / "db.json"
+DOMAIN_NAME = "clinical_endocrinology"
+ENDO_DATA_DIR = DATA_DIR / "tau2" / "domains" / "clinical" / "endocrinology"
+
+TASKS_PATH = ENDO_DATA_DIR / "tasks.json"
+SPLIT_TASKS_PATH = ENDO_DATA_DIR / "split_tasks.json"
+POLICY_PATH = ENDO_DATA_DIR / "policy.md"
+DB_PATH = ENDO_DATA_DIR / "db.json"
 
 ENDO_KEYWORDS = [
     "diabetes", "thyroid", "hormone", "insulin", "glucose",

@@ -4,13 +4,15 @@ Utility functions for Clinical Gastroenterology Domain
 
 from pathlib import Path
 
-DOMAIN_NAME = "clinical_gastroenterology"
-DATA_DIR = Path(__file__).parent.parent.parent.parent.parent / "data" / "tau2" / "domains" / "clinical" / "gastroenterology"
+from tau2.utils.utils import DATA_DIR
 
-TASKS_PATH = DATA_DIR / "tasks.json"
-SPLIT_TASKS_PATH = DATA_DIR / "split_tasks.json"
-POLICY_PATH = DATA_DIR / "policy.md"
-DB_PATH = DATA_DIR / "db.json"
+DOMAIN_NAME = "clinical_gastroenterology"
+GASTRO_DATA_DIR = DATA_DIR / "tau2" / "domains" / "clinical" / "gastroenterology"
+
+TASKS_PATH = GASTRO_DATA_DIR / "tasks.json"
+SPLIT_TASKS_PATH = GASTRO_DATA_DIR / "split_tasks.json"
+POLICY_PATH = GASTRO_DATA_DIR / "policy.md"
+DB_PATH = GASTRO_DATA_DIR / "db.json"
 
 GASTRO_KEYWORDS = [
     "gi", "gastro", "stomach", "digestive", "liver", "hepat",

@@ -4,15 +4,17 @@ Utility functions and constants for Clinical Nephrology Domain
 
 from pathlib import Path
 
+from tau2.utils.utils import DATA_DIR
+
 # Domain data paths
 DOMAIN_NAME = "clinical_nephrology"
-DATA_DIR = Path(__file__).parent.parent.parent.parent.parent / "data" / "tau2" / "domains" / "clinical" / "nephrology"
+NEPHRO_DATA_DIR = DATA_DIR / "tau2" / "domains" / "clinical" / "nephrology"
 
 # File paths
-TASKS_PATH = DATA_DIR / "tasks.json"
-SPLIT_TASKS_PATH = DATA_DIR / "split_tasks.json"
-POLICY_PATH = DATA_DIR / "policy.md"
-DB_PATH = DATA_DIR / "db.json"
+TASKS_PATH = NEPHRO_DATA_DIR / "tasks.json"
+SPLIT_TASKS_PATH = NEPHRO_DATA_DIR / "split_tasks.json"
+POLICY_PATH = NEPHRO_DATA_DIR / "policy.md"
+DB_PATH = NEPHRO_DATA_DIR / "db.json"
 
 # CKD staging reference
 CKD_STAGES = {
