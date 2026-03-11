@@ -1,5 +1,26 @@
 # Clinical Science Benchmark Design
 
+## Overview
+
+This repository extends the tau2-bench framework with clinical consultation domains, enabling evaluation of AI agents in medical consultation scenarios across 5 clinical specialties.
+
+## Supported Domains
+
+### Standard tau2-bench Domains
+- **airline** - Airline customer service
+- **retail** - Retail customer support
+- **telecom** - Telecommunications technical support
+- **mock** - Testing/mock domain
+
+### Clinical Domains (NEW)
+- **clinical_cardiology** - Cardiovascular medicine (758 tasks)
+- **clinical_endocrinology** - Hormonal/metabolic disorders (176 tasks)
+- **clinical_gastroenterology** - Digestive system (475 tasks)
+- **clinical_nephrology** - Kidney diseases (300 tasks)
+- **clinical_neurology** - Nervous system (741 tasks)
+
+**Total: 2,450 clinical consultation tasks**
+
 ## 1. Role Mapping
 
 | Tau2 Role | Clinical Benchmark Role |
