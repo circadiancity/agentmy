@@ -1,0 +1,80 @@
+{
+  "id": "cardiology_medxpertqa_003",
+  "description": {
+    "purpose": "Clinical consultation - fever",
+    "relevant_policies": null,
+    "notes": "Enriched from MCQ. Scenario: acute_coronary_syndrome. Enrichment level: moderate."
+  },
+  "user_scenario": {
+    "persona": "with fever",
+    "instructions": {
+      "domain": "cardiology",
+      "reason_for_call": "fever",
+      "known_info": "56-year-old female. presents with substernal chest discomfort lasting 2 hours, non-radiating, 6/10 severity, associated with diaphoresis but no nausea. HPI: Symptoms have been gradually worsening over the past few weeks.. Risk factors: age > 45 (men) or > 55 (women), hypertension, diabetes, smoking. Vitals: BP 158/92 mmHg, HR 102 bpm, RR 18 breaths/min, T 98.6°F (37.0°C). Exam: diaphoresis, S3/S4 gallop, crackles at lung bases. Red flags: pain at rest, pain lasting > 20 minutes, hemodynamic instability.",
+      "unknown_info": null,
+      "task_instructions": "You are a patient seeking medical consultation. Here's how the conversation should flow:\n\nPatient: I have chest discomfort and I'm worried it might be a heart problem.\nClinician: Do you have any medical history I should know about?\nPatient: Since {timeframe}.\nClinician: I'm going to check your vital signs.",
+      "enriched_scenario_type": "acute_coronary_syndrome",
+      "enrichment_level": "moderate"
+    }
+  },
+  "ticket": "I have chest discomfort and I'm worried it might be a heart problem.",
+  "initial_state": {
+    "initialization_actions": [
+      {
+        "env_type": "user",
+        "func_name": "set_user_info",
+        "arguments": {
+          "name": "Joseph Martinez",
+          "age": 56,
+          "gender": "female",
+          "mrn": "MRN636093",
+          "social_history": {
+            "smoking": "Former smoker (20 pack-years), quit 5 years ago",
+            "alcohol": "Social drinker (1-2 drinks/week)"
+          },
+          "medical_history": [
+            "Hypertension (10 years)",
+            "Hyperlipidemia",
+            "Type 2 Diabetes Mellitus"
+          ],
+          "medications": [
+            "Lisinopril 10mg daily",
+            "Metformin 1000mg BID",
+            "Atorvastatin 20mg nightly"
+          ],
+          "allergies": [
+            "NKDA"
+          ]
+        }
+      }
+    ]
+  },
+  "evaluation_criteria": {
+    "actions": [
+      {
+        "action_id": "use_assess_cardiovascular_risk",
+        "requestor": "assistant",
+        "name": "assess_cardiovascular_risk",
+        "arguments": {}
+      },
+      {
+        "action_id": "use_interpret_ekg",
+        "requestor": "assistant",
+        "name": "interpret_ekg",
+        "arguments": {}
+      },
+      {
+        "action_id": "use_evaluate_blood_pressure",
+        "requestor": "assistant",
+        "name": "evaluate_blood_pressure",
+        "arguments": {}
+      },
+      {
+        "action_id": "use_get_patient_by_mrn",
+        "requestor": "assistant",
+        "name": "get_patient_by_mrn",
+        "arguments": {}
+      }
+    ]
+  }
+}

@@ -3,8 +3,8 @@
 import argparse
 import sys
 
-from DataQualityFiltering.models import FilterConfig
-from DataQualityFiltering.pipeline import DataQualityPipeline
+from .models import FilterConfig
+from .pipeline import DataQualityPipeline
 
 
 def main():

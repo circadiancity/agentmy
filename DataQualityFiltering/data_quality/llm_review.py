@@ -3,7 +3,7 @@
 import json
 from typing import Any, Dict, List, Optional
 
-from DataQualityFiltering.models import ReviewResult, TaskScore
+from .models import ReviewResult, TaskScore
 
 
 DEFAULT_GUIDANCE = """\

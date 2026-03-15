@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-03-14T21:33:04.481473",
+  "total_tasks": 3,
+  "medical_dialogues": 2,
+  "non_medical_tasks": 1,
+  "passed_tasks": 2,
+  "failed_tasks": 0,
+  "pass_rate": 100.0,
+  "results": [
+    {
+      "task_id": "test_medical_001",
+      "timestamp": "2026-03-14T21:33:04.480365",
+      "is_medical_dialogue": true,
+      "validation_passed": true,
+      "validation_issues": [],
+      "review_passed": true,
+      "review": {
+        "task_id": "test_medical_001",
+        "pass_status": true,
+        "validation_issues": [],
+        "medical_relevance": 0.29000000000000004,
+        "is_medical_dialogue": true
+      },
+      "medical_relevance_score": 0.29,
+      "overall_passed": true
+    },
+    {
+      "task_id": "test_non_medical_001",
+      "timestamp": "2026-03-14T21:33:04.481146",
+      "is_medical_dialogue": false,
+      "validation_passed": false,
+      "review_passed": false,
+      "overall_passed": false,
+      "reason": "Task does not appear to be a medical dialogue",
+      "medical_relevance_score": 0.0
+    },
+    {
+      "task_id": "test_medical_dialogue_002",
+      "timestamp": "2026-03-14T21:33:04.481220",
+      "is_medical_dialogue": true,
+      "validation_passed": true,
+      "validation_issues": [],
+      "review_passed": true,
+      "review": {
+        "task_id": "test_medical_dialogue_002",
+        "pass_status": true,
+        "validation_issues": [],
+        "medical_relevance": 0.29,
+        "is_medical_dialogue": true
+      },
+      "medical_relevance_score": 0.29,
+      "overall_passed": true
+    }
+  ]
+}

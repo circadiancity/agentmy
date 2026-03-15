@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from DataQualityFiltering.models import ReviewResult, TaskScore
+from .models import ReviewResult, TaskScore
 
 
 SCORING_DIMENSIONS = [

@@ -4,11 +4,12 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from DataQualityFiltering.calibration import Calibrator
-from DataQualityFiltering.filter import TaskFilter
-from DataQualityFiltering.human_review import HumanReviewer
-from DataQualityFiltering.llm_review import LLMReviewer
-from DataQualityFiltering.models import (
+# 导入本模块的组件
+from .calibration import Calibrator
+from .filter_engine import QualityFilter
+from .human_review import HumanReviewer
+from .llm_review import LLMReviewer
+from .models import (
     CalibrationResult,
     FilterConfig,
     ReviewResult,

@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Optional, Tuple
 
-from DataQualityFiltering.models import CalibrationResult, ReviewResult
+from .models import CalibrationResult, ReviewResult
 
 
 def _pearsonr_fallback(x: List[float], y: List[float]) -> Tuple[float, float]:
