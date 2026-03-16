@@ -14,10 +14,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
@@ -89,10 +89,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
@@ -120,30 +120,58 @@ jobs:
         print('✅ Backward compatibility maintained!')
         "
 
-  test-agent-eval-imports:
+  test-tau2-clinical-eval:
     runs-on: ubuntu-latest
-    name: Test Agent Evaluation Imports
+    name: Test Tau2 Clinical Evaluation
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
-    - name: Test Agent Evaluation Module Imports
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pydantic
+        # Install tau2 in development mode
+        cd src && pip install -e . && cd ..
+
+    - name: Test Tau2 Clinical Evaluation Imports
       run: |
         python -c "
-        from DataQualityFiltering.agent_evaluation import (
-            AgentEvaluationPipeline,
-            MedicalAgentReviewer,
+        import sys
+        sys.path.insert(0, 'src')
+
+        # Test importing clinical evaluation components
+        from tau2.evaluator import (
+            ClinicalEvaluator,
             ClinicalAccuracyEvaluator,
             DialogueFluencyEvaluator,
             SafetyEmpathyEvaluator,
         )
-        print('✅ Agent evaluation module imports successful!')
+        from tau2.data_model.tasks import RewardType
+        from tau2.data_model.simulation import ClinicalCheck
+
+        # Verify RewardType.CLINICAL exists
+        assert hasattr(RewardType, 'CLINICAL'), 'RewardType.CLINICAL not found'
+        assert RewardType.CLINICAL == 'CLINICAL'
+
+        # Verify ClinicalCheck can be instantiated
+        check = ClinicalCheck(
+            overall_score=4.0,
+            dimension_scores={},
+            met=True,
+            reward=0.8,
+        )
+
+        print('✅ Tau2 clinical evaluation imports successful!')
+        print(f'  - ClinicalEvaluator: {ClinicalEvaluator}')
+        print(f'  - RewardType.CLINICAL: {RewardType.CLINICAL}')
+        print(f'  - ClinicalCheck: {ClinicalCheck}')
         "
       env:
         PYTHONWARNINGS: ignore
@@ -155,10 +183,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
@@ -214,10 +242,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
@@ -231,13 +259,21 @@ jobs:
 
     - name: Test Agent Eval CLI Help
       run: |
-        python -m DataQualityFiltering agent-eval --help || true
+        # Note: Agent evaluation has been migrated to tau2.evaluator
+        # This test now checks for backward compatibility warning
+        python -c "
+        try:
+            from DataQualityFiltering.agent_evaluation import MedicalAgentReviewer
+            print('[INFO] Old agent_evaluation import still available (backward compatibility)')
+        except (ImportError, ModuleNotFoundError) as e:
+            print('[OK] Agent evaluation successfully migrated to tau2.evaluator')
+        " || true
 
   # 总结测试结果
   summary:
     runs-on: ubuntu-latest
     name: Test Summary
-    needs: [test-data-quality, test-core-modules, test-agent-eval-imports, test-cli]
+    needs: [test-data-quality, test-core-modules, test-tau2-clinical-eval, test-cli]
     if: always()
 
     steps:
@@ -247,12 +283,12 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "- Data Quality Tests: ${{ needs.test-data-quality.result }}" >> $GITHUB_STEP_SUMMARY
         echo "- Core Modules Tests: ${{ needs.test-core-modules.result }}" >> $GITHUB_STEP_SUMMARY
-        echo "- Agent Eval Tests: ${{ needs.test-agent-eval-imports.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Tau2 Clinical Eval Tests: ${{ needs.test-tau2-clinical-eval.result }}" >> $GITHUB_STEP_SUMMARY
         echo "- CLI Tests: ${{ needs.test-cli.result }}" >> $GITHUB_STEP_SUMMARY
 
         if [ "${{ needs.test-data-quality.result }}" == "success" ] && \
            [ "${{ needs.test-core-modules.result }}" == "success" ] && \
-           [ "${{ needs.test-agent-eval-imports.result }}" == "success" ] && \
+           [ "${{ needs.test-tau2-clinical-eval.result }}" == "success" ] && \
            [ "${{ needs.test-cli.result }}" == "success" ]; then
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
