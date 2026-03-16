@@ -67,12 +67,17 @@ from .data_quality import (
 # 现在会自动重定向到 data_quality 子系统
 
 # ============================================================================
-# Agent 性能评估子系统
+# Agent 性能评估已迁移到 tau2/evaluator/
 # ============================================================================
-from .agent_evaluation import (
-    AgentEvaluationPipeline,
-    MedicalAgentReviewer,
-)
+# 三个医疗评估器已迁移到 tau2 框架：
+# - ClinicalAccuracyEvaluator: tau2.evaluator.evaluator_clinical_accuracy
+# - DialogueFluencyEvaluator: tau2.evaluator.evaluator_dialogue_fluency
+# - SafetyEmpathyEvaluator: tau2.evaluator.evaluator_safety_empathy
+#
+# 使用方式：
+#   from tau2.evaluator import ClinicalAccuracyEvaluator
+#   evaluator = ClinicalAccuracyEvaluator(model="gpt-4")
+# ============================================================================
 
 # ============================================================================
 # 公共 API
@@ -114,7 +119,6 @@ __all__ = [
     "DataQualityLLMReviewer",  # 使用别名避免冲突
     "Calibrator",
 
-    # ========== Agent 性能评估 ==========
-    "AgentEvaluationPipeline",
-    "MedicalAgentReviewer",
+    # 注意：Agent 性能评估器已迁移到 tau2.evaluator
+    # 请使用: from tau2.evaluator import ClinicalAccuracyEvaluator
 ]
