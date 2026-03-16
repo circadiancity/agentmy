@@ -228,6 +228,7 @@ class RewardType(str, Enum):
     NL_ASSERTION = "NL_ASSERTION"
     ACTION = "ACTION"
     COMMUNICATE = "COMMUNICATE"
+    CLINICAL = "CLINICAL"  # Medical/clinical evaluation for healthcare domains
 
 
 class EvaluationCriteria(BaseModel):

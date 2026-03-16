@@ -6,6 +6,7 @@ from tau2.evaluator.evaluator_action import ActionEvaluator
 from tau2.evaluator.evaluator_communicate import CommunicateEvaluator
 from tau2.evaluator.evaluator_env import EnvironmentEvaluator
 from tau2.evaluator.evaluator_nl_assertions import NLAssertionsEvaluator
+from tau2.evaluator.evaluator_clinical import ClinicalEvaluator
 from tau2.registry import registry
 
 
@@ -16,6 +17,8 @@ class EvaluationType(str, Enum):
     ALL = "all"
     NL_ASSERTIONS = "nl_assertions"  # WIP
     ALL_WITH_NL_ASSERTIONS = "all_with_nl_assertions"  # WIP
+    CLINICAL = "clinical"  # 医疗/临床评估
+    ALL_WITH_CLINICAL = "all_with_clinical"  # 包含医疗评估的综合评估
 
 
 def evaluate_simulation(
@@ -52,6 +55,13 @@ def evaluate_simulation(
             full_trajectory=simulation.messages,
             solo_mode=solo_mode,
         )
+    elif evaluation_type == EvaluationType.CLINICAL:
+        # 医疗评估：使用 ClinicalEvaluator
+        reward_info = ClinicalEvaluator.calculate_reward(
+            task=task,
+            full_trajectory=simulation.messages,
+            model=kwargs.get("clinical_model", "gpt-4"),
+        )
     elif evaluation_type == EvaluationType.NL_ASSERTIONS:
         reward_info = NLAssertionsEvaluator.calculate_reward(
             task=task,
@@ -67,7 +77,11 @@ def evaluate_simulation(
             task=task,
             full_trajectory=simulation.messages,
         )
-    elif evaluation_type in {EvaluationType.ALL, EvaluationType.ALL_WITH_NL_ASSERTIONS}:
+    elif evaluation_type in {
+        EvaluationType.ALL,
+        EvaluationType.ALL_WITH_NL_ASSERTIONS,
+        EvaluationType.ALL_WITH_CLINICAL,
+    }:
         env_reward_info = EnvironmentEvaluator.calculate_reward(
             environment_constructor=registry.get_env_constructor(domain),
             task=task,
@@ -88,6 +102,13 @@ def evaluate_simulation(
                 task=task,
                 full_trajectory=simulation.messages,
             )
+        clinical_reward_info = None
+        if evaluation_type == EvaluationType.ALL_WITH_CLINICAL:
+            clinical_reward_info = ClinicalEvaluator.calculate_reward(
+                task=task,
+                full_trajectory=simulation.messages,
+                model=kwargs.get("clinical_model", "gpt-4"),
+            )
 
         ## Combine all the rewards.
         reward = 1.0
@@ -95,6 +116,7 @@ def evaluate_simulation(
         action_bases = {RewardType.ACTION}
         nl_bases = {RewardType.NL_ASSERTION}
         comm_bases = {RewardType.COMMUNICATE}
+        clinical_bases = {RewardType.CLINICAL}
         task_reward_basis = set(task.evaluation_criteria.reward_basis)
 
         reward_breakdown = {}
@@ -118,6 +140,14 @@ def evaluate_simulation(
             if communicate_reward_info.reward_breakdown is not None:
                 reward_breakdown.update(communicate_reward_info.reward_breakdown)
             reward *= communicate_reward_info.reward
+        if task_reward_basis & clinical_bases:
+            if evaluation_type != EvaluationType.ALL_WITH_CLINICAL:
+                raise ValueError(
+                    "Clinical evaluation is part of the reward basis, but it is not being evaluated."
+                )
+            if clinical_reward_info.reward_breakdown is not None:
+                reward_breakdown.update(clinical_reward_info.reward_breakdown)
+            reward *= clinical_reward_info.reward
 
         reward_info = RewardInfo(
             reward=reward,
@@ -128,6 +158,9 @@ def evaluate_simulation(
             if nl_reward_info is not None
             else None,
             communicate_checks=communicate_reward_info.communicate_checks,
+            clinical_checks=clinical_reward_info.clinical_checks
+            if clinical_reward_info is not None
+            else None,
             reward_basis=task.evaluation_criteria.reward_basis,
             reward_breakdown=reward_breakdown,
             info={
@@ -135,6 +168,7 @@ def evaluate_simulation(
                 "nl": nl_reward_info.info if nl_reward_info is not None else None,
                 "communicate": communicate_reward_info.info,
                 "action": action_reward_info.info,
+                "clinical": clinical_reward_info.info if clinical_reward_info is not None else None,
             },
         )
     else:

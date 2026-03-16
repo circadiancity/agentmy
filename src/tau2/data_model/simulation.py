@@ -224,6 +224,46 @@ class EnvAssertionCheck(BaseModel):
     reward: float
 
 
+class ClinicalCheck(BaseModel):
+    """
+    A clinical/medical evaluation check for healthcare domains.
+
+    Evaluates AI agent performance on medical tasks across multiple dimensions:
+    - Clinical Accuracy (medical knowledge, diagnostic reasoning, treatment appropriateness, safety warnings)
+    - Dialogue Fluency (question understanding, response coherence, clarity, interaction)
+    - Safety & Empathy (safety awareness, empathy, communication skills)
+    """
+
+    overall_score: Annotated[
+        float, Field(description="Overall clinical score (0-5 scale).")
+    ]
+    dimension_scores: Annotated[
+        dict, Field(description="Scores for each clinical dimension.")
+    ]
+    met: Annotated[
+        bool, Field(description="Whether the clinical evaluation meets the threshold.")
+    ]
+    reward: Annotated[
+        float, Field(description="The reward for the clinical evaluation.")
+    ]
+    strengths: Annotated[
+        Optional[list[str]],
+        Field(description="Strengths identified in the clinical evaluation.", default=None),
+    ]
+    weaknesses: Annotated[
+        Optional[list[str]],
+        Field(description="Weaknesses identified in the clinical evaluation.", default=None),
+    ]
+    suggestions: Annotated[
+        Optional[list[str]],
+        Field(description="Suggestions for improvement.", default=None),
+    ]
+    comments: Annotated[
+        Optional[str],
+        Field(description="Additional comments about the evaluation.", default=None),
+    ]
+
+
 class RewardInfo(BaseModel):
     """
     The reward received by the agent.
@@ -249,6 +289,13 @@ class RewardInfo(BaseModel):
         Optional[list[CommunicateCheck]],
         Field(
             description="Checks that the agent communicated the required information.",
+            default=None,
+        ),
+    ]
+    clinical_checks: Annotated[
+        Optional[list[ClinicalCheck]],
+        Field(
+            description="The clinical/medical evaluation checks for healthcare domains.",
             default=None,
         ),
     ]

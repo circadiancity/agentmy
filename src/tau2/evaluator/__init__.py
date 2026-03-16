@@ -14,6 +14,7 @@ from .evaluator_env import EnvironmentEvaluator
 from .evaluator_clinical_accuracy import ClinicalAccuracyEvaluator
 from .evaluator_dialogue_fluency import DialogueFluencyEvaluator
 from .evaluator_safety_empathy import SafetyEmpathyEvaluator
+from .evaluator_clinical import ClinicalEvaluator
 
 __all__ = [
     # 基础评估器
@@ -26,4 +27,5 @@ __all__ = [
     "ClinicalAccuracyEvaluator",
     "DialogueFluencyEvaluator",
     "SafetyEmpathyEvaluator",
+    "ClinicalEvaluator",  # 综合医疗评估器
 ]
