@@ -2,7 +2,7 @@ name: DataQualityFiltering Tests
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, sync-quality-threshold-modules, feature/quality-threshold-filtering ]
   pull_request:
     branches: [ main, develop ]
   workflow_dispatch:  # 允许手动触发
