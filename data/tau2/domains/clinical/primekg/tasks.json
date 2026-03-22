@@ -1,0 +1,560 @@
+[
+  {
+    "id": "primekg_fever_medium",
+    "description": {
+      "purpose": "Medical consultation - Periodic fever",
+      "relevant_policies": null,
+      "notes": "Generated from PrimeKG knowledge graph. Diagnosis: cyclic hematopoiesis. Path: effect/phenotype → disease → drug"
+    },
+    "user_scenario": {
+      "persona": "60-year-old female patient with Periodic fever",
+      "instructions": {
+        "domain": "primekg_internal_medicine",
+        "reason_for_call": "Periodic fever",
+        "known_info": "Patient has Periodic fever for 22 days. Severity: mild.",
+        "unknown_info": "cyclic hematopoiesis",
+        "task_instructions": "You are a patient seeking medical advice.\n\nYour concern: Periodic fever\n\nDuration: 22 days\nSeverity: mild\n\nPlease engage in a natural conversation with the doctor about your health concern."
+      }
+    },
+    "ticket": "Periodic fever",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_primekg_fever_medium",
+            "mrn": "MRNfevermedium",
+            "age": 60,
+            "gender": "female"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "provide_medical_advice",
+          "requestor": "assistant",
+          "name": "provide_medical_advice",
+          "arguments": {
+            "should_address": "Periodic fever"
+          }
+        }
+      ],
+      "communication_checks": [
+        {
+          "check_id": "helpful_response",
+          "criteria": "Response should address patient's concern"
+        },
+        {
+          "check_id": "medical_accuracy",
+          "criteria": "Medical advice should be accurate based on PrimeKG knowledge"
+        }
+      ]
+    },
+    "reference_dialogue": [
+      {
+        "role": "user",
+        "content": "Doctor, I've been experiencing Periodic fever for about 22 days."
+      },
+      {
+        "role": "assistant",
+        "content": "I see. Can you describe the Periodic fever in more detail? Is it mild?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, it's quite mild. I'm worried about what might be causing this."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on your symptoms, I suspect you may have cyclic hematopoiesis. Let me explain the treatment options."
+      },
+      {
+        "role": "assistant",
+        "content": "Important note: Molindone is contraindicated for your condition, so we'll avoid that."
+      },
+      {
+        "role": "assistant",
+        "content": "Do you have any questions about your diagnosis or treatment plan?"
+      }
+    ],
+    "metadata": {
+      "source": "PrimeKG Random Walk Generator",
+      "primekg_path_length": 3,
+      "primekg_node_types": [
+        "effect/phenotype",
+        "disease",
+        "drug"
+      ],
+      "primekg_edge_types": [
+        "unknown",
+        "phenotype present",
+        "contraindication"
+      ],
+      "generation_date": "2025-03-22"
+    }
+  },
+  {
+    "id": "primekg_fever_short",
+    "description": {
+      "purpose": "Medical consultation - Periodic fever",
+      "relevant_policies": null,
+      "notes": "Generated from PrimeKG knowledge graph. Diagnosis: juvenile arthritis due to defect in LACC1. Path: effect/phenotype → disease → drug"
+    },
+    "user_scenario": {
+      "persona": "46-year-old female patient with Periodic fever",
+      "instructions": {
+        "domain": "primekg_internal_medicine",
+        "reason_for_call": "Periodic fever",
+        "known_info": "Patient has Periodic fever for 8 days. Severity: severe.",
+        "unknown_info": "juvenile arthritis due to defect in LACC1",
+        "task_instructions": "You are a patient seeking medical advice.\n\nYour concern: Periodic fever\n\nDuration: 8 days\nSeverity: severe\n\nPlease engage in a natural conversation with the doctor about your health concern."
+      }
+    },
+    "ticket": "Periodic fever",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_primekg_fever_short",
+            "mrn": "MRNfevershort",
+            "age": 46,
+            "gender": "female"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "provide_medical_advice",
+          "requestor": "assistant",
+          "name": "provide_medical_advice",
+          "arguments": {
+            "should_address": "Periodic fever"
+          }
+        }
+      ],
+      "communication_checks": [
+        {
+          "check_id": "helpful_response",
+          "criteria": "Response should address patient's concern"
+        },
+        {
+          "check_id": "medical_accuracy",
+          "criteria": "Medical advice should be accurate based on PrimeKG knowledge"
+        }
+      ]
+    },
+    "reference_dialogue": [
+      {
+        "role": "user",
+        "content": "Doctor, I've been experiencing Periodic fever for about 8 days."
+      },
+      {
+        "role": "assistant",
+        "content": "I see. Can you describe the Periodic fever in more detail? Is it severe?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, it's quite severe. I'm worried about what might be causing this."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on your symptoms, I suspect you may have juvenile arthritis due to defect in LACC1. Let me explain the treatment options."
+      },
+      {
+        "role": "assistant",
+        "content": "I recommend Cortisone acetate which is indicated for your condition."
+      },
+      {
+        "role": "assistant",
+        "content": "Do you have any questions about your diagnosis or treatment plan?"
+      }
+    ],
+    "metadata": {
+      "source": "PrimeKG Random Walk Generator",
+      "primekg_path_length": 3,
+      "primekg_node_types": [
+        "effect/phenotype",
+        "disease",
+        "drug"
+      ],
+      "primekg_edge_types": [
+        "unknown",
+        "phenotype present",
+        "indication"
+      ],
+      "generation_date": "2025-03-22"
+    }
+  },
+  {
+    "id": "primekg_hypertension_medium",
+    "description": {
+      "purpose": "Medical consultation - Ocular hypertension",
+      "relevant_policies": null,
+      "notes": "Generated from PrimeKG knowledge graph. Diagnosis: glaucoma. Path: effect/phenotype → disease → drug"
+    },
+    "user_scenario": {
+      "persona": "67-year-old female patient with Ocular hypertension",
+      "instructions": {
+        "domain": "primekg_internal_medicine",
+        "reason_for_call": "Ocular hypertension",
+        "known_info": "Patient has Ocular hypertension for 22 days. Severity: severe.",
+        "unknown_info": "glaucoma",
+        "task_instructions": "You are a patient seeking medical advice.\n\nYour concern: Ocular hypertension\n\nDuration: 22 days\nSeverity: severe\n\nPlease engage in a natural conversation with the doctor about your health concern."
+      }
+    },
+    "ticket": "Ocular hypertension",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_primekg_hypertension_medium",
+            "mrn": "MRNhypertensionmedium",
+            "age": 67,
+            "gender": "female"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "provide_medical_advice",
+          "requestor": "assistant",
+          "name": "provide_medical_advice",
+          "arguments": {
+            "should_address": "Ocular hypertension"
+          }
+        }
+      ],
+      "communication_checks": [
+        {
+          "check_id": "helpful_response",
+          "criteria": "Response should address patient's concern"
+        },
+        {
+          "check_id": "medical_accuracy",
+          "criteria": "Medical advice should be accurate based on PrimeKG knowledge"
+        }
+      ]
+    },
+    "reference_dialogue": [
+      {
+        "role": "user",
+        "content": "Doctor, I've been experiencing Ocular hypertension for about 22 days."
+      },
+      {
+        "role": "assistant",
+        "content": "I see. Can you describe the Ocular hypertension in more detail? Is it severe?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, it's quite severe. I'm worried about what might be causing this."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on your symptoms, I suspect you may have glaucoma. Let me explain the treatment options."
+      },
+      {
+        "role": "assistant",
+        "content": "I recommend Omidenepag isopropyl which is indicated for your condition."
+      },
+      {
+        "role": "assistant",
+        "content": "Do you have any questions about your diagnosis or treatment plan?"
+      }
+    ],
+    "metadata": {
+      "source": "PrimeKG Random Walk Generator",
+      "primekg_path_length": 3,
+      "primekg_node_types": [
+        "effect/phenotype",
+        "disease",
+        "drug"
+      ],
+      "primekg_edge_types": [
+        "unknown",
+        "phenotype present",
+        "indication"
+      ],
+      "generation_date": "2025-03-22"
+    }
+  },
+  {
+    "id": "primekg_hypertension_short",
+    "description": {
+      "purpose": "Medical consultation - Ocular hypertension",
+      "relevant_policies": null,
+      "notes": "Generated from PrimeKG knowledge graph. Diagnosis: anterior segment dysgenesis. Path: effect/phenotype → disease"
+    },
+    "user_scenario": {
+      "persona": "63-year-old female patient with Ocular hypertension",
+      "instructions": {
+        "domain": "primekg_internal_medicine",
+        "reason_for_call": "Ocular hypertension",
+        "known_info": "Patient has Ocular hypertension for 20 days. Severity: moderate.",
+        "unknown_info": "anterior segment dysgenesis",
+        "task_instructions": "You are a patient seeking medical advice.\n\nYour concern: Ocular hypertension\n\nDuration: 20 days\nSeverity: moderate\n\nPlease engage in a natural conversation with the doctor about your health concern."
+      }
+    },
+    "ticket": "Ocular hypertension",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_primekg_hypertension_short",
+            "mrn": "MRNhypertensionshort",
+            "age": 63,
+            "gender": "female"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "provide_medical_advice",
+          "requestor": "assistant",
+          "name": "provide_medical_advice",
+          "arguments": {
+            "should_address": "Ocular hypertension"
+          }
+        }
+      ],
+      "communication_checks": [
+        {
+          "check_id": "helpful_response",
+          "criteria": "Response should address patient's concern"
+        },
+        {
+          "check_id": "medical_accuracy",
+          "criteria": "Medical advice should be accurate based on PrimeKG knowledge"
+        }
+      ]
+    },
+    "reference_dialogue": [
+      {
+        "role": "user",
+        "content": "Doctor, I've been experiencing Ocular hypertension for about 20 days."
+      },
+      {
+        "role": "assistant",
+        "content": "I see. Can you describe the Ocular hypertension in more detail? Is it moderate?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, it's quite moderate. I'm worried about what might be causing this."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on your symptoms, I suspect you may have anterior segment dysgenesis. Let me explain the treatment options."
+      },
+      {
+        "role": "assistant",
+        "content": "Do you have any questions about your diagnosis or treatment plan?"
+      }
+    ],
+    "metadata": {
+      "source": "PrimeKG Random Walk Generator",
+      "primekg_path_length": 2,
+      "primekg_node_types": [
+        "effect/phenotype",
+        "disease"
+      ],
+      "primekg_edge_types": [
+        "unknown",
+        "phenotype present"
+      ],
+      "generation_date": "2025-03-22"
+    }
+  },
+  {
+    "id": "primekg_pain_medium",
+    "description": {
+      "purpose": "Medical consultation - Groin pain",
+      "relevant_policies": null,
+      "notes": "Generated from PrimeKG knowledge graph. Diagnosis: perineural cyst. Path: effect/phenotype → disease"
+    },
+    "user_scenario": {
+      "persona": "35-year-old female patient with Groin pain",
+      "instructions": {
+        "domain": "primekg_internal_medicine",
+        "reason_for_call": "Groin pain",
+        "known_info": "Patient has Groin pain for 10 days. Severity: moderate.",
+        "unknown_info": "perineural cyst",
+        "task_instructions": "You are a patient seeking medical advice.\n\nYour concern: Groin pain\n\nDuration: 10 days\nSeverity: moderate\n\nPlease engage in a natural conversation with the doctor about your health concern."
+      }
+    },
+    "ticket": "Groin pain",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_primekg_pain_medium",
+            "mrn": "MRNpainmedium",
+            "age": 35,
+            "gender": "female"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "provide_medical_advice",
+          "requestor": "assistant",
+          "name": "provide_medical_advice",
+          "arguments": {
+            "should_address": "Groin pain"
+          }
+        }
+      ],
+      "communication_checks": [
+        {
+          "check_id": "helpful_response",
+          "criteria": "Response should address patient's concern"
+        },
+        {
+          "check_id": "medical_accuracy",
+          "criteria": "Medical advice should be accurate based on PrimeKG knowledge"
+        }
+      ]
+    },
+    "reference_dialogue": [
+      {
+        "role": "user",
+        "content": "Doctor, I've been experiencing Groin pain for about 10 days."
+      },
+      {
+        "role": "assistant",
+        "content": "I see. Can you describe the Groin pain in more detail? Is it moderate?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, it's quite moderate. I'm worried about what might be causing this."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on your symptoms, I suspect you may have perineural cyst. Let me explain the treatment options."
+      },
+      {
+        "role": "assistant",
+        "content": "Do you have any questions about your diagnosis or treatment plan?"
+      }
+    ],
+    "metadata": {
+      "source": "PrimeKG Random Walk Generator",
+      "primekg_path_length": 2,
+      "primekg_node_types": [
+        "effect/phenotype",
+        "disease"
+      ],
+      "primekg_edge_types": [
+        "unknown",
+        "phenotype present"
+      ],
+      "generation_date": "2025-03-22"
+    }
+  },
+  {
+    "id": "primekg_pain_short",
+    "description": {
+      "purpose": "Medical consultation - Groin pain",
+      "relevant_policies": null,
+      "notes": "Generated from PrimeKG knowledge graph. Diagnosis: perineural cyst. Path: effect/phenotype → disease"
+    },
+    "user_scenario": {
+      "persona": "30-year-old female patient with Groin pain",
+      "instructions": {
+        "domain": "primekg_internal_medicine",
+        "reason_for_call": "Groin pain",
+        "known_info": "Patient has Groin pain for 30 days. Severity: moderate.",
+        "unknown_info": "perineural cyst",
+        "task_instructions": "You are a patient seeking medical advice.\n\nYour concern: Groin pain\n\nDuration: 30 days\nSeverity: moderate\n\nPlease engage in a natural conversation with the doctor about your health concern."
+      }
+    },
+    "ticket": "Groin pain",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_primekg_pain_short",
+            "mrn": "MRNpainshort",
+            "age": 30,
+            "gender": "female"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "provide_medical_advice",
+          "requestor": "assistant",
+          "name": "provide_medical_advice",
+          "arguments": {
+            "should_address": "Groin pain"
+          }
+        }
+      ],
+      "communication_checks": [
+        {
+          "check_id": "helpful_response",
+          "criteria": "Response should address patient's concern"
+        },
+        {
+          "check_id": "medical_accuracy",
+          "criteria": "Medical advice should be accurate based on PrimeKG knowledge"
+        }
+      ]
+    },
+    "reference_dialogue": [
+      {
+        "role": "user",
+        "content": "Doctor, I've been experiencing Groin pain for about 30 days."
+      },
+      {
+        "role": "assistant",
+        "content": "I see. Can you describe the Groin pain in more detail? Is it moderate?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, it's quite moderate. I'm worried about what might be causing this."
+      },
+      {
+        "role": "assistant",
+        "content": "Based on your symptoms, I suspect you may have perineural cyst. Let me explain the treatment options."
+      },
+      {
+        "role": "assistant",
+        "content": "Do you have any questions about your diagnosis or treatment plan?"
+      }
+    ],
+    "metadata": {
+      "source": "PrimeKG Random Walk Generator",
+      "primekg_path_length": 2,
+      "primekg_node_types": [
+        "effect/phenotype",
+        "disease"
+      ],
+      "primekg_edge_types": [
+        "unknown",
+        "phenotype present"
+      ],
+      "generation_date": "2025-03-22"
+    }
+  }
+]

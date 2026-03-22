@@ -1,0 +1,18 @@
+{
+  "train": [
+    "primekg_hypertension_short",
+    "primekg_fever_short",
+    "primekg_hypertension_medium",
+    "primekg_pain_medium"
+  ],
+  "test": [
+    "primekg_fever_medium",
+    "primekg_pain_short"
+  ],
+  "metadata": {
+    "total_tasks": 6,
+    "train_size": 4,
+    "test_size": 2,
+    "split_ratio": "80/20"
+  }
+}
