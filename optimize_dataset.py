@@ -11,7 +11,7 @@ from pathlib import Path
 # 添加项目根目录到路径
 sys.path.insert(0, str(Path(__file__).parent))
 
-from datagenerator.core.task_optimizer import TaskOptimizer
+from medical_task_suite.optimization.core.task_optimizer import TaskOptimizer
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
     # 配置
     input_file = "data/tau2/domains/clinical/chinese_internal_medicine/tasks_realistic_v3.json"
     output_file = "data/tau2/domains/clinical/chinese_internal_medicine/tasks_optimized.json"
-    config_file = "datagenerator/config/optimization_rules.yaml"
+    config_file = "medical_task_suite/optimization/config/optimization_rules.yaml"
 
     # 初始化优化器
     print(f"\n初始化优化器...")

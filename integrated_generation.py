@@ -17,8 +17,8 @@ from pathlib import Path
 # 添加项目根目录到路径
 sys.path.insert(0, str(Path(__file__).parent))
 
-from kg_generator.core.task_generator import KGTaskGenerator
-from datagenerator.core.task_optimizer import TaskOptimizer
+from medical_task_suite.generation.core.task_generator import KGTaskGenerator
+from medical_task_suite.optimization.core.task_optimizer import TaskOptimizer
 
 
 def integrated_generate(
@@ -73,7 +73,7 @@ def integrated_generate(
             )
 
             # 转换为tau2格式
-            from kg_generator.utils.tau2_converter import convert_to_tau2_format
+            from medical_task_suite.generation.utils.tau2_converter import convert_to_tau2_format
             tau2_task = convert_to_tau2_format(task)
 
             # 保存临时文件
