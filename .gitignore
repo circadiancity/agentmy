@@ -44,3 +44,11 @@ data/raw/PhysioNet/
 data/raw/medical_dialogues/*/
 !data/raw/medical_dialogues/*/.gitkeep
 !data/raw/medical_dialogues/README.md
+
+# PrimeKG cache (too large for Git)
+data/primekg_cache/
+*.csv
+*.gml
+
+# PrimeKG generated tasks (keep source code, ignore generated data)
+# data/primekg_tasks/  # Uncomment if you want to ignore generated tasks
