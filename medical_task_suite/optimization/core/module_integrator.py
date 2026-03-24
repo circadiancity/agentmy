@@ -139,6 +139,10 @@ class ModuleIntegrator:
         # Scenario-to-module mapping index
         self.scenario_module_map = {}
 
+        # Build name-to-ID and ID-to-config mappings
+        self.name_to_id_map = {}
+        self.id_to_config_map = {}
+
         # Build indexes from module definitions
         if self.module_definitions:
             # Get scenario mapping from module_definitions if available
@@ -146,12 +150,29 @@ class ModuleIntegrator:
                 'scenario_module_mapping', {}
             )
 
-            for module_id, module_config in self.module_definitions.items():
+            for module_key, module_config in self.module_definitions.items():
+                # Build name-to-ID and ID-to-config mappings
+                module_id = module_config.get('module_id', module_key)
+                self.name_to_id_map[module_key] = module_id
+                self.id_to_config_map[module_id] = module_config
+
                 priority = module_config.get('priority', 'P2')
                 if priority in self.priority_groups:
                     self.priority_groups[priority].append(module_id)
 
-            self.scenario_module_map = scenario_mapping
+            # Convert scenario mapping from names to IDs
+            self.scenario_module_map = {}
+            for scenario, mapping in scenario_mapping.items():
+                self.scenario_module_map[scenario] = {
+                    'primary_modules': [
+                        self.name_to_id_map.get(name, name)
+                        for name in mapping.get('primary_modules', [])
+                    ],
+                    'secondary_modules': [
+                        self.name_to_id_map.get(name, name)
+                        for name in mapping.get('secondary_modules', [])
+                    ]
+                }
 
     def select_modules_for_task(
         self,
@@ -184,8 +205,9 @@ class ModuleIntegrator:
         # Score each module
         scored_modules = []
         for module_id in recommended_module_ids:
-            if module_id in self.module_definitions:
-                module_config = self.module_definitions[module_id]
+            # Use id_to_config_map to get module config by ID
+            if module_id in self.id_to_config_map:
+                module_config = self.id_to_config_map[module_id]
                 score = self._calculate_module_relevance(
                     module_config, task_context
                 )
@@ -343,8 +365,9 @@ class ModuleIntegrator:
 
         requirements = {}
         for module_id in selected_modules:
-            if module_id in self.module_definitions:
-                module_config = self.module_definitions[module_id]
+            # Use id_to_config_map to get module config by ID
+            if module_id in self.id_to_config_map:
+                module_config = self.id_to_config_map[module_id]
 
                 # Get module-specific behavior template
                 behavior_spec = self._get_behavior_spec(
@@ -596,8 +619,8 @@ class ModuleIntegrator:
                     module_counts[module_id] += 1
 
                 # Count priorities
-                if module_id in self.module_definitions:
-                    priority = self.module_definitions[module_id].get('priority', 'P2')
+                if module_id in self.id_to_config_map:
+                    priority = self.id_to_config_map[module_id].get('priority', 'P2')
                     priority_counts[priority] += 1
 
             # Count difficulties
