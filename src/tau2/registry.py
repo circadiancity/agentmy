@@ -75,6 +75,14 @@ from tau2.domains.clinical.endocrinology.environment import get_tasks as clinica
 from tau2.domains.clinical.endocrinology.environment import (
     get_tasks_split as clinical_endocrinology_get_tasks_split,
 )
+# Chinese Internal Medicine domain
+from tau2.domains.clinical.chinese_internal_medicine.environment import (
+    get_environment as clinical_chinese_internal_medicine_get_environment,
+)
+from tau2.domains.clinical.chinese_internal_medicine.environment import get_tasks as clinical_chinese_internal_medicine_get_tasks
+from tau2.domains.clinical.chinese_internal_medicine.environment import (
+    get_tasks_split as clinical_chinese_internal_medicine_get_tasks_split,
+)
 # PrimeKG domain
 from tau2.domains.clinical.primekg.environment import (
     get_environment as primekg_get_environment,
@@ -322,6 +330,14 @@ try:
         clinical_endocrinology_get_tasks,
         "clinical_endocrinology",
         get_task_splits=clinical_endocrinology_get_tasks_split,
+    )
+
+    # Chinese Internal Medicine domain
+    registry.register_domain(clinical_chinese_internal_medicine_get_environment, "clinical_chinese_internal_medicine")
+    registry.register_tasks(
+        clinical_chinese_internal_medicine_get_tasks,
+        "clinical_chinese_internal_medicine",
+        get_task_splits=clinical_chinese_internal_medicine_get_tasks_split,
     )
 
     # PrimeKG domain
