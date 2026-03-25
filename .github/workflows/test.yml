@@ -120,6 +120,10 @@ jobs:
       with:
         python-version: '3.10'
 
+    - name: Install tau2
+      run: |
+        pip install -e .
+
     - name: Test Core Imports
       run: |
         python -c "
@@ -297,7 +301,7 @@ jobs:
   summary:
     runs-on: ubuntu-latest
     name: Test Summary
-    needs: [basic-check, test-core-modules, test-tau2-clinical-eval, test-cli, test-with-real-data]
+    needs: [basic-check, test-core-modules, test-tau2-clinical-eval, test-cli]
     if: always()
 
     steps:
@@ -309,7 +313,11 @@ jobs:
         echo "- Core Modules Tests: ${{ needs.test-core-modules.result }}" >> $GITHUB_STEP_SUMMARY
         echo "- Tau2 Clinical Eval Tests: ${{ needs.test-tau2-clinical-eval.result }}" >> $GITHUB_STEP_SUMMARY
         echo "- CLI Tests: ${{ needs.test-cli.result }}" >> $GITHUB_STEP_SUMMARY
-        echo "- Real Data Tests: ${{ needs.test-with-real-data.result }}" >> $GITHUB_STEP_SUMMARY
+
+        # Only show real data tests if they ran
+        if [ "${{ needs.test-with-real-data.result }}" != "" ]; then
+          echo "- Real Data Tests: ${{ needs.test-with-real-data.result }}" >> $GITHUB_STEP_SUMMARY
+        fi
 
         if [ "${{ needs.basic-check.result }}" == "success" ] && \
            [ "${{ needs.test-core-modules.result }}" == "success" ] && \
