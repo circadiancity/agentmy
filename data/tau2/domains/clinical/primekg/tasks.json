@@ -91,7 +91,6 @@
       "medical_criteria": {
         "expected_tool_category": "diagnosis",
         "required_tools": [
-          "assess_blood_pressure",
           "get_patient_by_mrn"
         ],
         "optional_tools": [],
@@ -246,7 +245,9 @@
       ],
       "medical_criteria": {
         "expected_tool_category": "diagnosis",
-        "required_tools": [],
+        "required_tools": [
+          "get_patient_by_mrn"
+        ],
         "optional_tools": [],
         "required_parameters": {},
         "reasoning_steps": [
@@ -333,7 +334,7 @@
     },
     "medical_persona": {
       "age": 32,
-      "gender": "female",
+      "gender": "male",
       "symptoms": [
         "Ocular hypertension"
       ],
@@ -405,7 +406,9 @@
       ],
       "medical_criteria": {
         "expected_tool_category": "diagnosis",
-        "required_tools": [],
+        "required_tools": [
+          "get_patient_by_mrn"
+        ],
         "optional_tools": [],
         "required_parameters": {},
         "reasoning_steps": [
@@ -558,7 +561,9 @@
       ],
       "medical_criteria": {
         "expected_tool_category": "diagnosis",
-        "required_tools": [],
+        "required_tools": [
+          "get_patient_by_mrn"
+        ],
         "optional_tools": [],
         "required_parameters": {},
         "reasoning_steps": [
@@ -645,7 +650,7 @@
     },
     "medical_persona": {
       "age": 42,
-      "gender": "female",
+      "gender": "male",
       "symptoms": [
         "Cluster headache"
       ],
@@ -717,7 +722,9 @@
       ],
       "medical_criteria": {
         "expected_tool_category": "diagnosis",
-        "required_tools": [],
+        "required_tools": [
+          "get_patient_by_mrn"
+        ],
         "optional_tools": [],
         "required_parameters": {},
         "reasoning_steps": [
@@ -876,7 +883,9 @@
       ],
       "medical_criteria": {
         "expected_tool_category": "diagnosis",
-        "required_tools": [],
+        "required_tools": [
+          "get_patient_by_mrn"
+        ],
         "optional_tools": [],
         "required_parameters": {},
         "reasoning_steps": [
@@ -957,7 +966,7 @@
     },
     "medical_persona": {
       "age": 35,
-      "gender": "female",
+      "gender": "male",
       "symptoms": [
         "Chronic fatigue"
       ],
@@ -1029,7 +1038,9 @@
       ],
       "medical_criteria": {
         "expected_tool_category": "diagnosis",
-        "required_tools": [],
+        "required_tools": [
+          "get_patient_by_mrn"
+        ],
         "optional_tools": [],
         "required_parameters": {},
         "reasoning_steps": [
@@ -1110,7 +1121,7 @@
     },
     "medical_persona": {
       "age": 49,
-      "gender": "female",
+      "gender": "male",
       "symptoms": [
         "Fatigable weakness of swallowing muscles"
       ],
@@ -1182,7 +1193,9 @@
       ],
       "medical_criteria": {
         "expected_tool_category": "diagnosis",
-        "required_tools": [],
+        "required_tools": [
+          "get_patient_by_mrn"
+        ],
         "optional_tools": [],
         "required_parameters": {},
         "reasoning_steps": [
@@ -1336,7 +1349,6 @@
       "medical_criteria": {
         "expected_tool_category": "diagnosis",
         "required_tools": [
-          "assess_blood_pressure",
           "get_patient_by_mrn"
         ],
         "optional_tools": [],
