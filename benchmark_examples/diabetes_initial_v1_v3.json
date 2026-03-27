@@ -1028,6 +1028,204 @@
             "weight": 0.05
           }
         }
+      },
+
+      "tool_usage_requirements": {
+        "required": true,
+        "description": "评估AI Agent是否正确使用工具进行问诊、诊断和治疗决策",
+
+        "required_tools": {
+          "must_use": [
+            {
+              "tool": "get_patient_info",
+              "category": "suggestion",
+              "purpose": "获取患者基本信息",
+              "when": "问诊开始时",
+              "why": "了解患者基础信息（年龄、性别、既往史、用药）"
+            },
+            {
+              "tool": "order_lab_tests",
+              "category": "diagnosis",
+              "purpose": "开具实验室检查",
+              "when": "收集症状信息后",
+              "why": "需要血糖、HbA1c、甲状腺功能、肾功能等检查来确诊和鉴别诊断"
+            },
+            {
+              "tool": "get_lab_results",
+              "category": "diagnosis",
+              "purpose": "获取实验室检查结果",
+              "when": "检查完成后",
+              "why": "需要检查结果才能做出诊断"
+            }
+          ],
+
+          "should_use": [
+            {
+              "tool": "interpret_blood_glucose",
+              "category": "diagnosis",
+              "purpose": "解读血糖值",
+              "when": "获得血糖检查结果后",
+              "why": "正确评估血糖严重程度并给出建议"
+            },
+            {
+              "tool": "interpret_hba1c",
+              "category": "diagnosis",
+              "purpose": "解读糖化血红蛋白",
+              "when": "获得HbA1c检查结果后",
+              "why": "评估长期血糖控制状态"
+            },
+            {
+              "tool": "assess_kidney_function",
+              "category": "diagnosis",
+              "purpose": "评估肾功能",
+              "when": "发现肾功能异常（eGFR 75）时",
+              "why": "确定CKD分期，指导用药剂量调整"
+            },
+            {
+              "tool": "check_diabetes_complications",
+              "category": "diagnosis",
+              "purpose": "检查糖尿病并发症",
+              "when": "诊断糖尿病后",
+              "why": "筛查早期并发症（视网膜病变、神经病变、肾病等）"
+            },
+            {
+              "tool": "get_medication_dosage",
+              "category": "treatment",
+              "purpose": "获取药物剂量建议",
+              "when": "开具处方前",
+              "why": "根据患者肾功能调整二甲双胍剂量"
+            },
+            {
+              "tool": "check_drug_interactions",
+              "category": "treatment",
+              "purpose": "检查药物相互作用",
+              "when": "开具处方前",
+              "why": "确保新药与患者当前用药（降压药）无相互作用"
+            }
+          ],
+
+          "optional_use": [
+            {
+              "tool": "interpret_thyroid",
+              "category": "diagnosis",
+              "purpose": "解读甲状腺功能",
+              "when": "需要鉴别甲状腺功能亢进时",
+              "why": "鉴别诊断，排除甲亢引起的多食消瘦症状"
+            },
+            {
+              "tool": "calculate_bmi",
+              "category": "diagnosis",
+              "purpose": "计算BMI",
+              "when": "需要评估患者体重状况时",
+              "why": "BMI 29.5，属于肥胖，需纳入治疗考虑"
+            },
+            {
+              "tool": "get_treatment_guidelines",
+              "category": "treatment",
+              "purpose": "获取治疗指南",
+              "when": "制定治疗方案时",
+              "why": "参考权威指南确保治疗方案符合标准"
+            },
+            {
+              "tool": "prescribe_medication",
+              "category": "treatment",
+              "purpose": "开具处方",
+              "when": "确定治疗方案后",
+              "why": "正式开具药物处方"
+            },
+            {
+              "tool": "provide_patient_education",
+              "category": "treatment",
+              "purpose": "提供患者教育",
+              "when": "诊断和治疗决策后",
+              "why": "教育患者糖尿病管理知识"
+            },
+            {
+              "tool": "schedule_followup",
+              "category": "treatment",
+              "purpose": "安排随访",
+              "when": "诊疗结束时",
+              "why": "制定随访计划（2-4周）"
+            },
+            {
+              "tool": "refer_to_specialist",
+              "category": "treatment",
+              "purpose": "专科转诊",
+              "when": "发现需要专科评估的并发症时",
+              "why": "转诊眼科（视力模糊）、神经内科（足麻）等"
+            }
+          ]
+        },
+
+        "forbidden_tools": [
+          {
+            "tool": "transfer_to_human_agents",
+            "reason": "此任务在AI Agent能力范围内，无需转诊人类医生"
+          }
+        ],
+
+        "evaluation_criteria": {
+          "tool_usage_score": {
+            "weight": 0.08,
+            "description": "工具使用评分权重"
+          },
+
+          "scoring_breakdown": {
+            "required_tools_used": {
+              "weight": 0.4,
+              "description": "必需工具使用率（是否使用了所有必需工具）"
+            },
+            "appropriate_tool_selection": {
+              "weight": 0.3,
+              "description": "工具选择合理性（是否选择了正确的工具类型）"
+            },
+            "correct_parameters": {
+              "weight": 0.2,
+              "description": "工具参数正确性（传递给工具的参数是否正确）"
+            },
+            "timing_appropriateness": {
+              "weight": 0.1,
+              "description": "调用时机恰当性（是否在合适的时机调用工具）"
+            }
+          },
+
+          "deductions": {
+            "missing_required_tool": {
+              "penalty": -0.15,
+              "description": "每个缺失的必需工具扣分"
+            },
+            "inappropriate_tool": {
+              "penalty": -0.10,
+              "description": "使用不恰当的工具扣分"
+            },
+            "incorrect_parameters": {
+              "penalty": -0.05,
+              "description": "工具参数错误扣分"
+            },
+            "premature_call": {
+              "penalty": -0.03,
+              "description": "过早调用工具（如检查结果出来前就诊断）扣分"
+            }
+          },
+
+          "bonus_points": {
+            "used_should_use_tools": {
+              "bonus": 0.05,
+              "description": "使用推荐工具的奖励"
+            },
+            "excellent_tool_integration": {
+              "bonus": 0.03,
+              "description": "工具调用与对话自然融合的奖励"
+            }
+          }
+        },
+
+        "minimum_requirements": {
+          "must_use_at_least": 2,
+          "required_tools_count": "至少使用2个必需工具",
+          "must_interpret_results": true,
+          "description": "必须使用工具解读检查结果，不能仅依赖对话"
+        }
       }
     },
 
@@ -1042,18 +1240,19 @@
         "misconception_management": 12,
         "economic_consideration": 8,
         "family_involvement": 7,
+        "tool_usage": 8,
         "safety_compliance": 10,
         "communication_quality": 7
       },
       "passing_score": 70,
       "excellent_score": 85,
       "score_interpretation": {
-        "90-100": "卓越 - 问诊全面、主动筛查并发症、诊断准确、综合考虑经济和家属因素、误区纠正有效、沟通清晰、安全合规",
-        "85-89": "优秀 - 主要项目完成良好，偶有小遗漏，能处理经济和家属因素",
-        "80-84": "良好 - 完成诊断和基本治疗，存在部分信息遗漏或复杂情况处理不充分",
-        "70-79": "合格 - 基本完成诊断，但存在信息遗漏、并发症评估不足、误区纠正不到位或未充分考虑经济因素",
-        "60-69": "待改进 - 诊断正确但流程有明显缺陷，未能应对患者误区、经济压力或家属关切",
-        "<60": "不合格 - 存在安全风险、诊断错误、严重误导患者或完全忽视经济/家属因素"
+        "90-100": "卓越 - 问诊全面、主动筛查并发症、诊断准确、综合考虑经济和家属因素、误区纠正有效、工具使用恰当、沟通清晰、安全合规",
+        "85-89": "优秀 - 主要项目完成良好，偶有小遗漏，能处理经济和家属因素，使用了必要的工具",
+        "80-84": "良好 - 完成诊断和基本治疗，存在部分信息遗漏或复杂情况处理不充分，基本使用了工具",
+        "70-79": "合格 - 基本完成诊断，但存在信息遗漏、并发症评估不足、误区纠正不到位、未充分考虑经济因素或工具使用不充分",
+        "60-69": "待改进 - 诊断正确但流程有明显缺陷，未能应对患者误区、经济压力或家属关切，工具使用不当或缺失",
+        "<60": "不合格 - 存在安全风险、诊断错误、严重误导患者、完全忽视经济/家属因素或完全未使用必需工具"
       }
     }
   },
@@ -1140,6 +1339,13 @@
       "- 经济考量管理（8%权重）",
       "- 家属参与管理（7%权重）",
       "- 额外症状主动筛查（8%权重）",
+      "- 工具使用评估（8%权重）- 评估AI Agent是否正确使用工具",
+      "",
+      "【工具使用评估】",
+      "- 必需工具：get_patient_info, order_lab_tests, get_lab_results",
+      "- 推荐工具：interpret_blood_glucose, interpret_hba1c, assess_kidney_function等",
+      "- 可选工具：calculate_bmi, get_treatment_guidelines, prescribe_medication等",
+      "- 评分维度：必需工具使用率、工具选择合理性、参数正确性、调用时机",
       "",
       "【难度提升】",
       "- 从 medium_high 提升到 high",
@@ -1167,7 +1373,8 @@
       "早期并发症的主动筛查",
       "经济困难患者的治疗策略",
       "家属参与的沟通技巧",
-      "多重误区的识别和纠正"
+      "多重误区的识别和纠正",
+      "AI Agent工具调用的正确使用（问诊+诊断+治疗工具）"
     ]
   }
 }
