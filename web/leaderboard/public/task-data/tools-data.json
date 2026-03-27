@@ -699,6 +699,356 @@
       }
     ]
   },
+  "clinical": {
+    "description": "Tools available for clinical medical agents to help with patient consultation, diagnosis, treatment planning, and medical information retrieval.",
+    "tools": [
+      {
+        "name": "get_patient_info",
+        "type": "READ",
+        "description": "Retrieve patient basic information including demographics, medical history, and current medications.",
+        "parameters": [
+          {
+            "name": "mrn",
+            "type": "string",
+            "required": true,
+            "description": "The medical record number (MRN) of the patient."
+          }
+        ],
+        "returns": "Patient profile with demographics, diagnoses, chief complaint, and medication list."
+      },
+      {
+        "name": "interpret_blood_glucose",
+        "type": "READ",
+        "description": "Interpret blood glucose levels and provide clinical assessment.",
+        "parameters": [
+          {
+            "name": "glucose",
+            "type": "number",
+            "required": true,
+            "description": "Blood glucose value in mg/dL or mmol/L."
+          },
+          {
+            "name": "fasting",
+            "type": "boolean",
+            "required": false,
+            "description": "Whether this is a fasting measurement. Default is true."
+          }
+        ],
+        "returns": "Glucose interpretation with category (hypoglycemia/normal/prediabetes/diabetes) and clinical recommendations."
+      },
+      {
+        "name": "interpret_hba1c",
+        "type": "READ",
+        "description": "Interpret hemoglobin A1c levels for long-term glucose control assessment.",
+        "parameters": [
+          {
+            "name": "hba1c",
+            "type": "number",
+            "required": true,
+            "description": "HbA1c value in percentage."
+          }
+        ],
+        "returns": "HbA1c interpretation with category, estimated average glucose, and clinical recommendations."
+      },
+      {
+        "name": "interpret_thyroid",
+        "type": "READ",
+        "description": "Interpret thyroid function tests for differential diagnosis.",
+        "parameters": [
+          {
+            "name": "tsh",
+            "type": "number",
+            "required": true,
+            "description": "TSH level in mIU/L."
+          },
+          {
+            "name": "t4",
+            "type": "number",
+            "required": false,
+            "description": "Optional T4 level in mcg/dL for more detailed assessment."
+          }
+        ],
+        "returns": "Thyroid function status (normal/hyperthyroidism/hypothyroidism) with recommendations."
+      },
+      {
+        "name": "calculate_bmi",
+        "type": "READ",
+        "description": "Calculate Body Mass Index (BMI) and assess weight category.",
+        "parameters": [
+          {
+            "name": "weight",
+            "type": "number",
+            "required": true,
+            "description": "Weight in kilograms."
+          },
+          {
+            "name": "height",
+            "type": "number",
+            "required": true,
+            "description": "Height in meters."
+          }
+        ],
+        "returns": "BMI value with weight category (underweight/normal/overweight/obese) and recommendations."
+      },
+      {
+        "name": "assess_kidney_function",
+        "type": "READ",
+        "description": "Assess kidney function and determine CKD stage for medication dosing adjustments.",
+        "parameters": [
+          {
+            "name": "creatinine",
+            "type": "number",
+            "required": true,
+            "description": "Serum creatinine in μmol/L."
+          },
+          {
+            "name": "egfr",
+            "type": "number",
+            "required": false,
+            "description": "Estimated glomerular filtration rate in ml/min/1.73m²."
+          },
+          {
+            "name": "urine_albumin",
+            "type": "number",
+            "required": false,
+            "description": "Urine albumin level for proteinuria assessment."
+          }
+        ],
+        "returns": "CKD stage, medication adjustment recommendations, and clinical guidance."
+      },
+      {
+        "name": "check_diabetes_complications",
+        "type": "READ",
+        "description": "Screen for diabetes complications based on symptoms and lab results.",
+        "parameters": [
+          {
+            "name": "patient_symptoms",
+            "type": "array",
+            "required": true,
+            "description": "List of patient-reported symptoms."
+          },
+          {
+            "name": "lab_results",
+            "type": "object",
+            "required": false,
+            "description": "Laboratory test results for complication screening."
+          }
+        ],
+        "returns": "Identified complications, screening recommendations, and referral suggestions."
+      },
+      {
+        "name": "get_medication_dosage",
+        "type": "READ",
+        "description": "Get appropriate medication dosage based on patient characteristics.",
+        "parameters": [
+          {
+            "name": "medication",
+            "type": "string",
+            "required": true,
+            "description": "Medication name (e.g., 'metformin', 'lisinopril')."
+          },
+          {
+            "name": "patient_characteristics",
+            "type": "object",
+            "required": true,
+            "description": "Patient demographics including age, weight, kidney function, liver function."
+          }
+        ],
+        "returns": "Recommended dosage with frequency, contraindications, cautions, and alternative medications."
+      },
+      {
+        "name": "check_drug_interactions",
+        "type": "READ",
+        "description": "Check for potential drug-drug interactions before prescribing.",
+        "parameters": [
+          {
+            "name": "new_medication",
+            "type": "string",
+            "required": true,
+            "description": "The medication being prescribed."
+          },
+          {
+            "name": "current_medications",
+            "type": "array",
+            "required": true,
+            "description": "List of medications the patient is currently taking."
+          }
+        ],
+        "returns": "List of interactions with severity levels and clinical recommendations."
+      },
+      {
+        "name": "get_treatment_guidelines",
+        "type": "READ",
+        "description": "Retrieve clinical practice guidelines for condition management.",
+        "parameters": [
+          {
+            "name": "condition",
+            "type": "string",
+            "required": true,
+            "description": "Medical condition (e.g., 'type 2 diabetes', 'hypertension')."
+          },
+          {
+            "name": "patient_profile",
+            "type": "object",
+            "required": false,
+            "description": "Patient characteristics for personalized guideline recommendations."
+          }
+        ],
+        "returns": "Treatment recommendations, medication choices, and therapeutic targets from clinical guidelines."
+      },
+      {
+        "name": "prescribe_medication",
+        "type": "WRITE",
+        "description": "Prescribe medication with appropriate dosage and instructions.",
+        "parameters": [
+          {
+            "name": "medication",
+            "type": "string",
+            "required": true,
+            "description": "Medication name."
+          },
+          {
+            "name": "dosage",
+            "type": "string",
+            "required": true,
+            "description": "Dosage amount and frequency (e.g., '500mg twice daily')."
+          },
+          {
+            "name": "duration",
+            "type": "string",
+            "required": false,
+            "description": "Treatment duration if applicable."
+          },
+          {
+            "name": "instructions",
+            "type": "string",
+            "required": false,
+            "description": "Special instructions for the patient."
+          }
+        ],
+        "returns": "Prescription confirmation with medication details and patient instructions."
+      },
+      {
+        "name": "order_lab_tests",
+        "type": "WRITE",
+        "description": "Order laboratory tests for diagnostic evaluation.",
+        "parameters": [
+          {
+            "name": "tests",
+            "type": "array",
+            "required": true,
+            "description": "List of tests to order (e.g., 'fasting_glucose', 'hba1c', 'lipid_panel')."
+          },
+          {
+            "name": "priority",
+            "type": "string",
+            "required": false,
+            "description": "Test priority: 'routine', 'urgent', or 'stat'. Default is 'routine'."
+          }
+        ],
+        "returns": "Lab order confirmation with test details and expected turnaround time."
+      },
+      {
+        "name": "get_lab_results",
+        "type": "READ",
+        "description": "Retrieve laboratory test results for a patient.",
+        "parameters": [
+          {
+            "name": "mrn",
+            "type": "string",
+            "required": true,
+            "description": "Patient medical record number."
+          },
+          {
+            "name": "test_names",
+            "type": "array",
+            "required": false,
+            "description": "Optional list of specific tests to retrieve. If not provided, returns all recent results."
+          }
+        ],
+        "returns": "Lab results with values, reference ranges, and interpretation flags."
+      },
+      {
+        "name": "provide_patient_education",
+        "type": "WRITE",
+        "description": "Provide patient education materials and instructions.",
+        "parameters": [
+          {
+            "name": "topic",
+            "type": "string",
+            "required": true,
+            "description": "Education topic (e.g., 'diabetes_management', 'medication_adherence')."
+          },
+          {
+            "name": "level",
+            "type": "string",
+            "required": false,
+            "description": "Complexity level: 'simple', 'intermediate', or 'advanced'. Default adapts to patient education level."
+          }
+        ],
+        "returns": "Patient education content with explanations and recommendations."
+      },
+      {
+        "name": "schedule_followup",
+        "type": "WRITE",
+        "description": "Schedule a follow-up appointment for the patient.",
+        "parameters": [
+          {
+            "name": "mrn",
+            "type": "string",
+            "required": true,
+            "description": "Patient medical record number."
+          },
+          {
+            "name": "timing",
+            "type": "string",
+            "required": true,
+            "description": "Follow-up timing (e.g., '2 weeks', '1 month')."
+          },
+          {
+            "name": "purpose",
+            "type": "string",
+            "required": false,
+            "description": "Purpose of the follow-up visit."
+          }
+        ],
+        "returns": "Follow-up appointment confirmation with date, time, and monitoring targets."
+      },
+      {
+        "name": "refer_to_specialist",
+        "type": "WRITE",
+        "description": "Refer patient to a specialist for further evaluation or management.",
+        "parameters": [
+          {
+            "name": "mrn",
+            "type": "string",
+            "required": true,
+            "description": "Patient medical record number."
+          },
+          {
+            "name": "specialty",
+            "type": "string",
+            "required": true,
+            "description": "Specialist type (e.g., 'ophthalmology', 'nephrology', 'cardiology')."
+          },
+          {
+            "name": "reason",
+            "type": "string",
+            "required": true,
+            "description": "Reason for referral."
+          }
+        ],
+        "returns": "Referral confirmation with specialty, reason, and urgency level."
+      },
+      {
+        "name": "transfer_to_human_agents",
+        "type": "WRITE",
+        "description": "Transfer to human physician when the situation requires clinical judgment beyond AI scope.",
+        "parameters": [],
+        "returns": "Confirmation that the transfer request has been initiated."
+      }
+    ]
+  },
   "mock": {
     "description": "Tools available for the mock testing domain to demonstrate basic task management functionality.",
     "tools": [
