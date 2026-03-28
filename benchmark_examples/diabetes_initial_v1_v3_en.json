@@ -199,9 +199,9 @@
     "interaction_timing": [
       "When doctor mentions long-term medication, wife will ask about cost (Doctor, how much is this medicine per month? Is it reimbursable?)",
       "After doctor explains diagnosis, wife will ask if it's hereditary (Will this disease be inherited by our children?)",
-      "When doctor prescribes, wife will ask about price and reimbursement",
+      "When doctor prescribes, wife will ask about price and reimbursement (Doctor, how much does this medicine cost? Can our employee insurance cover it?)",
       "When doctor mentions diet management, wife will ask specifically how to cook (What should we pay attention to when cooking at home? Should we throw away all sweets?)",
-      "When patient expresses hesitation, wife will encourage or express concern",
+      "When patient expresses hesitation, wife will encourage or express concern (Listen to the doctor, take your medicine properly, don't risk your health)",
       "When supplements or alternative treatments are mentioned, wife will ask about health supplements (Heard there are health supplements that can lower blood sugar, should we buy some?)",
       "When treatment plan is finalized, wife will promise to supervise medication (I will watch him take medicine on time)",
       "When medication cost is discussed in detail, wife may express economic pressure (We have two children in school, finances are tight, can you prescribe cheaper medicines?)"
