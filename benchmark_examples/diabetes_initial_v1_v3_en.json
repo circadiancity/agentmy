@@ -11,7 +11,7 @@
   "task_type": "initial_diagnosis",
   "difficulty": "high",
   "estimated_duration_minutes": 25,
-  "version": "v3.1",
+  "version": "v3.2",
   "description": {
     "purpose": "Initial diagnosis of Type 2 Diabetes - 48-year-old male, elementary education, presenting with 'three polys and one loss' symptoms",
     "clinical_scenario": "Patient presents with thirst, polyuria, and weight loss for 1 month. Physician needs to conduct history taking, order tests, diagnose, and develop treatment plan",
@@ -167,15 +167,7 @@
           "GI concerns (my stomach is not good, will medication irritate it?)"
         ],
         "family_member_will_interject": {
-          "_note": "This is a SUMMARY. The authoritative definition is in family_member_scenario.interaction_timing. Any conflicts defer to that section.",
-          "items": [
-            "Wife will ask about cost (Doctor, how much is this medicine per month? Is it reimbursable?)",
-            "Wife will express genetic concerns (Will this disease be inherited by our children?)",
-            "Wife will ask about diet management (What should we pay attention to when cooking at home? Should we throw away all sweets?)",
-            "Wife will ask about health supplements (Heard there are health supplements that can lower blood sugar, should we buy some?)",
-            "Wife will promise supervision (I will watch him take medicine on time)",
-            "Wife may express economic pressure (We have two children in school, finances are tight, can you prescribe cheaper medicines?)"
-          ]
+          "_note": "DEFUNCT. All family member behavior is defined in family_member_scenario.family_interjection_rules. This field is retained only for backward compatibility and MUST NOT be used for simulation logic."
         },
         "response_style": {
           "honest": true,
@@ -198,6 +190,93 @@
           ],
           "financial_constraints": true,
           "family_involvement": true
+        },
+        "question_matching_rules": {
+          "_note": "Defines what constitutes 'being asked' for each information category. Eliminates ambiguity between different question phrasings.",
+          "matching_method": "Intent-based matching. If the agent's question is reasonably directed at obtaining the information, it counts as 'asked', regardless of exact wording.",
+          "categories": {
+            "share_only_if_asked": {
+              "hypertension_details": {
+                "trigger_questions": [
+                  "Do you have hypertension? / Do you have high blood pressure?",
+                  "How long have you had hypertension?",
+                  "Tell me about your blood pressure."
+                ],
+                "patient_shares": "Had hypertension for 2 years, takes amlodipine but not regularly",
+                "note": "Even a general question about hypertension triggers sharing the full detail including duration and medication adherence"
+              },
+              "polyphagia": {
+                "trigger_questions": [
+                  "How is your appetite?",
+                  "Do you eat more or less than usual?",
+                  "Have you noticed changes in eating?"
+                ],
+                "patient_shares": "Increased appetite, eat more but still lose weight"
+              },
+              "smoking_and_drinking": {
+                "trigger_questions": [
+                  "Do you smoke or drink?",
+                  "Tell me about your lifestyle habits.",
+                  "Do you have any habits like smoking?"
+                ],
+                "patient_shares": "1 pack daily for 25 years, drinks 2-3 times per week, 2 liang white liquor each time",
+                "note": "General lifestyle question triggers sharing both smoking and drinking details"
+              },
+              "blurred_vision": {
+                "trigger_questions": [
+                  "Any discomfort with your eyes?",
+                  "How is your vision recently?",
+                  "Any changes in your eyesight?"
+                ],
+                "patient_shares": "Vision has been blurry lately, thought it was age"
+              },
+              "foot_numbness": {
+                "trigger_questions": [
+                  "Any abnormal sensation in your feet?",
+                  "Do your feet feel numb or tingly?",
+                  "Any discomfort in your legs or feet?"
+                ],
+                "patient_shares": "Sometimes feet feel numb, thought it was from squatting too long"
+              },
+              "sexual_dysfunction": {
+                "trigger_questions": [
+                  "Any changes in sexual function?",
+                  "How is your sexual health?",
+                  "Any issues with intimacy?"
+                ],
+                "patient_shares": "Reluctantly admits recent erectile dysfunction",
+                "note": "Requires privacy assurance and indirect wording per sensitive_inquiry_evaluation"
+              },
+              "gi_symptoms": {
+                "trigger_questions": [
+                  "How is your stomach?",
+                  "Any bloating or indigestion?",
+                  "Do you have any digestive issues?"
+                ],
+                "patient_shares": "Occasional bloating, some medicines upset stomach before"
+              }
+            },
+            "volunteer_without_asking": {
+              "note": "Patient volunteers these without specific prompting. No trigger question needed.",
+              "items": [
+                "Chief complaint: thirst, polyuria, weight loss",
+                "Duration: about 1 month (approximate)",
+                "Family history: mother has diabetes, takes injections",
+                "Economic situation: family condition is average",
+                "Wife accompanying"
+              ]
+            },
+            "share_in_response_to_medication_discussion": {
+              "note": "These concerns emerge naturally when medication/treatment is discussed. No specific question needed - patient volunteers these concerns reactively.",
+              "items": [
+                "Fear of insulin (triggered by: insulin mention, injection mention, or diagnosis explanation)",
+                "Kidney damage worry (triggered by: long-term medication discussion)",
+                "Chinese medicine preference (triggered by: any treatment discussion)",
+                "Dietary extremes (triggered by: diet restriction mention)",
+                "Economic pressure (triggered by: cost/price discussion)"
+              ]
+            }
+          }
         }
       }
     },
@@ -218,7 +297,8 @@
         "When supplements or alternative treatments are mentioned, wife will ask about health supplements (Heard there are health supplements that can lower blood sugar, should we buy some?)",
         "When treatment plan is finalized, wife will promise to supervise medication (I will watch him take medicine on time)",
         "When medication cost is discussed in detail, wife may express economic pressure (We have two children in school, finances are tight, can you prescribe cheaper medicines?)"
-      ]
+      ],
+      "_deprecation_notice": "DEPRECATED in v3.2. Retained for human readability only. All executable logic is in family_interjection_rules. Any conflict between this section and family_interjection_rules MUST defer to family_interjection_rules. This section will be removed in v4.0."
     },
     "family_interjection_rules": {
       "_note": "Trigger-based rules for automated simulation. Wife interjects when agent utterance matches trigger_keywords. Each rule fires at most once per conversation. If agent never triggers a rule, the wife may raise the topic spontaneously after turn 20 (fallback).",
@@ -230,11 +310,11 @@
           "rule_id": "wife_cost_inquiry",
           "trigger_keywords": [
             "metformin",
-            "medication",
             "prescribe",
-            "medicine",
-            "drug",
-            "treatment plan"
+            "medicine for you",
+            "your medication",
+            "drug treatment",
+            "take this medicine"
           ],
           "trigger_context": "when medication is first discussed or prescribed",
           "response": "Doctor, how much is this medicine per month? Is it reimbursable?",
@@ -244,8 +324,11 @@
           "fired_flag": "cost_inquiry_fired",
           "also_triggers_behavior": {
             "delay_turns": 1,
-            "description": "After wife asks about cost, wife_economic_pressure fires on the next assistant turn if agent responds about cost/price/reimbursement. If agent does not address cost, wife_economic_pressure fires after 2 assistant turns regardless."
-          }
+            "description": "After wife asks about cost, wife_economic_pressure fires on the next assistant turn if agent responds about cost/price/reimbursement. If agent does not address cost, wife_economic_pressure fires after 2 assistant turns regardless.",
+            "delay_unit": "assistant turns",
+            "clarification": "delay_turns:1 means wife_economic_pressure fires 1 assistant turn after wife_cost_inquiry fires. If assistant turn T triggers wife_cost_inquiry, wife responds in T, then wife_economic_pressure response appears after assistant turn T+1."
+          },
+          "_keyword_precision_note": "Narrowed from generic 'medication'/'drug'/'treatment plan' to reduce false triggers. Must match as substring in assistant utterance."
         },
         {
           "rule_id": "wife_genetic_concern",
@@ -346,6 +429,33 @@
           "agent_never_mentions_medication": "If agent never discusses medication, wife_cost_inquiry remains unfired. At turn 20 fallback, it fires. Agent response scored independently: economic/social_context for addressing cost, treatment for prescribing quality.",
           "multiple_unfired_at_fallback": "At most 2 fallback interjections fire, in priority order from fallback_rules.priority_order."
         }
+      },
+      "_execution_algorithm": {
+        "_note": "Pseudocode for deterministic simulation of wife interjection behavior. Eliminates ambiguity.",
+        "algorithm": [
+          "1. Initialize: all fired_flags = false, turn_counter = 0, pending_queue = []",
+          "2. For each assistant utterance:",
+          "   a. turn_counter += 1 (counts assistant turns only)",
+          "   b. Check pending_queue: if any pending rule has waited >= delay_turns, fire it and remove from queue",
+          "   c. Scan assistant utterance for trigger_keywords (case-insensitive substring match)",
+          "   d. For each unfired rule whose keywords match:",
+          "      - If rule is highest priority among matched rules: fire immediately",
+          "      - Other matched rules: add to pending_queue with their delay_turns",
+          "   e. For each fired rule with also_triggers: add triggered rules to pending_queue",
+          "3. Fallback check: if turn_counter >= fallback_turn (20):",
+          "   a. Collect all unfired rules",
+          "   b. Sort by fallback priority_order",
+          "   c. Fire up to max_fallback_interjections from top of sorted list",
+          "   d. Mark fired_flags accordingly",
+          "4. Each rule fires at most once (max_interjections_per_trigger = 1)"
+        ],
+        "keyword_matching_rule": {
+          "method": "case-insensitive substring match",
+          "precision": "Any occurrence of the keyword as a substring in the assistant utterance qualifies. E.g., 'medication' matches 'I will prescribe medication' and 'your medications'.",
+          "false_positive_mitigation": "For broad keywords like 'treatment plan', require the full phrase as a substring, not individual words."
+        },
+        "delay_unit_definition": "All delay values (delay_turns, delay_between_triggered_rules) are measured in ASSISTANT turns only. system/user/family_member turns are excluded.",
+        "turn_counter_definition": "turn_counter increments only when role=assistant appears in the dialogue."
       }
     }
   },
@@ -699,7 +809,13 @@
           "dosing_frequency": "Dosing frequency",
           "contraindications": "Contraindications",
           "cautions": "Precautions",
-          "alternatives": "Alternative medications"
+          "alternatives": "Alternative medications",
+          "cost_and_insurance": {
+            "estimated_monthly_cost_rmb": "Estimated monthly retail cost in RMB",
+            "insurance_coverage": "Whether covered by employee medical insurance",
+            "estimated_out_of_pocket_rmb": "Estimated monthly out-of-pocket cost after insurance",
+            "generic_available": "Whether generic version is available"
+          }
         },
         "common_diabetes_medications": {
           "metformin": "Metformin (first-line choice, dose adjustment based on eGFR)",
@@ -707,6 +823,21 @@
           "dpp4_inhibitors": "DPP-4 inhibitors (e.g., sitagliptin)",
           "sglt2_inhibitors": "SGLT-2 inhibitors (e.g., dapagliflozin)",
           "insulin": "Insulin"
+        },
+        "example_output": {
+          "metformin": {
+            "recommended_dosage": "500mg",
+            "dosing_frequency": "twice daily",
+            "contraindications": "eGFR < 30",
+            "cautions": "Start low dose with eGFR 60-89, monitor kidney function. GI side effects common initially.",
+            "alternatives": "Sitagliptin (DPP-4 inhibitor), dapagliflozin (SGLT-2 inhibitor)",
+            "cost_and_insurance": {
+              "estimated_monthly_cost_rmb": "20-30",
+              "insurance_coverage": true,
+              "estimated_out_of_pocket_rmb": "8-12",
+              "generic_available": true
+            }
+          }
         }
       },
       {
@@ -720,16 +851,53 @@
           "current_medications": "Current medication list"
         },
         "returns": {
-          "interactions": "List of discovered interactions",
-          "severity": "Severity level",
-          "recommendations": "Recommendations"
+          "interactions": [
+            {
+              "drug_pair": "The two drugs being checked",
+              "severity": "One of: contraindicated, major, moderate, minor, none",
+              "mechanism": "Brief description of the interaction mechanism",
+              "clinical_significance": "What this means for the patient"
+            }
+          ],
+          "overall_safety": "One of: safe, use_with_caution, avoid_combination",
+          "recommendations": "Specific clinical recommendations based on interaction severity"
         },
-        "interaction_severity_levels": [
-          "contraindicated",
-          "major",
-          "moderate",
-          "minor"
-        ]
+        "interaction_severity_levels": {
+          "contraindicated": {
+            "definition": "Must NOT be used together. Serious risk of harm.",
+            "action": "Do not prescribe. Find alternative."
+          },
+          "major": {
+            "definition": "Significant interaction. May require dose adjustment or close monitoring.",
+            "action": "Consider alternative. If used together, monitor closely and adjust doses."
+          },
+          "moderate": {
+            "definition": "Moderate interaction. Monitor for effects.",
+            "action": "Use together with monitoring. Inform patient of potential effects."
+          },
+          "minor": {
+            "definition": "Minor interaction. Usually manageable.",
+            "action": "No special action needed. Routine monitoring sufficient."
+          },
+          "none": {
+            "definition": "No known interaction.",
+            "action": "Safe to use together."
+          }
+        },
+        "example_output": {
+          "metformin_plus_amlodipine": {
+            "interactions": [
+              {
+                "drug_pair": "Metformin + Amlodipine",
+                "severity": "none",
+                "mechanism": "No pharmacokinetic or pharmacodynamic interaction",
+                "clinical_significance": "Safe to use together"
+              }
+            ],
+            "overall_safety": "safe",
+            "recommendations": "No dose adjustment needed. Safe combination."
+          }
+        }
       },
       {
         "name": "get_treatment_guidelines",
@@ -2161,6 +2329,139 @@
               ]
             }
           }
+        },
+        "error_tolerance_rules": {
+          "_note": "Defines how tool call errors and omissions are handled. Prevents overly harsh penalties for recoverable mistakes.",
+          "missed_required_test": {
+            "scenario": "Agent orders fasting_glucose but forgets HbA1c",
+            "handling": "Agent may call order_lab_tests again with supplemental tests. Penalty: -0.05 per missed test if corrected within 2 turns of receiving initial results. Penalty: -0.15 if never ordered.",
+            "example": "Agent orders only fasting_glucose, gets result, then says 'I also need HbA1c' and orders again. Small penalty applied."
+          },
+          "supplemental_tool_calls": {
+            "scenario": "Agent calls get_lab_results but then realizes need assess_kidney_function",
+            "handling": "Allowed without penalty as long as it occurs before prescribing. The tool_call_order_validation checks final state, not intermediate path.",
+            "note": "Agents that call tools in non-optimal order but achieve correct final state receive timing penalties only, not failure penalties."
+          },
+          "incorrect_parameters": {
+            "scenario": "Agent passes wrong glucose value to interpret_blood_glucose",
+            "handling": "Tool returns result based on provided value. If agent uses wrong value in subsequent reasoning, scored under diagnosis_accuracy. Tool_usage dimension penalizes incorrect parameters (-0.05) but does not fail the test."
+          },
+          "economic_decision_boundaries": {
+            "metformin_recommendation": "Always acceptable as first-line regardless of cost discussion",
+            "sglt2_inhibitor_without_insurance_discussion": {
+              "scenario": "Agent recommends SGLT-2 inhibitor (dapagliflozin) without discussing insurance coverage",
+              "handling": "Penalty under social_context_management: -0.3 for economic sub-dimension. SGLT-2 costs 100-200 RMB/month, significantly more than metformin. Agent must discuss cost/insurance if recommending expensive medications.",
+              "exception": "No penalty if agent explicitly states the cost and confirms patient can afford it"
+            },
+            "generic_vs_brand": {
+              "correct": "Recommend generic metformin with insurance coverage info",
+              "acceptable": "Recommend metformin without specifying generic/brand but mentions insurance",
+              "penalty": "Recommend brand-name only without cost discussion: -0.2"
+            }
+          },
+          "tool_call_count_limits": {
+            "minimum": 2,
+            "recommended": "6-11 tools",
+            "maximum": 15,
+            "penalty_for_exceeding": "No penalty for count alone, but repetitive/redundant calls are penalized under efficiency_requirements (-0.05 each)"
+          }
+        },
+        "tool_call_stage_requirements": {
+          "_note": "Defines WHEN tools must be called. Creates a structured consultation flow that enables fair comparison between agents.",
+          "stages": {
+            "1_opening": {
+              "description": "Agent greets patient and retrieves basic info",
+              "required_tools": [
+                "get_patient_info"
+              ],
+              "forbidden_tools": [
+                "prescribe_medication",
+                "diagnose_diabetes"
+              ],
+              "typical_turn_range": "1-3"
+            },
+            "2_history_taking": {
+              "description": "Agent collects symptoms, medical history, lifestyle",
+              "required_tools": [],
+              "recommended_actions": [
+                "Ask chief complaint",
+                "Explore symptoms (3 polys)",
+                "Family history",
+                "Medications",
+                "Allergies",
+                "Lifestyle",
+                "Red flags",
+                "Additional symptoms screening"
+              ],
+              "forbidden_tools": [
+                "prescribe_medication",
+                "diagnose_diabetes"
+              ],
+              "typical_turn_range": "3-18"
+            },
+            "3_diagnostic_testing": {
+              "description": "Agent orders and reviews lab tests",
+              "required_tools": [
+                "order_lab_tests",
+                "get_lab_results"
+              ],
+              "recommended_tools": [
+                "interpret_blood_glucose",
+                "interpret_hba1c",
+                "assess_kidney_function"
+              ],
+              "forbidden_tools": [
+                "prescribe_medication",
+                "diagnose_diabetes"
+              ],
+              "typical_turn_range": "18-25",
+              "note": "Agent must NOT diagnose before receiving lab results"
+            },
+            "4_diagnosis": {
+              "description": "Agent states diagnosis based on evidence",
+              "required_tools": [],
+              "required_actions": [
+                "State diagnosis",
+                "Explain differential reasoning"
+              ],
+              "recommended_tools": [
+                "check_diabetes_complications"
+              ],
+              "forbidden_tools": [],
+              "typical_turn_range": "25-30"
+            },
+            "5_treatment": {
+              "description": "Agent develops and communicates treatment plan",
+              "recommended_tools": [
+                "get_medication_dosage",
+                "check_drug_interactions",
+                "prescribe_medication"
+              ],
+              "required_before_prescribing": [
+                "assess_kidney_function (if not done)",
+                "get_medication_dosage"
+              ],
+              "forbidden_tools": [
+                "diagnose_diabetes"
+              ],
+              "typical_turn_range": "30-45"
+            },
+            "6_closing": {
+              "description": "Agent provides education, schedules follow-up",
+              "recommended_tools": [
+                "provide_patient_education",
+                "schedule_followup",
+                "refer_to_specialist"
+              ],
+              "forbidden_tools": [],
+              "typical_turn_range": "45-60"
+            }
+          },
+          "stage_transition_rules": {
+            "forward_only": "Stages should proceed in order (1->2->3->4->5->6). Minor overlap is acceptable.",
+            "backtrack_allowed": "Agent may return to history_taking from diagnostic_testing if new information is needed (penalty: -0.03 for efficiency).",
+            "strict_forbidden": "Prescribing before diagnosis OR diagnosing before lab results are critical safety violations (penalty per safety_requirements)."
+          }
         }
       },
       "scoring": {
@@ -2360,6 +2661,143 @@
           "70-79": "Passing - Basically completed diagnosis, but has information omissions, inadequate complication assessment, inadequate misconception correction, insufficient consideration of economic factors or inadequate tool use",
           "60-69": "Needs Improvement - Correct diagnosis but significant process flaws, failed to address patient misconceptions, economic pressure, or family concerns, improper or missing tool use",
           "<60": "Failing - Safety risks, diagnostic errors, seriously misleading patients, completely ignoring economic/family factors or completely failing to use required tools"
+        },
+        "scoring_rubric_examples": {
+          "_note": "Concrete examples for each score level per dimension. Used to calibrate evaluators and ensure reproducibility.",
+          "information_gathering": {
+            "excellent_9": {
+              "description": "Collects all 7 required items (chief complaint, 3 polys, family history, medications, allergies, lifestyle, red flags) plus 3+ additional symptoms proactively",
+              "example": "Agent asks about vision, feet, stomach, and sexual function without prompting"
+            },
+            "acceptable_6": {
+              "description": "Collects 5-6 of 7 required items. May miss 1-2 additional symptoms but covers all safety-critical items (allergies, red flags)",
+              "example": "Agent misses asking about sexual dysfunction but covers all other areas"
+            },
+            "failing_3": {
+              "description": "Misses 3+ required items, especially safety-critical ones (allergies, red flags)",
+              "example": "Agent never asks about allergies before prescribing, or never screens for red flags"
+            }
+          },
+          "diagnosis_accuracy": {
+            "excellent_13_14": {
+              "description": "Correct Type 2 Diabetes diagnosis, considers 3 differentials (hyperthyroidism, CKD, diabetes insipidus), orders all must_order and should_order tests, explains evidence to patient",
+              "example": "Agent says: 'Thyroid function is normal, so we can rule out hyperthyroidism. Your blood sugar is 13.2, confirming diabetes.'"
+            },
+            "acceptable_9_10": {
+              "description": "Correct diagnosis but incomplete differential (only 1-2 considered) or missing some should_order tests",
+              "example": "Agent correctly diagnoses T2DM but does not mention ruling out hyperthyroidism"
+            },
+            "failing_5": {
+              "description": "Wrong diagnosis, or correct diagnosis without any lab evidence, or no differential considered",
+              "example": "Agent diagnoses diabetes without ordering any tests"
+            }
+          },
+          "social_context_management": {
+            "excellent_10_12": {
+              "description": "Addresses all economic concerns with specific costs/insurance info, all family concerns with appropriate reassurance, proactively mentions cost without being asked",
+              "example": "Agent says: 'Metformin costs about 10 RMB after insurance. Your wife can help monitor. The disease has genetic tendency but lifestyle matters more for your kids.'"
+            },
+            "acceptable_7_8": {
+              "description": "Addresses most concerns but not all, or provides less specific cost information",
+              "example": "Agent says 'the medicine is affordable' without giving specific cost"
+            },
+            "failing_3_4": {
+              "description": "Dismisses or ignores economic/family concerns, or tells patient not to worry about cost",
+              "example": "Agent says 'don't worry about the cost, just take the medicine'"
+            }
+          },
+          "clinical_reasoning": {
+            "excellent_3_5_4": {
+              "description": "Explains differential diagnosis to patient, justifies test choices, explains treatment rationale in simple terms with analogies",
+              "example": "Agent says: 'I ordered thyroid tests because an overactive thyroid can cause similar symptoms. I am prescribing metformin because it is the safest first choice for your kidney level.'"
+            },
+            "acceptable_2_3": {
+              "description": "Explains some reasoning but not all, or explains without adapting to patient education level",
+              "example": "Agent explains why metformin was chosen but does not explain why thyroid tests were ordered"
+            },
+            "failing_1": {
+              "description": "No clinical reasoning shared with patient, just orders tests and prescribes",
+              "example": "Agent orders tests, reads results silently, states diagnosis, prescribes without explanation"
+            }
+          }
+        },
+        "reproducibility_standards": {
+          "_note": "Standards to ensure evaluation results are reproducible across different evaluators and runs.",
+          "dialogue_limits": {
+            "max_turns": 60,
+            "min_turns": 12,
+            "counted_roles": [
+              "assistant",
+              "user",
+              "family_member"
+            ],
+            "excluded_roles": [
+              "system"
+            ],
+            "tool_call_limit": {
+              "minimum": 2,
+              "recommended": "6-11",
+              "maximum": 15,
+              "note": "No hard penalty for count, but redundant calls penalized under efficiency"
+            }
+          },
+          "evaluation_method": {
+            "primary": "Automated keyword/structure matching (defined in scoring_formula and validation_rules)",
+            "secondary": "Human review for dimensions requiring judgment (communication_quality, clinical_reasoning quality)",
+            "inter_rater_reliability": "For human-reviewed dimensions, require 2 independent evaluators. Accept score if agreement within 10%. Use average if disagreement."
+          },
+          "error_case_annotations": {
+            "_note": "Examples of common errors and their scoring implications.",
+            "cases": [
+              {
+                "error": "Agent prescribes without checking allergies",
+                "dimensions_affected": [
+                  "safety_compliance (critical penalty -1.0)",
+                  "tool_usage (missing check -0.15)"
+                ],
+                "severity": "critical"
+              },
+              {
+                "error": "Agent agrees insulin is addictive",
+                "dimensions_affected": [
+                  "safety_compliance (critical penalty -1.0)",
+                  "misconception_management (0 score for that item)"
+                ],
+                "severity": "critical"
+              },
+              {
+                "error": "Agent recommends SGLT-2 without cost discussion",
+                "dimensions_affected": [
+                  "social_context_management (economic -0.3)",
+                  "treatment_appropriateness (minor)"
+                ],
+                "severity": "moderate"
+              },
+              {
+                "error": "Agent never asks about sexual dysfunction",
+                "dimensions_affected": [
+                  "additional_symptoms_screening (1/4 missing)",
+                  "sensitive_inquiry_evaluation (not applicable)"
+                ],
+                "severity": "moderate"
+              },
+              {
+                "error": "Agent asks about sexual function bluntly without privacy assurance",
+                "dimensions_affected": [
+                  "sensitive_inquiry_evaluation (0 score)",
+                  "communication_quality (minor)"
+                ],
+                "severity": "minor"
+              },
+              {
+                "error": "Agent repeats the same question twice",
+                "dimensions_affected": [
+                  "efficiency_requirements (repetitive -0.05)"
+                ],
+                "severity": "minor"
+              }
+            ]
+          }
         }
       }
     },
@@ -3077,6 +3515,7 @@
   "created_date": "2025-03-27",
   "last_modified_date": "2025-03-27",
   "modification_notes": [
+    "[v3.2] Science and reproducibility fixes: simplified family interjection rules with execution algorithm, defined information sharing boundaries, added error tolerance for tool calls, completed tool definitions (cost/insurance/severity levels), added tool stage requirements, added scoring rubric examples, added edge case handling, added design rationale document",
     "[v3.1] Critical fixes: synonym libraries for keyword matching, tool call format specification, wife interjection priority/sequencing, dimension restructuring (social_context_management + clinical_reasoning), sensitive inquiry evaluation, cultural context notes",
     "[v3.0] Major upgrade - increased real-world complexity",
     "",
@@ -3215,6 +3654,70 @@
         "explanation": "Two children in school is major financial burden (tuition, tutoring, meals). Family may struggle with even small additional costs.",
         "evaluation_relevance": "Agent should acknowledge pressure and emphasize treating now prevents expensive complications later."
       }
+    }
+  },
+  "edge_case_handling": {
+    "_note": "Defines how the simulation handles non-standard patient/agent interactions. These rules ensure the benchmark tests agent robustness.",
+    "patient_refusal": {
+      "description": "Patient refuses to answer a question or share information",
+      "examples": [
+        "Patient refuses to discuss drinking: 'I don't drink that much, it's not relevant.'",
+        "Patient refuses sexual history: 'That's too personal, I don't want to talk about it.'"
+      ],
+      "agent_expected_behavior": "Respect patient's boundary, note the information gap, move on to next question. May try once more with different framing but must not pressure.",
+      "scoring_impact": "No penalty for missing the refused information. Agent gets credit for attempting to ask."
+    },
+    "family_member_excessive_interruption": {
+      "description": "Wife interrupts at an inappropriate time or dominates conversation",
+      "examples": [
+        "Wife repeatedly asks questions before agent finishes explaining",
+        "Wife contradicts patient's answers"
+      ],
+      "agent_expected_behavior": "Politely acknowledge wife's concern, then redirect to structured consultation. 'Mrs. Liu, I hear your concern and will address it shortly. Let me first finish asking Mr. Liu about...'",
+      "scoring_impact": "Agent is scored on how well it manages the interruption, not on whether the interruption occurs."
+    },
+    "incomplete_lab_results": {
+      "description": "Some test results are delayed or unavailable",
+      "example": "HbA1c result is delayed, only fasting glucose is available initially",
+      "agent_expected_behavior": "Make preliminary assessment based on available data, clearly communicate uncertainty, schedule follow-up for pending results",
+      "scoring_impact": "If agent makes definitive diagnosis without HbA1c, penalty under safety_requirements (-0.5 for premature diagnosis). If agent states preliminary diagnosis and waits for confirmation, no penalty."
+    },
+    "patient_emotional_distress": {
+      "description": "Patient becomes upset after diagnosis",
+      "example": "Patient starts crying or becomes angry: 'I don't want to have diabetes!'",
+      "agent_expected_behavior": "Acknowledge emotions, provide reassurance, allow space. Do not rush into treatment discussion immediately.",
+      "scoring_impact": "Scored under communication_quality.empathy sub-dimension."
+    },
+    "patient_requests_specific_treatment": {
+      "description": "Patient insists on a specific treatment the agent didn't recommend",
+      "example": "Patient says: 'My neighbor takes drug X and it works great, can you give me that?'",
+      "agent_expected_behavior": "Explain why the recommended treatment is more appropriate for their specific condition. Do not simply agree to patient's request without clinical justification.",
+      "scoring_impact": "Scored under misconception_management and treatment_appropriateness."
+    }
+  },
+  "design_rationale": {
+    "_note": "Explains key design decisions for benchmark users and evaluators.",
+    "comorbidity_density": {
+      "decision": "Patient has 9 concurrent conditions (CKD stage 2, hypertension, fatty liver, hyperuricemia, dyslipidemia, GI issues, sexual dysfunction, possible retinopathy, possible neuropathy)",
+      "rationale": "This is a HIGH-difficulty benchmark (difficulty: 'high'). In real clinical practice, T2DM patients frequently present with multiple metabolic comorbidities. A 48-year-old obese male with T2DM and HbA1c 9.8% would realistically have several of these conditions. The benchmark specifically tests whether agents can perform comprehensive management rather than treating diabetes in isolation.",
+      "score_differentiation": "An agent that only addresses diabetes (ignoring comorbidities) would score ~55-60. An agent addressing all comorbidities scores 90+. This creates meaningful score spread.",
+      "simplified_variant": "For lower-difficulty testing, remove: sexual_dysfunction, possible_retinopathy, possible_neuropathy, GI_issues. This reduces to 5 core comorbidities while preserving essential diabetes management."
+    },
+    "economic_complexity": {
+      "decision": "Patient has specific economic constraints (5000 RMB/month, two children, employee insurance)",
+      "rationale": "Economic factors are a primary driver of treatment non-adherence in real-world diabetes care. Testing whether agents can navigate cost concerns while maintaining treatment quality is a clinically meaningful capability."
+    },
+    "family_participation": {
+      "decision": "Wife participates actively with trigger-based interjection rules",
+      "rationale": "In Chinese clinical culture, family members commonly accompany patients and participate in medical decisions. Testing multi-party conversation management is essential for real-world applicability."
+    },
+    "keyword_matching_approach": {
+      "decision": "Use keyword/synonym matching rather than semantic evaluation for most dimensions",
+      "rationale": "Ensures automated evaluation is deterministic and reproducible. Synonym libraries (added in v3.1) mitigate brittleness. Semantic evaluation is reserved for communication_quality and clinical_reasoning which require human review."
+    },
+    "tool_granularity": {
+      "decision": "Keep interpret_blood_glucose and interpret_hba1c as separate tools rather than merging",
+      "rationale": "Separate tools allow: 1) Parallel calling (both can be called simultaneously), 2) Independent scoring (agent may call one but not the other), 3) Matches real clinical decision support system architectures where individual result interpretation is modular."
     }
   }
 }
