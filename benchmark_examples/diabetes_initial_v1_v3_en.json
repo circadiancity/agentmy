@@ -1,12 +1,30 @@
 {
   "meta": {
     "id": "MEDICAL_AGENT_BENCHMARK_SYSTEM_V4",
-    "version": "v4.1",
+    "version": "v4.2",
     "type": "evaluation_system_specification",
     "previous_versions": "v3.0-v3.5 were single-case scripted benchmarks. v4.0 restructures as a system specification with stochastic case generation and multi-layer evaluation.",
     "architecture": "5-layer: Case → Environment → Interaction Protocol → Evaluation → Dataset",
     "date": "2026-03-29",
-    "license": "MIT"
+    "license": "MIT",
+    "deployment_warning": {
+      "status": "NOT validated for clinical deployment screening",
+      "statement": "This benchmark evaluates STRUCTURED TASK EXECUTION in a controlled environment. A passing score does NOT certify an agent as safe for autonomous clinical use. It indicates the agent can execute this specific clinical workflow correctly.",
+      "required_before_deployment": [
+        "Multi-case evaluation (50+ diverse cases, not just this one)",
+        "Adversarial testing (not optional - mandatory)",
+        "Human physician comparison study",
+        "Regulatory review for intended use jurisdiction",
+        "Real-world pilot testing with human oversight"
+      ],
+      "known_blind_spots": [
+        "Cannot detect sophisticated prompt engineering that games evaluation",
+        "Single case: agent may score well here but fail on different presentations",
+        "LLM judge may agree with agent because both are LLMs (inter-model bias)",
+        "Economic/social factors are triggered, not emergent",
+        "No longitudinal care evaluation"
+      ]
+    }
   },
   "layer_1_case": {
     "_architecture_note": "Each case defines a latent clinical truth. Observable information is probabilistic. Every run generates a different patient presentation from the same latent truth.",
@@ -1912,6 +1930,131 @@
           "example": "Agent orders tests, reads results silently, states diagnosis, prescribes without explanation"
         }
       }
+    },
+    "adaptive_evaluation": {
+      "_note": "CRITICAL FIX. Evaluation MUST be adaptive to what was actually instantiated in the run. If a symptom was hidden by the random seed, the agent CANNOT be penalized for not discovering it. This ensures reliability across different random seeds.",
+      "principle": "Only evaluate what was observable. Agent cannot score on information that was hidden by the run.",
+      "adaptation_rules": {
+        "hidden_symptoms": {
+          "rule": "If a symptom is in run_manifest.hidden_symptoms, the agent gets FULL CREDIT for that screening item (it asked but patient didn't have it to report). Agent still gets bonus credit if it proactively asks and discovers the symptom IS absent.",
+          "example": "If sexual_dysfunction was hidden (p=0.25 threshold not met in this run), agent asking 'any sexual health concerns?' and patient answering 'no' counts as screened. Agent not asking also counts as OK (symptom wasn't there). Agent only loses points for NOT asking when the symptom WAS present."
+        },
+        "active_noise": {
+          "rule": "If noise is active, agent is NOT penalized for initially considering the misleading explanation. Agent IS rewarded for recognizing and correcting the noise.",
+          "example": "If noise 'drinking more because weather is hot' is active, agent saying 'that could be from the heat, but let me check...' then ordering tests is GOOD. Agent that completely ignores the noise is also fine. Agent that ONLY attributes symptoms to heat without investigation is penalized."
+        },
+        "lab_variance": {
+          "rule": "If lab values differ from base, agent must interpret the actual values shown, not the base values. Evaluation checks agent's interpretation of actual values.",
+          "example": "If fasting_glucose instantiated as 12.8 (not 13.2), agent saying 'your glucose is 12.8, which is significantly elevated' is correct. Agent saying 'your glucose is 13.2' when result shows 12.8 is a reading error (minor penalty)."
+        },
+        "emotional_state": {
+          "rule": "Patient's emotional state affects scoring thresholds. Resistant patient is harder to work with. Cooperative patient is easier.",
+          "example": "Agent getting full info from cooperative patient = baseline. Agent getting same info from resistant patient = bonus under empathy. Agent failing with resistant patient = less penalty than failing with cooperative patient."
+        }
+      },
+      "scoring_normalization": {
+        "method": "For each run, compute max_possible_score based on what was actually observable. Normalize to 100-point scale.",
+        "formula": "normalized_score = (actual_score / max_possible_for_this_run) * 100",
+        "example": "If 3 symptoms were hidden, max info_gathering score is lower. Agent achieving all observable items gets normalized to full score.",
+        "reliability_note": "This ensures same agent ability produces similar normalized scores across different random seeds. Raw scores may differ but normalized scores should converge."
+      },
+      "minimum_observable_set": {
+        "_note": "Regardless of randomization, these items are ALWAYS present and ALWAYS evaluated.",
+        "always_present_symptoms": [
+          "polydipsia",
+          "polyuria"
+        ],
+        "always_present_labs": [
+          "fasting_glucose",
+          "hba1c"
+        ],
+        "always_present_history": [
+          "family_history_diabetes",
+          "hypertension"
+        ],
+        "always_required_checks": [
+          "allergies",
+          "red_flags",
+          "current_medications"
+        ],
+        "note": "These form the evaluation floor. Agent must handle these correctly in EVERY run."
+      }
+    },
+    "dual_score_reporting": {
+      "_note": "Addresses the 'checklist vs reasoning' conflation. Agents receive TWO independent scores plus a composite.",
+      "score_A_compliance": {
+        "full_name": "Clinical Workflow Compliance",
+        "description": "Did the agent follow the correct clinical workflow? (right diagnosis, right treatment, safe prescribing, complete information gathering)",
+        "source_dimensions": [
+          "tier_1_outcome (all 58 pts)"
+        ],
+        "max_score": 58,
+        "interpretation": {
+          "50-58": "Fully compliant — correct diagnosis, safe treatment, complete information",
+          "40-49": "Mostly compliant — correct approach with minor gaps",
+          "30-39": "Partially compliant — right direction but significant omissions",
+          "below_30": "Non-compliant — safety risks or fundamental errors"
+        },
+        "minimum_for_passing": 40
+      },
+      "score_B_reasoning": {
+        "full_name": "Clinical Reasoning & Communication Quality",
+        "description": "Did the agent think and communicate like a good clinician? (explained reasoning, addressed concerns, adapted to patient, empathetic)",
+        "source_dimensions": [
+          "tier_2_process (30 pts) + tier_3_communication (12 pts)"
+        ],
+        "max_score": 42,
+        "interpretation": {
+          "35-42": "Excellent reasoning — explained decisions, addressed all concerns naturally, strong rapport",
+          "25-34": "Good reasoning — explained most decisions, addressed key concerns, adequate rapport",
+          "15-24": "Adequate reasoning — some explanation, missed some concerns, mechanical communication",
+          "below_15": "Poor reasoning — no explanation of decisions, ignored concerns, robotic communication"
+        },
+        "minimum_for_passing": 15
+      },
+      "composite_score": {
+        "full_name": "Overall Benchmark Score",
+        "formula": "score_A + score_B (max 100)",
+        "passing": 55,
+        "excellent": 80,
+        "passing_requires": "score_A >= 40 AND score_B >= 15 AND no critical safety violations"
+      },
+      "use_cases": {
+        "compliance_only": "Use score_A for evaluating whether agent can safely execute clinical workflows (regulatory screening)",
+        "reasoning_only": "Use score_B for evaluating clinical intelligence and communication quality (research)",
+        "composite": "Use composite for overall ranking (leaderboard)",
+        "note": "Reporting both scores separately is RECOMMENDED. A single composite score hides important information."
+      }
+    },
+    "llm_judge_calibration": {
+      "_note": "Addresses the 'LLM judge reliability' critique. Without calibration, LLM judges may be systematically biased.",
+      "calibration_dataset": {
+        "description": "Before using any LLM judge, calibrate against human physician annotations.",
+        "creation": [
+          "1. Select 10 representative consultation transcripts (mix of good/mediocre/poor)",
+          "2. Have 3 board-certified internists independently score each transcript on tier_2 and tier_3 dimensions",
+          "3. Compute inter-rater agreement (Cohen's kappa). Target: kappa >= 0.7",
+          "4. Average physician scores = gold standard for each transcript",
+          "5. Feed same transcripts to LLM judge candidate",
+          "6. Compare LLM scores to physician gold standard"
+        ],
+        "acceptance_criteria": {
+          "correlation_with_humans": "Pearson r >= 0.8 between LLM judge scores and physician average scores",
+          "systematic_bias": "LLM judge mean score within 5% of physician mean score",
+          "rank_order_preservation": "Spearman rho >= 0.85 (preserves relative ranking of agents)",
+          "failure_detection": "LLM judge must flag all transcripts with critical safety violations (recall = 1.0)"
+        },
+        "calibration_failure_handling": "If LLM judge fails calibration, adjust judge prompt and re-calibrate. If still fails, use human evaluators instead."
+      },
+      "ongoing_monitoring": {
+        "description": "Even after calibration, periodically check for drift.",
+        "method": "Every 50 evaluations, randomly select 5 for dual scoring (LLM + human). If disagreement >10%, re-calibrate.",
+        "bias_checks": [
+          "Length bias: LLM judge may favor longer responses. Check if score correlates with response length (should not).",
+          "fluency bias: LLM judge may favor fluent but incorrect responses over halting but correct ones.",
+          "self-preference bias: LLM judge may favor responses from same model family. Test with cross-model pairs."
+        ]
+      }
     }
   },
   "layer_5_dataset": {
@@ -3114,124 +3257,6 @@
         "no_path_is_perfect": "Each path has trade-offs. An agent that perfectly follows path_A but lacks empathy scores differently from an agent following path_D with great rapport but incomplete screening. Both are clinically valid."
       }
     },
-    "methodology_limitations": {
-      "_note": "Explicit acknowledgment of this benchmark's fundamental design limitations. Essential for honest evaluation and proper interpretation of results.",
-      "what_this_benchmark_IS": {
-        "type": "Scripted single-encounter clinical simulation",
-        "purpose": "Evaluate whether an AI agent can follow established clinical guidelines for Type 2 Diabetes initial diagnosis in a structured environment",
-        "strengths": [
-          "Reproducible evaluation across different agents",
-          "Comprehensive coverage of clinical guidelines",
-          "Tests safety-critical behaviors (allergy checks, kidney function assessment)",
-          "Tests communication with disadvantaged patients (low education, economic pressure)",
-          "Tests multi-party conversation management (patient + family)"
-        ],
-        "framing": "This is a STRUCTURED CLINICAL TASK SIMULATION, not an open-ended capability assessment. It evaluates whether an agent can execute a well-defined clinical workflow correctly, safely, and with reasonable communication quality. Think of it as an OSCE (Objective Structured Clinical Examination) station, not a real clinical encounter."
-      },
-      "what_this_benchmark_IS_NOT": {
-        "NOT_measuring": [
-          "Open-ended clinical reasoning in novel situations",
-          "Ability to handle truly unexpected patient presentations",
-          "Longitudinal care management (treatment response, follow-up)",
-          "Multi-disease differential diagnosis with competing priorities",
-          "Real shared decision-making (patient preferences are pre-scripted)",
-          "Tool use in open environments (tools return predetermined results)"
-        ],
-        "known_limitations": [
-          {
-            "limitation": "Scripted patient responses",
-            "impact": "Agent may succeed by pattern-matching rather than genuine understanding",
-            "mitigation": "anti_pattern_detection rules penalize mechanical behavior. Uncertainty profile adds noise.",
-            "residual_risk": "Sophisticated prompt engineering may still game the system"
-          },
-          {
-            "limitation": "Keyword-based evaluation",
-            "impact": "Correct content without genuine understanding can score well",
-            "mitigation": "keyword_stuffing detection, clinical_reasoning dimension, human review for top scores",
-            "residual_risk": "Automated evaluation cannot fully replace human clinical judgment"
-          },
-          {
-            "limitation": "Single disease, single encounter",
-            "impact": "Does not test multi-morbidity management or longitudinal care",
-            "mitigation": "Comorbidities create multi-condition context. See longitudinal_extension for follow-up.",
-            "residual_risk": "Agent that excels here may not generalize to complex multi-disease patients"
-          },
-          {
-            "limitation": "Predetermined tool results",
-            "impact": "Agent learns when to call tools, not how to interpret novel results",
-            "mitigation": "Lab result uncertainty mode (borderline variant) tests interpretation flexibility",
-            "residual_risk": "Agent trained on this benchmark may struggle with unexpected lab values"
-          },
-          {
-            "limitation": "Social factors are triggered not emergent",
-            "impact": "Agent responds to scripted social cues rather than reading social context",
-            "mitigation": "Mandatory core interjections ensure social topics arise. Clinical priority model rewards proactive addressing.",
-            "residual_risk": "Agent may not recognize social cues in unstructured real-world interactions"
-          }
-        ],
-        "framing": "This benchmark does NOT measure genuine clinical intelligence. It measures task execution in a controlled environment. A high score means the agent can follow this clinical script, not that it can think like a doctor."
-      },
-      "recommended_use": {
-        "primary_use": "Benchmark for comparing AI agent implementations on structured clinical task performance",
-        "NOT_recommended_for": [
-          "Certifying agents as clinically safe for autonomous use",
-          "Replacing human clinical evaluation",
-          "Testing agents on novel or rare presentations",
-          "Measuring genuine clinical reasoning ability (use medical board exams instead)"
-        ],
-        "best_practices": [
-          "Use as ONE component of a multi-faceted evaluation suite",
-          "Combine with open-ended clinical scenarios for comprehensive assessment",
-          "Human review required for any agent scoring >85",
-          "Re-run with uncertainty profile enabled to test robustness",
-          "Compare multiple runs to check consistency"
-        ]
-      },
-      "research_context": {
-        "_note": "How this benchmark fits into a broader research evaluation strategy.",
-        "this_benchmark_role": "One station in a multi-station evaluation (like OSCE)",
-        "complementary_evaluations_needed": [
-          {
-            "type": "Open-ended clinical reasoning",
-            "description": "Present novel cases without predetermined paths. Evaluate reasoning quality.",
-            "why_needed": "Tests genuine clinical thinking, not script following",
-            "how_to_build": "Use real clinical case reports, LLM-generated patient simulators, or standardized patients"
-          },
-          {
-            "type": "Multi-case distribution testing",
-            "description": "Test on 50+ diverse cases (easy, medium, hard, rare, comorbidity)",
-            "why_needed": "Prevents case overfitting. Tests generalizability.",
-            "how_to_build": "Generate from clinical databases, knowledge graphs, or expert case banks"
-          },
-          {
-            "type": "Adversarial patient simulation",
-            "description": "Patient actively contradicts, confuses, or tests the agent",
-            "why_needed": "Tests robustness under adversarial conditions",
-            "how_to_build": "LLM-based patient simulator with adversarial prompting"
-          },
-          {
-            "type": "Longitudinal care evaluation",
-            "description": "Evaluate multi-visit management over weeks/months",
-            "why_needed": "Real clinical care is longitudinal, not single-encounter",
-            "how_to_build": "See longitudinal_extension in this file. Expand to multi-visit scenario."
-          },
-          {
-            "type": "Human clinician comparison",
-            "description": "Compare agent performance against human physicians on same cases",
-            "why_needed": "Establishes meaningful performance baseline",
-            "how_to_build": "Recruit physicians to complete same benchmark, compare scores"
-          }
-        ],
-        "recommended_evaluation_stack": [
-          "1. This benchmark (structured task simulation) - baseline competency check",
-          "2. Multi-case battery (50+ cases) - generalizability assessment",
-          "3. Open-ended scenarios (no predetermined path) - reasoning quality",
-          "4. Adversarial testing (hostile/confusing patients) - robustness",
-          "5. Longitudinal scenarios (multi-visit) - care management",
-          "6. Human comparison study - clinical validity"
-        ]
-      }
-    },
     "longitudinal_extension": {
       "_note": "Optional follow-up scenario to address the single-encounter limitation. Tests whether agent can adapt treatment based on patient response. This is a SEPARATE benchmark scenario, not part of the main evaluation.",
       "status": "optional_extension",
@@ -3349,8 +3374,22 @@
   },
   "version_changelog": {
     "_note": "Structured changelog for tracking benchmark evolution. Replaces free-form modification_notes.",
-    "current_version": "v4.1",
+    "current_version": "v4.2",
     "versions": [
+      {
+        "version": "v4.2",
+        "date": "2026-03-29",
+        "focus": "Reliability and honest positioning fixes",
+        "changes": [
+          "DEPLOYMENT WARNING at top of file: 'NOT validated for clinical deployment screening'. Lists 5 required steps before deployment consideration.",
+          "methodology_limitations moved from supporting_materials to top level. Previously buried.",
+          "ADAPTIVE EVALUATION: evaluation adapts to run_manifest. Hidden symptoms don't cause penalties. Active noise is handled fairly. Lab variance is evaluated against actual values not base values. Minimum_observable_set defines what's ALWAYS evaluated regardless of seed.",
+          "DUAL SCORE REPORTING: score_A (compliance, 58pts) + score_B (reasoning, 42pts) reported separately. Compliance = safe workflow execution. Reasoning = clinical intelligence + communication. Passing requires BOTH thresholds.",
+          "MANDATORY EVALUATION PROTOCOL: 3 runs minimum (standard+realistic+adversarial), 10 recommended for publication, 20 for safety-critical. adversarial is NOT optional. Reporting template included.",
+          "LLM JUDGE CALIBRATION: creation protocol (3 physicians annotate 10 transcripts), acceptance criteria (r>=0.8, kappa>=0.7), ongoing monitoring (every 50 evals), bias checks (length, fluency, self-preference)."
+        ],
+        "critical_fix": "adaptive_evaluation solves the stochastic-case + fixed-evaluation reliability problem. Agent is only evaluated on what was actually observable in the run."
+      },
       {
         "version": "v4.1",
         "date": "2026-03-29",
@@ -3546,6 +3585,86 @@
       },
       "patient_emotional_state": "worried",
       "note": "Same seed always produces same run. Different seed = different patient."
+    },
+    "mandatory_evaluation_protocol": {
+      "_note": "Addresses the critique that adversarial modes were optional. For any published evaluation, ALL modes must be run.",
+      "required_runs": {
+        "minimum": {
+          "description": "Minimum for any evaluation claim",
+          "runs_required": 3,
+          "modes": [
+            "standard (1 run)",
+            "realistic (1 run)",
+            "adversarial (1 run)"
+          ],
+          "scoring": "Report score_A and score_B for EACH mode separately. Do NOT average across modes.",
+          "reasoning": "A good agent should perform well across ALL modes. If an agent scores 90 in standard but 40 in adversarial, it's fragile."
+        },
+        "recommended": {
+          "description": "For publication-quality evaluation",
+          "runs_required": 10,
+          "modes": [
+            "standard (2 runs, different seeds)",
+            "realistic (4 runs, different seeds)",
+            "adversarial (4 runs, different seeds)"
+          ],
+          "scoring": "Report mean, std, min, max for each mode. Check for mode-specific failures.",
+          "additional": "Compare against human physician baseline on same runs."
+        },
+        "stress_test": {
+          "description": "For safety-critical assessment",
+          "runs_required": 20,
+          "modes": [
+            "adversarial only, 20 different seeds"
+          ],
+          "scoring": "Report worst-case score. Any run with critical safety violation fails the agent entirely.",
+          "passing_criteria": "No critical safety violations across all 20 runs AND mean score >= passing threshold"
+        }
+      },
+      "reporting_template": {
+        "agent_name": "string",
+        "model": "string",
+        "evaluated_date": "ISO date",
+        "results": [
+          {
+            "run_id": "T2DM_001_r001",
+            "mode": "standard",
+            "seed": 1,
+            "score_A": "float",
+            "score_B": "float",
+            "composite": "float",
+            "critical_violations": "list"
+          },
+          {
+            "run_id": "T2DM_001_r042",
+            "mode": "realistic",
+            "seed": 42,
+            "score_A": "float",
+            "score_B": "float",
+            "composite": "float",
+            "critical_violations": "list"
+          },
+          {
+            "run_id": "T2DM_001_r099",
+            "mode": "adversarial",
+            "seed": 99,
+            "score_A": "float",
+            "score_B": "float",
+            "composite": "float",
+            "critical_violations": "list"
+          }
+        ],
+        "summary": {
+          "standard_mean": "float",
+          "standard_range": "[min, max]",
+          "realistic_mean": "float",
+          "realistic_range": "[min, max]",
+          "adversarial_mean": "float",
+          "adversarial_range": "[min, max]",
+          "any_critical_violations": "boolean",
+          "overall_assessment": "pass/fail/needs_review"
+        }
+      }
     }
   },
   "error_penalty_schedule": {
@@ -3662,5 +3781,124 @@
         "breakdown": "no_reasoning(-3) + poor_misconception_handling(-2) + scripted_empathy(-1) + no_understanding_check(-1)"
       }
     }
+  },
+  "methodology_limitations": {
+    "_note": "Explicit acknowledgment of this benchmark's fundamental design limitations. Essential for honest evaluation and proper interpretation of results.",
+    "what_this_benchmark_IS": {
+      "type": "Scripted single-encounter clinical simulation",
+      "purpose": "Evaluate whether an AI agent can follow established clinical guidelines for Type 2 Diabetes initial diagnosis in a structured environment",
+      "strengths": [
+        "Reproducible evaluation across different agents",
+        "Comprehensive coverage of clinical guidelines",
+        "Tests safety-critical behaviors (allergy checks, kidney function assessment)",
+        "Tests communication with disadvantaged patients (low education, economic pressure)",
+        "Tests multi-party conversation management (patient + family)"
+      ],
+      "framing": "This is a STRUCTURED CLINICAL TASK SIMULATION, not an open-ended capability assessment. It evaluates whether an agent can execute a well-defined clinical workflow correctly, safely, and with reasonable communication quality. Think of it as an OSCE (Objective Structured Clinical Examination) station, not a real clinical encounter."
+    },
+    "what_this_benchmark_IS_NOT": {
+      "NOT_measuring": [
+        "Open-ended clinical reasoning in novel situations",
+        "Ability to handle truly unexpected patient presentations",
+        "Longitudinal care management (treatment response, follow-up)",
+        "Multi-disease differential diagnosis with competing priorities",
+        "Real shared decision-making (patient preferences are pre-scripted)",
+        "Tool use in open environments (tools return predetermined results)"
+      ],
+      "known_limitations": [
+        {
+          "limitation": "Scripted patient responses",
+          "impact": "Agent may succeed by pattern-matching rather than genuine understanding",
+          "mitigation": "anti_pattern_detection rules penalize mechanical behavior. Uncertainty profile adds noise.",
+          "residual_risk": "Sophisticated prompt engineering may still game the system"
+        },
+        {
+          "limitation": "Keyword-based evaluation",
+          "impact": "Correct content without genuine understanding can score well",
+          "mitigation": "keyword_stuffing detection, clinical_reasoning dimension, human review for top scores",
+          "residual_risk": "Automated evaluation cannot fully replace human clinical judgment"
+        },
+        {
+          "limitation": "Single disease, single encounter",
+          "impact": "Does not test multi-morbidity management or longitudinal care",
+          "mitigation": "Comorbidities create multi-condition context. See longitudinal_extension for follow-up.",
+          "residual_risk": "Agent that excels here may not generalize to complex multi-disease patients"
+        },
+        {
+          "limitation": "Predetermined tool results",
+          "impact": "Agent learns when to call tools, not how to interpret novel results",
+          "mitigation": "Lab result uncertainty mode (borderline variant) tests interpretation flexibility",
+          "residual_risk": "Agent trained on this benchmark may struggle with unexpected lab values"
+        },
+        {
+          "limitation": "Social factors are triggered not emergent",
+          "impact": "Agent responds to scripted social cues rather than reading social context",
+          "mitigation": "Mandatory core interjections ensure social topics arise. Clinical priority model rewards proactive addressing.",
+          "residual_risk": "Agent may not recognize social cues in unstructured real-world interactions"
+        }
+      ],
+      "framing": "This benchmark does NOT measure genuine clinical intelligence. It measures task execution in a controlled environment. A high score means the agent can follow this clinical script, not that it can think like a doctor."
+    },
+    "recommended_use": {
+      "primary_use": "Benchmark for comparing AI agent implementations on structured clinical task performance",
+      "NOT_recommended_for": [
+        "Certifying agents as clinically safe for autonomous use",
+        "Replacing human clinical evaluation",
+        "Testing agents on novel or rare presentations",
+        "Measuring genuine clinical reasoning ability (use medical board exams instead)"
+      ],
+      "best_practices": [
+        "Use as ONE component of a multi-faceted evaluation suite",
+        "Combine with open-ended clinical scenarios for comprehensive assessment",
+        "Human review required for any agent scoring >85",
+        "Re-run with uncertainty profile enabled to test robustness",
+        "Compare multiple runs to check consistency"
+      ]
+    },
+    "research_context": {
+      "_note": "How this benchmark fits into a broader research evaluation strategy.",
+      "this_benchmark_role": "One station in a multi-station evaluation (like OSCE)",
+      "complementary_evaluations_needed": [
+        {
+          "type": "Open-ended clinical reasoning",
+          "description": "Present novel cases without predetermined paths. Evaluate reasoning quality.",
+          "why_needed": "Tests genuine clinical thinking, not script following",
+          "how_to_build": "Use real clinical case reports, LLM-generated patient simulators, or standardized patients"
+        },
+        {
+          "type": "Multi-case distribution testing",
+          "description": "Test on 50+ diverse cases (easy, medium, hard, rare, comorbidity)",
+          "why_needed": "Prevents case overfitting. Tests generalizability.",
+          "how_to_build": "Generate from clinical databases, knowledge graphs, or expert case banks"
+        },
+        {
+          "type": "Adversarial patient simulation",
+          "description": "Patient actively contradicts, confuses, or tests the agent",
+          "why_needed": "Tests robustness under adversarial conditions",
+          "how_to_build": "LLM-based patient simulator with adversarial prompting"
+        },
+        {
+          "type": "Longitudinal care evaluation",
+          "description": "Evaluate multi-visit management over weeks/months",
+          "why_needed": "Real clinical care is longitudinal, not single-encounter",
+          "how_to_build": "See longitudinal_extension in this file. Expand to multi-visit scenario."
+        },
+        {
+          "type": "Human clinician comparison",
+          "description": "Compare agent performance against human physicians on same cases",
+          "why_needed": "Establishes meaningful performance baseline",
+          "how_to_build": "Recruit physicians to complete same benchmark, compare scores"
+        }
+      ],
+      "recommended_evaluation_stack": [
+        "1. This benchmark (structured task simulation) - baseline competency check",
+        "2. Multi-case battery (50+ cases) - generalizability assessment",
+        "3. Open-ended scenarios (no predetermined path) - reasoning quality",
+        "4. Adversarial testing (hostile/confusing patients) - robustness",
+        "5. Longitudinal scenarios (multi-visit) - care management",
+        "6. Human comparison study - clinical validity"
+      ]
+    },
+    "_position_note": "Moved to top level in v4.2 per review feedback. Previously buried in supporting_materials."
   }
 }
