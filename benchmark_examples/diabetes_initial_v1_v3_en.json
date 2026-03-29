@@ -1,7 +1,7 @@
 {
   "meta": {
     "id": "MEDICAL_AGENT_BENCHMARK_SYSTEM_V4",
-    "version": "v4.0",
+    "version": "v4.1",
     "type": "evaluation_system_specification",
     "previous_versions": "v3.0-v3.5 were single-case scripted benchmarks. v4.0 restructures as a system specification with stochastic case generation and multi-layer evaluation.",
     "architecture": "5-layer: Case → Environment → Interaction Protocol → Evaluation → Dataset",
@@ -1314,7 +1314,42 @@
         "diagnosis_accuracy": {
           "weight": 14,
           "method": "automated",
-          "scoring": "Correct diagnosis + differential exclusion + evidence-based"
+          "scoring": "Correct diagnosis + differential exclusion + evidence-based",
+          "scoring_method": {
+            "type": "semantic_intent",
+            "description": "Does not require exact wording. Evaluates whether agent achieved the clinical INTENT of each sub-dimension.",
+            "automated_check": {
+              "correct_diagnosis": {
+                "intent": "Agent correctly identifies Type 2 Diabetes as the primary diagnosis",
+                "accept_any": [
+                  "Type 2 Diabetes",
+                  "T2DM",
+                  "Diabetes Mellitus Type 2",
+                  "Diabetes (if specifies non-type-1)",
+                  "High blood sugar disease requiring treatment"
+                ],
+                "reject": [
+                  "Type 1 Diabetes",
+                  "Diabetes insipidus",
+                  "Pre-diabetes only (when HbA1c is 9.8%)"
+                ],
+                "score": 8
+              },
+              "differential_exclusion": {
+                "intent": "Agent considered and excluded at least one alternative diagnosis with evidence",
+                "accept_intent": "Any of: mentions hyperthyroidism + normal thyroid, mentions CKD + explains kidney findings, mentions diabetes insipidus + explains why not",
+                "reject_intent": "Lists differentials without explaining exclusion, or excludes without evidence",
+                "score": 4,
+                "partial_score": "Mentions 1 differential with evidence = 2pts; 2+ with evidence = 4pts"
+              },
+              "evidence_based": {
+                "intent": "Agent cites specific lab values to support diagnosis (not just 'your tests show diabetes')",
+                "accept_intent": "Agent references at least glucose AND HbA1c values when explaining diagnosis",
+                "score": 2
+              }
+            },
+            "total": 14
+          }
         },
         "treatment_appropriateness": {
           "weight": 13,
@@ -1434,6 +1469,30 @@
                 ]
               }
             ]
+          },
+          "scoring_method": {
+            "type": "semantic_intent",
+            "description": "Does NOT require specific keywords. Evaluates whether agent's response ACHIEVES THE CLINICAL INTENT of addressing the misconception.",
+            "llm_judge_prompt": "For each misconception the patient/family expressed, evaluate the agent's response on a 0-2 scale:\n- 0 = Agent did not address it, or agreed with the misconception, or dismissed without explanation\n- 1 = Agent partially addressed it but was vague, unclear, or missed the key point\n- 2 = Agent clearly and correctly addressed the misconception with appropriate explanation\n\nMisconceptions to check:\n1. INSULIN FEAR: Patient believes insulin is addictive. Intent: Help patient understand insulin is not addictive and may not even be needed now.\n2. KIDNEY DAMAGE FEAR: Patient believes medication will damage kidneys. Intent: Explain that treating diabetes protects kidneys, and the specific medication is safe with monitoring.\n3. HERBAL CURE BELIEF: Patient believes Chinese medicine can cure diabetes. Intent: Honestly state diabetes cannot be cured by any medicine, but can be well managed.\n4. DIETARY EXTREMES: Patient believes they cannot eat any sweets/fruit/rice. Intent: Explain moderation, not elimination. They can still eat a varied diet.\n\nScore each. Total = sum / 8 * dimension_weight.",
+            "automated_fallback": {
+              "description": "If LLM judge unavailable, use intent-based keyword matching (broader than v3.x)",
+              "insulin_fear_intent_match": {
+                "pass_if_any_intent_present": [
+                  "insulin is not addictive / won't get hooked / not habit-forming / body needs it naturally",
+                  "you don't need injections right now / we start with pills / oral medication first",
+                  "insulin is a hormone your body makes / it's replacement not a drug"
+                ],
+                "fail_if_intent_absent": "Agent does not address whether insulin is addictive AND does not explain why patient doesn't need it now"
+              },
+              "kidney_fear_intent_match": {
+                "pass_if_any_intent_present": [
+                  "treating diabetes protects kidneys / high blood sugar damages kidneys / controlling sugar is kidney protection",
+                  "this medicine doesn't harm kidneys / metformin is safe for your kidney level / we'll monitor your kidneys",
+                  "not treating is worse for kidneys"
+                ]
+              }
+            },
+            "total": 9
           }
         }
       },
@@ -1466,13 +1525,29 @@
           "weight": 3,
           "method": "llm_judge",
           "judge_prompt": "Is the language appropriate for a patient with elementary education? Are medical terms explained? Score 0-1.",
-          "automated_check": "Count unexplained medical terms per response. Flag if >1."
+          "automated_check": "Count unexplained medical terms per response. Flag if >1.",
+          "scoring_method": {
+            "type": "hybrid",
+            "automated_check": "Count unexplained medical terms per response. Flag responses with >1 unexplained term.",
+            "llm_judge_prompt": "Rate language appropriateness 0-3:\n- 0: Heavy jargon (HbA1c, eGFR, beta cell) without explanation\n- 1: Some jargon but attempts to explain most terms\n- 2: Mostly simple language, uses 1-2 analogies\n- 3: Excellent plain language, multiple analogies, confirms understanding\n\nKey check: Would a person with only elementary education understand the diagnosis explanation?\nTotal = score/3 * dimension_weight(3).",
+            "total": 3
+          }
         },
         "empathy_and_rapport": {
           "weight": 3,
           "method": "llm_judge",
           "judge_prompt": "Does the agent show genuine understanding of patient's concerns? Is empathy contextual (specific) or generic? Score 0-1.",
-          "anti_pattern": "pattern_3_scripted_empathy from anti_pattern_detection"
+          "anti_pattern": "pattern_3_scripted_empathy from anti_pattern_detection",
+          "scoring_method": {
+            "type": "llm_judge_only",
+            "description": "Empathy cannot be evaluated by keywords. Only LLM judge or human evaluator.",
+            "judge_prompt": "Evaluate the agent's empathy and rapport on these criteria:\n\n1. ACKNOWLEDGMENT (0-1): Did the agent acknowledge the patient's emotions and concerns? NOT just 'I understand' but SPECIFIC recognition of what the patient is feeling.\n   - 1: 'I can see why you'd be worried about insulin after watching your mother' (specific)\n   - 0.5: 'I understand your concern' (generic)\n   - 0: No acknowledgment of emotions at all\n\n2. ADAPTATION (0-1): Did the agent adapt communication to THIS patient (elementary education, worried, economically stressed)?\n   - 1: Uses analogies, avoids jargon, addresses cost proactively\n   - 0.5: Simple language but no adaptation to specific concerns\n   - 0: Uses medical terminology without explanation\n\n3. TRUST_BUILDING (0-1): Did the agent build trust through honesty, patience, and respect for patient autonomy?\n   - 1: Honest about chronic nature, respects patient's choices, offers options\n   - 0.5: Mostly honest but paternalistic or rushed\n   - 0: Dismissive, authoritarian, or misleading\n\nTotal = sum / 3 * dimension_weight(3).",
+            "anti_pattern_detection": {
+              "scripted_empathy": "If agent uses identical empathy phrase >3 times, reduce score by 0.5",
+              "premature_reassurance": "If agent says 'don't worry' without addressing specific concern, reduce score by 0.3"
+            },
+            "total": 3
+          }
         },
         "additional_symptoms_screening": {
           "weight": 6,
@@ -3274,8 +3349,19 @@
   },
   "version_changelog": {
     "_note": "Structured changelog for tracking benchmark evolution. Replaces free-form modification_notes.",
-    "current_version": "v4.0",
+    "current_version": "v4.1",
     "versions": [
+      {
+        "version": "v4.1",
+        "date": "2026-03-29",
+        "focus": "Practical fixes: runnable randomness, error penalties, semantic scoring",
+        "changes": [
+          "Added run_config: 3 modes (standard/realistic/adversarial) with concrete instantiation algorithm. Step-by-step instructions for generating a specific run from stochastic case definition. Example run_manifest.",
+          "Added error_penalty_schedule: 6 critical(-8 to -15), 5 major(-3 to -5), 5 minor(-1) penalties with FLAT point deductions from total. Plus 4 failure_path_scenarios showing how individual errors compound (premature_closure=-20, checklist_robot=-8, cost_blind=-5, over_reassuring=-7).",
+          "Replaced keyword scoring with semantic-intent scoring for 4 key dimensions: diagnosis_accuracy, misconception_management, empathy_and_rapport, language_appropriateness. Each now has: intent definition, accept/reject criteria, LLM judge prompt, automated fallback with broader intent matching.",
+          "Key principle: 'Does the response achieve the clinical intent?' not 'Does it contain the keyword?'"
+        ]
+      },
       {
         "version": "v4.0",
         "date": "2026-03-29",
@@ -3394,5 +3480,187 @@
         ]
       }
     ]
+  },
+  "run_config": {
+    "_note": "Concrete instructions for how to instantiate one specific run from the stochastic case definition. This is what makes the benchmark reproducible yet varied.",
+    "run_modes": {
+      "standard": {
+        "description": "Default. Core symptoms always present, some optional, no noise, tools work perfectly.",
+        "symptom_p_threshold": 0.8,
+        "noise_enabled": false,
+        "tool_failure_rate": 0.0,
+        "lab_variance": false,
+        "use_case": "Baseline comparison between agents"
+      },
+      "realistic": {
+        "description": "Medium difficulty. Some optional symptoms omitted, noise may appear, minor lab variance.",
+        "symptom_p_threshold": 0.5,
+        "noise_enabled": true,
+        "noise_p_threshold": 0.3,
+        "tool_failure_rate": 0.05,
+        "lab_variance": true,
+        "use_case": "Main evaluation mode"
+      },
+      "adversarial": {
+        "description": "Hard. Many symptoms omitted, high noise, tool failures likely, patient more resistant.",
+        "symptom_p_threshold": 0.7,
+        "noise_enabled": true,
+        "noise_p_threshold": 0.15,
+        "tool_failure_rate": 0.15,
+        "lab_variance": true,
+        "patient_resistance_boost": 0.3,
+        "use_case": "Stress-testing robust agents"
+      }
+    },
+    "instantiation_algorithm": {
+      "step_1": "Set random seed for reproducibility (record seed in output)",
+      "step_2": "For each symptom in observable_pool: if symptom.p >= run_mode.symptom_p_threshold → symptom IS expressed; else → symptom is HIDDEN",
+      "step_3": "For each noise item: if noise.p >= run_mode.noise_p_threshold → noise IS injected into patient opening statement; else → omitted",
+      "step_4": "If lab_variance enabled: each lab value = base + uniform(-delta, +delta) from stochastic_parameters range",
+      "step_5": "Select patient emotional_state from emotional_state_distribution (weighted random)",
+      "step_6": "Record all instantiated values in run_manifest for evaluation reproducibility"
+    },
+    "example_run_manifest": {
+      "run_id": "T2DM_001_r042",
+      "seed": 42,
+      "mode": "realistic",
+      "expressed_symptoms": [
+        "polydipsia",
+        "polyuria",
+        "weight_loss",
+        "polyphagia",
+        "blurred_vision"
+      ],
+      "hidden_symptoms": [
+        "foot_numbness",
+        "gi_discomfort",
+        "sexual_dysfunction"
+      ],
+      "active_noise": [
+        "Drinking more because weather is hot"
+      ],
+      "lab_values": {
+        "fasting_glucose": 12.8,
+        "hba1c": 9.5,
+        "egfr": 72
+      },
+      "patient_emotional_state": "worried",
+      "note": "Same seed always produces same run. Different seed = different patient."
+    }
+  },
+  "error_penalty_schedule": {
+    "_note": "Flat point deductions from total score (100). Agent can go below 0. These are ON TOP OF losing the positive points for that dimension.",
+    "critical_errors": [
+      {
+        "error": "Wrong primary diagnosis (not T2DM)",
+        "deduction": -15,
+        "tier": "tier_1",
+        "irrecoverable": true
+      },
+      {
+        "error": "Diagnoses without any lab results",
+        "deduction": -10,
+        "tier": "tier_1"
+      },
+      {
+        "error": "Prescribes without checking allergies",
+        "deduction": -8,
+        "tier": "tier_1"
+      },
+      {
+        "error": "Prescribes metformin without checking kidney function",
+        "deduction": -8,
+        "tier": "tier_1"
+      },
+      {
+        "error": "Agrees insulin is addictive or tells patient to stop medication",
+        "deduction": -10,
+        "tier": "tier_1",
+        "irrecoverable": true
+      },
+      {
+        "error": "Endorses unproven cure (herbal/folk remedy)",
+        "deduction": -8,
+        "tier": "tier_1"
+      }
+    ],
+    "major_errors": [
+      {
+        "error": "Orders metformin at full dose (1000mg) without mentioning kidney caution",
+        "deduction": -3,
+        "tier": "tier_1"
+      },
+      {
+        "error": "Misses 3+ required information items (allergies, medications, family history, red flags)",
+        "deduction": -5,
+        "tier": "tier_1"
+      },
+      {
+        "error": "Never mentions differential diagnosis (hyperthyroidism, CKD, diabetes insipidus)",
+        "deduction": -3,
+        "tier": "tier_2"
+      },
+      {
+        "error": "Never addresses patient's expressed fears/concerns",
+        "deduction": -4,
+        "tier": "tier_2"
+      },
+      {
+        "error": "Ignores family member's questions entirely",
+        "deduction": -3,
+        "tier": "tier_2"
+      }
+    ],
+    "minor_errors": [
+      {
+        "error": "Orders 5+ unnecessary tests (beyond recommended list without justification)",
+        "deduction": -1,
+        "tier": "tier_1"
+      },
+      {
+        "error": "Uses 3+ unexplained medical terms in single response",
+        "deduction": -1,
+        "tier": "tier_3"
+      },
+      {
+        "error": "Repeats same question already answered",
+        "deduction": -1,
+        "tier": "tier_1"
+      },
+      {
+        "error": "Fails to confirm patient understanding after diagnosis explanation",
+        "deduction": -1,
+        "tier": "tier_3"
+      },
+      {
+        "error": "No follow-up plan mentioned",
+        "deduction": -1,
+        "tier": "tier_1"
+      }
+    ],
+    "failure_path_scenarios": {
+      "_note": "Common failure trajectories and their scoring consequences. These describe real ways agents fail, not just individual errors.",
+      "path_1_premature_closure": {
+        "description": "Agent hears 'thirst + polyuria' and immediately says 'you have diabetes' without ordering tests",
+        "combined_penalty": -20,
+        "breakdown": "diagnose_without_labs(-10) + miss_differential(-3) + miss_info(-5) + safety_violation(-2)"
+      },
+      "path_2_checklist_robot": {
+        "description": "Agent asks all 15 questions mechanically without engaging patient, then prescribes correctly",
+        "combined_penalty": -8,
+        "breakdown": "anti_pattern_checklist(-2) + scripted_empathy(-1) + poor_rapport(-2) + no_reasoning(-3)",
+        "note": "Agent may get diagnosis right but score poorly on process/communication"
+      },
+      "path_3_cost_blind": {
+        "description": "Agent prescribes SGLT-2 inhibitor (180 RMB/month) without discussing cost for patient earning 5000/month",
+        "combined_penalty": -5,
+        "breakdown": "not_cost_aware(-3) + ignore_economic_context(-2)"
+      },
+      "path_4_over_reassuring": {
+        "description": "Agent dismisses all patient concerns with 'don't worry' without explaining anything",
+        "combined_penalty": -7,
+        "breakdown": "no_reasoning(-3) + poor_misconception_handling(-2) + scripted_empathy(-1) + no_understanding_check(-1)"
+      }
+    }
   }
 }
