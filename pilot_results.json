@@ -1,0 +1,643 @@
+{
+  "config": {
+    "n_tasks": 18,
+    "seed": 42
+  },
+  "random_avg": 0.027777777777777776,
+  "rule_based_avg": 0.9178444444444445,
+  "gap": 0.8900666666666667,
+  "results": {
+    "random": [
+      {
+        "task_id": "v27_diagnostic_uncertainty_L1_sleep_apnea_400781",
+        "total": 0.05,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.0,
+          "treatment": 0.0,
+          "communication": 0.3333,
+          "process": 0.3333
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E04",
+          "E05",
+          "E08"
+        ],
+        "turns": 4
+      },
+      {
+        "task_id": "v27_conflicting_evidence_L2_osteoporosis_f8d064",
+        "total": 0.0,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.5,
+          "treatment": 1.0,
+          "communication": 0.6667,
+          "process": 0.5136
+        },
+        "pass": false,
+        "errors": [
+          "E01"
+        ],
+        "turns": 11
+      },
+      {
+        "task_id": "v27_treatment_tradeoff_L3_anxiety_disorder_2ce50d",
+        "total": 0.05,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.0,
+          "treatment": 0.0,
+          "communication": 0.3333,
+          "process": 0.0
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E04",
+          "E05",
+          "E08"
+        ],
+        "turns": 3
+      },
+      {
+        "task_id": "v27_patient_non_compliance_L1_psoriasis_54386c",
+        "total": 0.05,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 0.0,
+          "info": 0.0,
+          "treatment": 1.0,
+          "communication": 0.3333,
+          "process": 0.0
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E02",
+          "E04",
+          "E08"
+        ],
+        "turns": 5
+      },
+      {
+        "task_id": "v27_drug_safety_risk_L2_coronary_artery_disease_0a",
+        "total": 0.0,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.0,
+          "treatment": 0.0,
+          "communication": 0.3333,
+          "process": 0.3333
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E04",
+          "E05",
+          "E08"
+        ],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_emergency_triage_L3_stroke_b64298",
+        "total": 0.05,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.0,
+          "treatment": 0.0,
+          "communication": 0.3333,
+          "process": 0.3333
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E04",
+          "E05",
+          "E08",
+          "E09"
+        ],
+        "turns": 5
+      },
+      {
+        "task_id": "v27_diagnostic_uncertainty_L1_anemia_f3ce3e",
+        "total": 0.05,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 0.0,
+          "info": 0.0,
+          "treatment": 0.0,
+          "communication": 0.6667,
+          "process": 0.0
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E02",
+          "E04",
+          "E05"
+        ],
+        "turns": 4
+      },
+      {
+        "task_id": "v27_conflicting_evidence_L2_cystic_fibrosis_d89bbf",
+        "total": 0.0,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 0.0,
+          "info": 0.0,
+          "treatment": 1.0,
+          "communication": 0.6667,
+          "process": 0.0
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E02",
+          "E04"
+        ],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_treatment_tradeoff_L3_type_2_diabetes_75e679",
+        "total": 0.0,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 0.75,
+          "info": 0.3333,
+          "treatment": 0.0,
+          "communication": 0.3333,
+          "process": 0.697
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E02",
+          "E04",
+          "E05",
+          "E08"
+        ],
+        "turns": 11
+      },
+      {
+        "task_id": "v27_patient_non_compliance_L1_anxiety_disorder_67a",
+        "total": 0.0,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.0,
+          "treatment": 0.0,
+          "communication": 0.6667,
+          "process": 0.3333
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E04",
+          "E05"
+        ],
+        "turns": 11
+      },
+      {
+        "task_id": "v27_drug_safety_risk_L2_multiple_sclerosis_dcf21a",
+        "total": 0.05,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 0.0,
+          "info": 0.0,
+          "treatment": 1.0,
+          "communication": 0.6667,
+          "process": 0.0
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E02",
+          "E04"
+        ],
+        "turns": 5
+      },
+      {
+        "task_id": "v27_emergency_triage_L3_multiple_sclerosis_f9e1a4",
+        "total": 0.05,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.0,
+          "treatment": 0.0,
+          "communication": 0.3333,
+          "process": 0.3333
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E04",
+          "E05",
+          "E08",
+          "E09"
+        ],
+        "turns": 5
+      },
+      {
+        "task_id": "v27_diagnostic_uncertainty_L1_epilepsy_706b0e",
+        "total": 0.0,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.0,
+          "treatment": 1.0,
+          "communication": 0.6667,
+          "process": 0.3333
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E04"
+        ],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_conflicting_evidence_L2_coronary_artery_diseas",
+        "total": 0.0,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.1667,
+          "treatment": 0.0,
+          "communication": 0.6667,
+          "process": 0.5303
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E04",
+          "E05"
+        ],
+        "turns": 11
+      },
+      {
+        "task_id": "v27_treatment_tradeoff_L3_meningitis_73d978",
+        "total": 0.05,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.0,
+          "treatment": 0.0,
+          "communication": 0.6667,
+          "process": 0.0
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E04",
+          "E05"
+        ],
+        "turns": 7
+      },
+      {
+        "task_id": "v27_patient_non_compliance_L1_osteoporosis_cb77ff",
+        "total": 0.05,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.0,
+          "treatment": 0.0,
+          "communication": 0.3333,
+          "process": 0.0
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E04",
+          "E05",
+          "E08"
+        ],
+        "turns": 5
+      },
+      {
+        "task_id": "v27_drug_safety_risk_L2_glaucoma_1ad5b5",
+        "total": 0.0,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 0.0,
+          "info": 0.0,
+          "treatment": 1.0,
+          "communication": 0.6667,
+          "process": 0.0
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E02",
+          "E04"
+        ],
+        "turns": 9
+      },
+      {
+        "task_id": "v27_emergency_triage_L3_bipolar_disorder_01acc0",
+        "total": 0.05,
+        "components": {
+          "diagnosis": 0.0,
+          "safety": 1.0,
+          "info": 0.5,
+          "treatment": 0.0,
+          "communication": 0.3333,
+          "process": 0.5667
+        },
+        "pass": false,
+        "errors": [
+          "E01",
+          "E05",
+          "E08",
+          "E09"
+        ],
+        "turns": 5
+      }
+    ],
+    "rule_based": [
+      {
+        "task_id": "v27_diagnostic_uncertainty_L1_sleep_apnea_400781",
+        "total": 0.9244,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6222
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_conflicting_evidence_L2_osteoporosis_f8d064",
+        "total": 0.9211,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6056
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 10
+      },
+      {
+        "task_id": "v27_treatment_tradeoff_L3_anxiety_disorder_2ce50d",
+        "total": 0.9744,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6222
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_patient_non_compliance_L1_psoriasis_54386c",
+        "total": 0.9244,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6222
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_drug_safety_risk_L2_coronary_artery_disease_0a",
+        "total": 0.959,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.7949
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 13
+      },
+      {
+        "task_id": "v27_emergency_triage_L3_stroke_b64298",
+        "total": 0.7799,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.5995
+        },
+        "pass": true,
+        "errors": [
+          "E09"
+        ],
+        "turns": 11
+      },
+      {
+        "task_id": "v27_diagnostic_uncertainty_L1_anemia_f3ce3e",
+        "total": 0.9211,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6056
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 10
+      },
+      {
+        "task_id": "v27_conflicting_evidence_L2_cystic_fibrosis_d89bbf",
+        "total": 0.9356,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6778
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 9
+      },
+      {
+        "task_id": "v27_treatment_tradeoff_L3_type_2_diabetes_75e679",
+        "total": 0.93,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.65
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 12
+      },
+      {
+        "task_id": "v27_patient_non_compliance_L1_anxiety_disorder_67a",
+        "total": 0.9244,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6222
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_drug_safety_risk_L2_multiple_sclerosis_dcf21a",
+        "total": 0.9244,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6222
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_emergency_triage_L3_multiple_sclerosis_f9e1a4",
+        "total": 0.8444,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6222
+        },
+        "pass": true,
+        "errors": [
+          "E09"
+        ],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_diagnostic_uncertainty_L1_epilepsy_706b0e",
+        "total": 0.9244,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6222
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_conflicting_evidence_L2_coronary_artery_diseas",
+        "total": 0.959,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.7949
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 13
+      },
+      {
+        "task_id": "v27_treatment_tradeoff_L3_meningitis_73d978",
+        "total": 0.9744,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6222
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_patient_non_compliance_L1_osteoporosis_cb77ff",
+        "total": 0.9315,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6576
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 11
+      },
+      {
+        "task_id": "v27_drug_safety_risk_L2_glaucoma_1ad5b5",
+        "total": 0.9244,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6222
+        },
+        "pass": true,
+        "errors": [],
+        "turns": 8
+      },
+      {
+        "task_id": "v27_emergency_triage_L3_bipolar_disorder_01acc0",
+        "total": 0.8444,
+        "components": {
+          "diagnosis": 1.0,
+          "safety": 1.0,
+          "info": 1.0,
+          "treatment": 1.0,
+          "communication": 1.0,
+          "process": 0.6222
+        },
+        "pass": true,
+        "errors": [
+          "E09"
+        ],
+        "turns": 8
+      }
+    ]
+  }
+}

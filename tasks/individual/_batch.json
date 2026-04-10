@@ -29,13 +29,23 @@
         "volunteer": [
           "i've been having wake up with morning headaches"
         ],
-        "if_asked": [],
-        "hidden": [],
+        "if_asked": [
+          "pain"
+        ],
+        "hidden": [
+          "constant tiredness"
+        ],
         "resistant": [],
         "misleading": [],
         "noise": []
       },
-      "progressive_reveal": [],
+      "progressive_reveal": [
+        {
+          "after_turn": 3,
+          "symptom": "constant tiredness",
+          "trigger": "doctor asks a specific follow-up question about related symptoms"
+        }
+      ],
       "misconceptions": {
         "general_concerns": [
           "Is this serious?",
@@ -49,11 +59,11 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are ZhangXX, a 47-year-old male patient. Your education level is 高中/中专. You work as a retail manager. You are seeing a doctor because of i've been having wake up with morning headaches. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are ZhangXX, a 47-year-old male patient. Your education level is 高中/中专. You work as a retail manager. You are seeing a doctor because of i've been having wake up with morning headaches. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
-        "blood_pressure": "148/81 mmHg",
+        "blood_pressure": "159/81 mmHg",
         "bmi": "22.1"
       },
       "labs": {},
@@ -135,8 +145,8 @@
         "derived_from": {
           "symptom_graph": {
             "volunteer_count": 1,
-            "if_asked_count": 0,
-            "hidden_count": 0,
+            "if_asked_count": 1,
+            "hidden_count": 1,
             "misleading_count": 0
           },
           "minimal_information_sets": {
@@ -160,7 +170,9 @@
               "CHECK_ALLERGY + PRESCRIBE",
               "END"
             ],
-            "allowed_to_skip": []
+            "allowed_to_skip": [
+              "constant tiredness"
+            ]
           }
         ],
         "acceptable_variants": [
@@ -495,7 +507,7 @@
       "max_possible": 21,
       "adversarial": {
         "noise": false,
-        "partial_observability": false,
+        "partial_observability": true,
         "adversarial_behavior": false,
         "misleading_symptoms": false
       }
@@ -622,7 +634,7 @@
         "occupation": "office clerk",
         "economic_status": "comfortable"
       },
-      "chief_complaint": "bone loss for a few weeks",
+      "chief_complaint": "brittle bone for a few weeks",
       "behavior": {
         "type": "cooperative",
         "cooperation": "good",
@@ -631,10 +643,10 @@
       },
       "symptoms": {
         "volunteer": [
-          "bone loss"
+          "brittle bone"
         ],
         "if_asked": [
-          "brittle bone"
+          "bone loss"
         ],
         "hidden": [
           "low bone density"
@@ -659,7 +671,7 @@
           "How long will treatment take?"
         ]
       },
-      "instructions": "You are ChenXX, a 58-year-old male patient. Your education level is 高中/中专. You work as a office clerk. You are seeing a doctor because of bone loss. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them."
+      "instructions": "You are ChenXX, a 58-year-old male patient. Your education level is 高中/中专. You work as a office clerk. You are seeing a doctor because of brittle bone. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them."
     },
     "clinical": {
       "vitals": {
@@ -790,7 +802,7 @@
           },
           "minimal_information_sets": {
             "must_collect": [
-              "bone loss"
+              "brittle bone"
             ],
             "must_order": [
               "calcium",
@@ -1294,7 +1306,7 @@
         "occupation": "cleaner",
         "economic_status": "low"
       },
-      "chief_complaint": "anxiety for a few weeks",
+      "chief_complaint": "gad for a few weeks",
       "behavior": {
         "type": "forgetful",
         "cooperation": "good",
@@ -1303,10 +1315,10 @@
       },
       "symptoms": {
         "volunteer": [
-          "anxiety"
+          "gad"
         ],
         "if_asked": [
-          "gad"
+          "anxiety"
         ],
         "hidden": [
           "anxiety"
@@ -1339,7 +1351,7 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are ChenXX, a 53-year-old male patient. Your education level is 小学. You work as a cleaner. You are seeing a doctor because of anxiety. This has been going on for about a few weeks. Answer honestly but you may forget to mention some symptoms. If the doctor doesn't specifically ask about something, you might not remember it. Your memory for details is not great — approximate answers are fine. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are ChenXX, a 53-year-old male patient. Your education level is 小学. You work as a cleaner. You are seeing a doctor because of gad. This has been going on for about a few weeks. Answer honestly but you may forget to mention some symptoms. If the doctor doesn't specifically ask about something, you might not remember it. Your memory for details is not great — approximate answers are fine. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
@@ -1441,7 +1453,7 @@
           },
           "minimal_information_sets": {
             "must_collect": [
-              "anxiety"
+              "gad"
             ],
             "must_order": [
               "CBC",
@@ -1935,13 +1947,23 @@
         "volunteer": [
           "do any joints ache or swell"
         ],
-        "if_asked": [],
-        "hidden": [],
+        "if_asked": [
+          "constant tiredness"
+        ],
+        "hidden": [
+          "pain"
+        ],
         "resistant": [],
         "misleading": [],
         "noise": []
       },
-      "progressive_reveal": [],
+      "progressive_reveal": [
+        {
+          "after_turn": 3,
+          "symptom": "pain",
+          "trigger": "doctor asks a specific follow-up question about related symptoms"
+        }
+      ],
       "misconceptions": {
         "general_concerns": [
           "Is this serious?",
@@ -1949,17 +1971,15 @@
           "How long will treatment take?"
         ]
       },
-      "instructions": "You are ZhaoXX, a 56-year-old female patient. Your education level is 高中/中专. You work as a office clerk. You are seeing a doctor because of do any joints ache or swell. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words."
+      "instructions": "You are ZhaoXX, a 56-year-old female patient. Your education level is 高中/中专. You work as a office clerk. You are seeing a doctor because of do any joints ache or swell. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them."
     },
     "clinical": {
       "vitals": {
-        "blood_pressure": "133/91 mmHg",
-        "bmi": "22.5"
+        "blood_pressure": "136/81 mmHg",
+        "bmi": "22.7"
       },
       "labs": {},
-      "medications": [
-        "topical betamethasone apply thin layer twice daily to affected areas"
-      ],
+      "medications": [],
       "comorbidities": [],
       "allergies": [],
       "confounders": [],
@@ -2043,8 +2063,8 @@
         "derived_from": {
           "symptom_graph": {
             "volunteer_count": 1,
-            "if_asked_count": 0,
-            "hidden_count": 0,
+            "if_asked_count": 1,
+            "hidden_count": 1,
             "misleading_count": 0
           },
           "minimal_information_sets": {
@@ -2068,7 +2088,9 @@
               "CHECK_ALLERGY + PRESCRIBE",
               "END"
             ],
-            "allowed_to_skip": []
+            "allowed_to_skip": [
+              "pain"
+            ]
           }
         ],
         "acceptable_variants": [
@@ -2403,7 +2425,7 @@
       "max_possible": 21,
       "adversarial": {
         "noise": false,
-        "partial_observability": false,
+        "partial_observability": true,
         "adversarial_behavior": false,
         "misleading_symptoms": false
       }
@@ -2530,7 +2552,7 @@
         "occupation": "farm worker",
         "economic_status": "low"
       },
-      "chief_complaint": "my weight has changed, heart disease, and atherosclerotic heart for a few weeks",
+      "chief_complaint": "chd, atherosclerotic heart, and my weight has changed for a few weeks",
       "behavior": {
         "type": "confused",
         "cooperation": "moderate",
@@ -2539,17 +2561,17 @@
       },
       "symptoms": {
         "volunteer": [
-          "my weight has changed",
-          "heart disease",
-          "atherosclerotic heart"
+          "chd",
+          "atherosclerotic heart",
+          "my weight has changed"
         ],
         "if_asked": [
-          "coronary heart",
+          "ihd",
           "ischemic heart"
         ],
         "hidden": [
-          "ihd",
-          "chd"
+          "coronary heart",
+          "heart disease"
         ],
         "resistant": [],
         "misleading": [
@@ -2561,12 +2583,12 @@
       "progressive_reveal": [
         {
           "after_turn": 3,
-          "symptom": "chd",
+          "symptom": "heart disease",
           "trigger": "doctor asks a specific follow-up question about related symptoms"
         },
         {
           "after_turn": 5,
-          "symptom": "ihd",
+          "symptom": "coronary heart",
           "trigger": "doctor asks a specific follow-up question about related symptoms"
         }
       ],
@@ -2583,7 +2605,7 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are WangXX, a 39-year-old male patient. Your education level is 小学. You work as a farm worker. You are seeing a doctor because of my weight has changed. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are WangXX, a 39-year-old male patient. Your education level is 小学. You work as a farm worker. You are seeing a doctor because of chd. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
@@ -2735,8 +2757,8 @@
           },
           "minimal_information_sets": {
             "must_collect": [
-              "my weight has changed",
-              "heart disease"
+              "chd",
+              "atherosclerotic heart"
             ],
             "must_order": [
               "total_cholesterol",
@@ -2756,8 +2778,8 @@
               "END"
             ],
             "allowed_to_skip": [
-              "ihd",
-              "chd"
+              "coronary heart",
+              "heart disease"
             ]
           }
         ],
@@ -3242,7 +3264,7 @@
         "occupation": "cleaner",
         "economic_status": "comfortable"
       },
-      "chief_complaint": "high blood pressure for a few weeks",
+      "chief_complaint": "hld for a few weeks",
       "behavior": {
         "type": "forgetful",
         "cooperation": "good",
@@ -3251,10 +3273,10 @@
       },
       "symptoms": {
         "volunteer": [
-          "high blood pressure"
+          "hld"
         ],
         "if_asked": [
-          "hld"
+          "high blood pressure"
         ],
         "hidden": [
           "i've had vision changes",
@@ -3298,7 +3320,7 @@
           "How long will treatment take?"
         ]
       },
-      "instructions": "You are ZhouXX, a 64-year-old male patient. Your education level is 小学. You work as a cleaner. You are seeing a doctor because of high blood pressure. This has been going on for about a few weeks. Answer honestly but you may forget to mention some symptoms. If the doctor doesn't specifically ask about something, you might not remember it. Your memory for details is not great — approximate answers are fine. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them."
+      "instructions": "You are ZhouXX, a 64-year-old male patient. Your education level is 小学. You work as a cleaner. You are seeing a doctor because of hld. This has been going on for about a few weeks. Answer honestly but you may forget to mention some symptoms. If the doctor doesn't specifically ask about something, you might not remember it. Your memory for details is not great — approximate answers are fine. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them."
     },
     "clinical": {
       "vitals": {
@@ -3459,7 +3481,7 @@
           },
           "minimal_information_sets": {
             "must_collect": [
-              "high blood pressure"
+              "hld"
             ],
             "must_order": [
               "glucose_random",
@@ -3997,13 +4019,23 @@
         "volunteer": [
           "anaemia"
         ],
-        "if_asked": [],
-        "hidden": [],
+        "if_asked": [
+          "shortness of breath"
+        ],
+        "hidden": [
+          "dizziness"
+        ],
         "resistant": [],
         "misleading": [],
         "noise": []
       },
-      "progressive_reveal": [],
+      "progressive_reveal": [
+        {
+          "after_turn": 3,
+          "symptom": "dizziness",
+          "trigger": "doctor asks a specific follow-up question about related symptoms"
+        }
+      ],
       "misconceptions": {
         "general_concerns": [
           "Is this serious?",
@@ -4017,22 +4049,22 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are ChenXX, a 30-year-old female patient. Your education level is 高中/中专. You work as a retail manager. You are seeing a doctor because of anaemia. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are ChenXX, a 30-year-old female patient. Your education level is 高中/中专. You work as a retail manager. You are seeing a doctor because of anaemia. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
-        "blood_pressure": "120/91 mmHg",
-        "bmi": "27.4"
+        "blood_pressure": "136/86 mmHg",
+        "bmi": "27.6"
       },
       "labs": {
-        "hemoglobin": "9.31 g/dL (abnormal)",
-        "mcv": "77.9 fL (abnormal)",
-        "rdw": "16.9 % (abnormal)",
-        "ferritin": "21.9 ng/mL (abnormal)",
-        "tibc": "411 ug/dL (abnormal)"
+        "hemoglobin": "8.98 g/dL (abnormal)",
+        "mcv": "79.4 fL (abnormal)",
+        "rdw": "16.7 % (abnormal)",
+        "ferritin": "18.1 ng/mL (abnormal)",
+        "tibc": "408 ug/dL (abnormal)"
       },
       "medications": [
-        "ferrous sulfate 325mg three times daily"
+        "folic acid 1mg once daily"
       ],
       "comorbidities": [],
       "allergies": [],
@@ -4063,31 +4095,31 @@
       },
       "expected_lab_results": {
         "hemoglobin": {
-          "expected_value": "8.76 g/dL (abnormal)",
+          "expected_value": "9.33 g/dL (abnormal)",
           "reference_range": "7.0-10.5 g/dL",
           "is_abnormal": true,
           "clinical_significance": "high"
         },
         "mcv": {
-          "expected_value": "79.4 fL (abnormal)",
+          "expected_value": "78.9 fL (abnormal)",
           "reference_range": "70-85 fL",
           "is_abnormal": true,
           "clinical_significance": "moderate"
         },
         "rdw": {
-          "expected_value": "16.7 % (abnormal)",
+          "expected_value": "16.3 % (abnormal)",
           "reference_range": "14.0-18.0 %",
           "is_abnormal": true,
           "clinical_significance": "moderate"
         },
         "ferritin": {
-          "expected_value": "18.5 ng/mL (abnormal)",
+          "expected_value": "22.0 ng/mL (abnormal)",
           "reference_range": "10-40 ng/mL",
           "is_abnormal": true,
           "clinical_significance": "high"
         },
         "tibc": {
-          "expected_value": "430 ug/dL (abnormal)",
+          "expected_value": "410 ug/dL (abnormal)",
           "reference_range": "350-500 ug/dL",
           "is_abnormal": true,
           "clinical_significance": "moderate"
@@ -4149,8 +4181,8 @@
         "derived_from": {
           "symptom_graph": {
             "volunteer_count": 1,
-            "if_asked_count": 0,
-            "hidden_count": 0,
+            "if_asked_count": 1,
+            "hidden_count": 1,
             "misleading_count": 0
           },
           "minimal_information_sets": {
@@ -4174,7 +4206,9 @@
               "CHECK_ALLERGY + PRESCRIBE",
               "END"
             ],
-            "allowed_to_skip": []
+            "allowed_to_skip": [
+              "dizziness"
+            ]
           }
         ],
         "acceptable_variants": [
@@ -4528,7 +4562,7 @@
       "max_possible": 21,
       "adversarial": {
         "noise": false,
-        "partial_observability": false,
+        "partial_observability": true,
         "adversarial_behavior": false,
         "misleading_symptoms": false
       }
@@ -4655,7 +4689,7 @@
         "occupation": "office clerk",
         "economic_status": "moderate"
       },
-      "chief_complaint": "cf for a few weeks",
+      "chief_complaint": "mucoviscidosis for a few weeks",
       "behavior": {
         "type": "concealing",
         "cooperation": "poor",
@@ -4664,10 +4698,11 @@
       },
       "symptoms": {
         "volunteer": [
-          "cf"
+          "mucoviscidosis"
         ],
         "if_asked": [
-          "mucoviscidosis"
+          "cf",
+          "pain"
         ],
         "hidden": [],
         "resistant": [],
@@ -4690,7 +4725,7 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are ZhaoXX, a 31-year-old male patient. Your education level is 高中/中专. You work as a office clerk. You are seeing a doctor because of cf. This has been going on for about a few weeks. You are reluctant to share certain symptoms, especially sensitive ones. Downplay severity when you can. Only reveal details if the doctor specifically asks and you feel comfortable. You don't want to make a big deal out of this. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are ZhaoXX, a 31-year-old male patient. Your education level is 高中/中专. You work as a office clerk. You are seeing a doctor because of mucoviscidosis. This has been going on for about a few weeks. You are reluctant to share certain symptoms, especially sensitive ones. Downplay severity when you can. Only reveal details if the doctor specifically asks and you feel comfortable. You don't want to make a big deal out of this. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
@@ -4765,13 +4800,13 @@
         "derived_from": {
           "symptom_graph": {
             "volunteer_count": 1,
-            "if_asked_count": 1,
+            "if_asked_count": 2,
             "hidden_count": 0,
             "misleading_count": 1
           },
           "minimal_information_sets": {
             "must_collect": [
-              "cf"
+              "mucoviscidosis"
             ],
             "must_order": [
               "CBC",
@@ -5242,7 +5277,7 @@
         "occupation": "factory worker",
         "economic_status": "moderate"
       },
-      "chief_complaint": "coronary heart for a few weeks",
+      "chief_complaint": "my appetite has changed for a few weeks",
       "behavior": {
         "type": "confused",
         "cooperation": "moderate",
@@ -5251,11 +5286,11 @@
       },
       "symptoms": {
         "volunteer": [
-          "coronary heart"
+          "my appetite has changed"
         ],
         "if_asked": [
-          "my appetite has changed",
-          "hld"
+          "hld",
+          "coronary heart"
         ],
         "hidden": [
           "kidney disease",
@@ -5322,7 +5357,7 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are HuangXX, a 40-year-old female patient. Your education level is 小学. You work as a factory worker. You are seeing a doctor because of coronary heart. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are HuangXX, a 40-year-old female patient. Your education level is 小学. You work as a factory worker. You are seeing a doctor because of my appetite has changed. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
@@ -5490,7 +5525,7 @@
           },
           "minimal_information_sets": {
             "must_collect": [
-              "coronary heart"
+              "my appetite has changed"
             ],
             "must_order": [
               "fasting_glucose",
@@ -6650,15 +6685,25 @@
         "volunteer": [
           "i've been having unusual fatigue"
         ],
-        "if_asked": [],
-        "hidden": [],
+        "if_asked": [
+          "pain"
+        ],
+        "hidden": [
+          "constant tiredness"
+        ],
         "resistant": [],
         "misleading": [
           "electric shock sensation"
         ],
         "noise": []
       },
-      "progressive_reveal": [],
+      "progressive_reveal": [
+        {
+          "after_turn": 3,
+          "symptom": "constant tiredness",
+          "trigger": "doctor asks a specific follow-up question about related symptoms"
+        }
+      ],
       "misconceptions": {
         "general_concerns": [
           "Is this serious?",
@@ -6672,11 +6717,11 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are LiXX, a 45-year-old male patient. Your education level is 小学. You work as a cleaner. You are seeing a doctor because of i've been having unusual fatigue. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are LiXX, a 45-year-old male patient. Your education level is 小学. You work as a cleaner. You are seeing a doctor because of i've been having unusual fatigue. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
-        "blood_pressure": "124/88 mmHg",
+        "blood_pressure": "143/88 mmHg",
         "bmi": "25.6"
       },
       "labs": {},
@@ -6760,8 +6805,8 @@
         "derived_from": {
           "symptom_graph": {
             "volunteer_count": 1,
-            "if_asked_count": 0,
-            "hidden_count": 0,
+            "if_asked_count": 1,
+            "hidden_count": 1,
             "misleading_count": 1
           },
           "minimal_information_sets": {
@@ -6785,7 +6830,9 @@
               "CHECK_ALLERGY + PRESCRIBE",
               "END"
             ],
-            "allowed_to_skip": []
+            "allowed_to_skip": [
+              "constant tiredness"
+            ]
           }
         ],
         "acceptable_variants": [
@@ -7120,7 +7167,7 @@
       "max_possible": 21,
       "adversarial": {
         "noise": false,
-        "partial_observability": false,
+        "partial_observability": true,
         "adversarial_behavior": false,
         "misleading_symptoms": true
       }
@@ -7258,8 +7305,12 @@
         "volunteer": [
           "i've been having unusual fatigue"
         ],
-        "if_asked": [],
-        "hidden": [],
+        "if_asked": [
+          "pain"
+        ],
+        "hidden": [
+          "constant tiredness"
+        ],
         "resistant": [],
         "misleading": [
           "eye pain with movement"
@@ -7268,7 +7319,13 @@
           "occasional ear fullness"
         ]
       },
-      "progressive_reveal": [],
+      "progressive_reveal": [
+        {
+          "after_turn": 3,
+          "symptom": "constant tiredness",
+          "trigger": "doctor asks a specific follow-up question about related symptoms"
+        }
+      ],
       "misconceptions": {
         "general_concerns": [
           "Is this serious?",
@@ -7282,16 +7339,15 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are LiuXX, a 47-year-old female patient. Your education level is 高中/中专. You work as a sales associate. You are seeing a doctor because of i've been having unusual fatigue. This has been going on for about a few weeks. You are reluctant to share certain symptoms, especially sensitive ones. Downplay severity when you can. Only reveal details if the doctor specifically asks and you feel comfortable. You don't want to make a big deal out of this. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are LiuXX, a 47-year-old female patient. Your education level is 高中/中专. You work as a sales associate. You are seeing a doctor because of i've been having unusual fatigue. This has been going on for about a few weeks. You are reluctant to share certain symptoms, especially sensitive ones. Downplay severity when you can. Only reveal details if the doctor specifically asks and you feel comfortable. You don't want to make a big deal out of this. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
-        "blood_pressure": "120/85 mmHg",
-        "bmi": "24.3"
+        "blood_pressure": "130/90 mmHg",
+        "bmi": "25.2"
       },
       "labs": {},
       "medications": [
-        "interferon beta-1a 30mcg injection once weekly",
         "glatiramer acetate 20mg injection daily"
       ],
       "comorbidities": [],
@@ -7369,8 +7425,8 @@
         "derived_from": {
           "symptom_graph": {
             "volunteer_count": 1,
-            "if_asked_count": 0,
-            "hidden_count": 0,
+            "if_asked_count": 1,
+            "hidden_count": 1,
             "misleading_count": 1
           },
           "minimal_information_sets": {
@@ -7394,7 +7450,9 @@
               "CHECK_ALLERGY + PRESCRIBE",
               "END"
             ],
-            "allowed_to_skip": []
+            "allowed_to_skip": [
+              "constant tiredness"
+            ]
           }
         ],
         "acceptable_variants": [
@@ -7729,7 +7787,7 @@
       "max_possible": 21,
       "adversarial": {
         "noise": true,
-        "partial_observability": false,
+        "partial_observability": true,
         "adversarial_behavior": true,
         "misleading_symptoms": true
       }
@@ -7867,13 +7925,23 @@
         "volunteer": [
           "seizure"
         ],
-        "if_asked": [],
-        "hidden": [],
+        "if_asked": [
+          "headache"
+        ],
+        "hidden": [
+          "seizure"
+        ],
         "resistant": [],
         "misleading": [],
         "noise": []
       },
-      "progressive_reveal": [],
+      "progressive_reveal": [
+        {
+          "after_turn": 3,
+          "symptom": "seizure",
+          "trigger": "doctor asks a specific follow-up question about related symptoms"
+        }
+      ],
       "misconceptions": {
         "general_concerns": [
           "Is this serious?",
@@ -7887,11 +7955,11 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are WangXX, a 36-year-old male patient. Your education level is 高中/中专. You work as a sales associate. You are seeing a doctor because of seizure. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are WangXX, a 36-year-old male patient. Your education level is 高中/中专. You work as a sales associate. You are seeing a doctor because of seizure. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
-        "blood_pressure": "138/95 mmHg",
+        "blood_pressure": "142/95 mmHg",
         "bmi": "22.7"
       },
       "labs": {},
@@ -7974,8 +8042,8 @@
         "derived_from": {
           "symptom_graph": {
             "volunteer_count": 1,
-            "if_asked_count": 0,
-            "hidden_count": 0,
+            "if_asked_count": 1,
+            "hidden_count": 1,
             "misleading_count": 0
           },
           "minimal_information_sets": {
@@ -7999,7 +8067,9 @@
               "CHECK_ALLERGY + PRESCRIBE",
               "END"
             ],
-            "allowed_to_skip": []
+            "allowed_to_skip": [
+              "seizure"
+            ]
           }
         ],
         "acceptable_variants": [
@@ -8334,7 +8404,7 @@
       "max_possible": 21,
       "adversarial": {
         "noise": false,
-        "partial_observability": false,
+        "partial_observability": true,
         "adversarial_behavior": false,
         "misleading_symptoms": false
       }
@@ -8461,7 +8531,7 @@
         "occupation": "sales associate",
         "economic_status": "low"
       },
-      "chief_complaint": "high blood pressure, atherosclerotic heart, and my weight has changed for a few weeks",
+      "chief_complaint": "ihd, atherosclerotic heart, and my weight has changed for a few weeks",
       "behavior": {
         "type": "cooperative",
         "cooperation": "good",
@@ -8470,18 +8540,18 @@
       },
       "symptoms": {
         "volunteer": [
-          "high blood pressure",
+          "ihd",
           "atherosclerotic heart",
           "my weight has changed"
         ],
         "if_asked": [
-          "chd",
           "high blood pressure",
-          "heart disease"
+          "ischemic heart",
+          "high blood pressure"
         ],
         "hidden": [
-          "ihd",
-          "ischemic heart",
+          "heart disease",
+          "chd",
           "coronary heart"
         ],
         "resistant": [],
@@ -8499,12 +8569,12 @@
         },
         {
           "after_turn": 6,
-          "symptom": "ischemic heart",
+          "symptom": "chd",
           "trigger": "doctor asks a specific follow-up question about related symptoms"
         },
         {
           "after_turn": 9,
-          "symptom": "ihd",
+          "symptom": "heart disease",
           "trigger": "doctor asks a specific follow-up question about related symptoms"
         }
       ],
@@ -8521,7 +8591,7 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are LiuXX, a 47-year-old female patient. Your education level is 高中/中专. You work as a sales associate. You are seeing a doctor because of high blood pressure. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are LiuXX, a 47-year-old female patient. Your education level is 高中/中专. You work as a sales associate. You are seeing a doctor because of ihd. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
@@ -8674,7 +8744,7 @@
           },
           "minimal_information_sets": {
             "must_collect": [
-              "high blood pressure",
+              "ihd",
               "atherosclerotic heart"
             ],
             "must_order": [
@@ -8695,8 +8765,8 @@
               "END"
             ],
             "allowed_to_skip": [
-              "ihd",
-              "ischemic heart",
+              "heart disease",
+              "chd",
               "coronary heart"
             ]
           }
@@ -9204,7 +9274,9 @@
         "volunteer": [
           "i've been having sensitive to light"
         ],
-        "if_asked": [],
+        "if_asked": [
+          "confusion"
+        ],
         "hidden": [
           "i've been having rash"
         ],
@@ -9322,7 +9394,7 @@
         "derived_from": {
           "symptom_graph": {
             "volunteer_count": 1,
-            "if_asked_count": 0,
+            "if_asked_count": 1,
             "hidden_count": 1,
             "misleading_count": 1
           },
@@ -9811,7 +9883,7 @@
         "occupation": "sales associate",
         "economic_status": "moderate"
       },
-      "chief_complaint": "brittle bone for a few weeks",
+      "chief_complaint": "low bone density for a few weeks",
       "behavior": {
         "type": "cooperative",
         "cooperation": "good",
@@ -9820,10 +9892,10 @@
       },
       "symptoms": {
         "volunteer": [
-          "brittle bone"
+          "low bone density"
         ],
         "if_asked": [
-          "low bone density",
+          "brittle bone",
           "bone loss"
         ],
         "hidden": [],
@@ -9845,7 +9917,7 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are ZhouXX, a 79-year-old male patient. Your education level is 高中/中专. You work as a sales associate. You are seeing a doctor because of brittle bone. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are ZhouXX, a 79-year-old male patient. Your education level is 高中/中专. You work as a sales associate. You are seeing a doctor because of low bone density. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
@@ -9977,7 +10049,7 @@
           },
           "minimal_information_sets": {
             "must_collect": [
-              "brittle bone"
+              "low bone density"
             ],
             "must_order": [
               "calcium",
@@ -10490,15 +10562,25 @@
         "volunteer": [
           "when was your last eye exam"
         ],
-        "if_asked": [],
-        "hidden": [],
+        "if_asked": [
+          "pain"
+        ],
+        "hidden": [
+          "constant tiredness"
+        ],
         "resistant": [],
         "misleading": [
           "new skin changes"
         ],
         "noise": []
       },
-      "progressive_reveal": [],
+      "progressive_reveal": [
+        {
+          "after_turn": 3,
+          "symptom": "constant tiredness",
+          "trigger": "doctor asks a specific follow-up question about related symptoms"
+        }
+      ],
       "misconceptions": {
         "general_concerns": [
           "Is this serious?",
@@ -10512,12 +10594,12 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are ChenXX, a 79-year-old female patient. Your education level is 小学. You work as a construction worker. You are seeing a doctor because of when was your last eye exam. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are ChenXX, a 79-year-old female patient. Your education level is 小学. You work as a construction worker. You are seeing a doctor because of when was your last eye exam. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
-        "blood_pressure": "143/88 mmHg",
-        "bmi": "25.8"
+        "blood_pressure": "133/92 mmHg",
+        "bmi": "23.3"
       },
       "labs": {},
       "medications": [
@@ -10525,7 +10607,7 @@
       ],
       "comorbidities": [],
       "allergies": [
-        "contrast dye"
+        "sulfa drugs"
       ],
       "confounders": [],
       "diagnosis": {
@@ -10600,8 +10682,8 @@
         "derived_from": {
           "symptom_graph": {
             "volunteer_count": 1,
-            "if_asked_count": 0,
-            "hidden_count": 0,
+            "if_asked_count": 1,
+            "hidden_count": 1,
             "misleading_count": 1
           },
           "minimal_information_sets": {
@@ -10625,7 +10707,9 @@
               "CHECK_ALLERGY + PRESCRIBE",
               "END"
             ],
-            "allowed_to_skip": []
+            "allowed_to_skip": [
+              "constant tiredness"
+            ]
           }
         ],
         "acceptable_variants": [
@@ -10960,7 +11044,7 @@
       "max_possible": 21,
       "adversarial": {
         "noise": false,
-        "partial_observability": false,
+        "partial_observability": true,
         "adversarial_behavior": false,
         "misleading_symptoms": true
       }
@@ -11087,7 +11171,7 @@
         "occupation": "delivery driver",
         "economic_status": "moderate"
       },
-      "chief_complaint": "manic-depressive for a few weeks",
+      "chief_complaint": "bipolar for a few weeks",
       "behavior": {
         "type": "confused",
         "cooperation": "moderate",
@@ -11096,11 +11180,13 @@
       },
       "symptoms": {
         "volunteer": [
-          "manic-depressive"
-        ],
-        "if_asked": [],
-        "hidden": [
           "bipolar"
+        ],
+        "if_asked": [
+          "constant tiredness"
+        ],
+        "hidden": [
+          "manic-depressive"
         ],
         "resistant": [],
         "misleading": [
@@ -11113,7 +11199,7 @@
       "progressive_reveal": [
         {
           "after_turn": 3,
-          "symptom": "bipolar",
+          "symptom": "manic-depressive",
           "trigger": "doctor asks a specific follow-up question about related symptoms"
         }
       ],
@@ -11130,7 +11216,7 @@
           "Can we only prescribe what's absolutely necessary?"
         ]
       },
-      "instructions": "You are ChenXX, a 46-year-old female patient. Your education level is 小学. You work as a delivery driver. You are seeing a doctor because of manic-depressive. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+      "instructions": "You are ChenXX, a 46-year-old female patient. Your education level is 小学. You work as a delivery driver. You are seeing a doctor because of bipolar. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
     },
     "clinical": {
       "vitals": {
@@ -11216,13 +11302,13 @@
         "derived_from": {
           "symptom_graph": {
             "volunteer_count": 1,
-            "if_asked_count": 0,
+            "if_asked_count": 1,
             "hidden_count": 1,
             "misleading_count": 1
           },
           "minimal_information_sets": {
             "must_collect": [
-              "manic-depressive"
+              "bipolar"
             ],
             "must_order": [
               "CBC",
@@ -11242,7 +11328,7 @@
               "END"
             ],
             "allowed_to_skip": [
-              "bipolar"
+              "manic-depressive"
             ]
           }
         ],

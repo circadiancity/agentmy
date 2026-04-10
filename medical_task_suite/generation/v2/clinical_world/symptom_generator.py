@@ -145,7 +145,26 @@ class SymptomGenerator:
         # 8. Use confounder symptoms AS misleading (not random misleading)
         misleading = confounder_symptoms if confounder_symptoms else self._generate_misleading(disease, scenario, config)
 
-        # 9. Convert clinical terms to patient-friendly language
+        # 9. Floor: ensure at least 3 non-noise symptoms for discrimination
+        MIN_SYMPTOMS = 3
+        relevant_count = len(distribution.get("volunteer", [])) + len(distribution.get("if_asked", [])) + len(distribution.get("hidden", [])) + len(distribution.get("resistant", []))
+        if relevant_count < MIN_SYMPTOMS:
+            # Generate supplementary symptoms from disease fallback or generic pool
+            existing = set(all_real)
+            supplement_pool = self._fallback_symptoms(disease)
+            supplement_pool = [s for s in supplement_pool if s not in existing]
+            if not supplement_pool:
+                supplement_pool = ["fatigue", "headache", "nausea", "dizziness", "appetite loss"]
+                supplement_pool = [s for s in supplement_pool if s not in existing]
+            needed = MIN_SYMPTOMS - relevant_count
+            random.shuffle(supplement_pool)
+            extra = supplement_pool[:needed]
+            # Distribute extras into if_asked and hidden (not volunteer — patient didn't mention them)
+            for i, s in enumerate(extra):
+                tier = "if_asked" if i % 2 == 0 else "hidden"
+                distribution.setdefault(tier, []).append(s)
+
+        # 10. Convert clinical terms to patient-friendly language
         volunteer = [self.language.to_patient(s) for s in distribution.get("volunteer", [])]
         if_asked = [self.language.to_patient(s) for s in distribution.get("if_asked", [])]
         resistant = [self.language.to_patient(s) for s in distribution.get("resistant", [])]
