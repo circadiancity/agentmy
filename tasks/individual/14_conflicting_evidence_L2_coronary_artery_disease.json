@@ -17,7 +17,7 @@
       "occupation": "sales associate",
       "economic_status": "low"
     },
-    "chief_complaint": "high blood pressure, high blood pressure, and my weight has changed for a few weeks",
+    "chief_complaint": "ischemic heart, my weight has changed, and high blood pressure for a few weeks",
     "behavior": {
       "type": "cooperative",
       "cooperation": "good",
@@ -26,19 +26,19 @@
     },
     "symptoms": {
       "volunteer": [
-        "high blood pressure",
-        "high blood pressure",
-        "my weight has changed"
+        "ischemic heart",
+        "my weight has changed",
+        "high blood pressure"
       ],
       "if_asked": [
-        "chd",
-        "atherosclerotic heart",
-        "ihd"
+        "coronary heart",
+        "heart disease",
+        "chd"
       ],
       "hidden": [
-        "ischemic heart",
-        "heart disease",
-        "coronary heart"
+        "high blood pressure",
+        "atherosclerotic heart",
+        "ihd"
       ],
       "resistant": [],
       "misleading": [
@@ -50,17 +50,17 @@
     "progressive_reveal": [
       {
         "after_turn": 3,
-        "symptom": "coronary heart",
+        "symptom": "ihd",
         "trigger": "doctor asks a specific follow-up question about related symptoms"
       },
       {
         "after_turn": 6,
-        "symptom": "heart disease",
+        "symptom": "atherosclerotic heart",
         "trigger": "doctor asks a specific follow-up question about related symptoms"
       },
       {
         "after_turn": 9,
-        "symptom": "ischemic heart",
+        "symptom": "high blood pressure",
         "trigger": "doctor asks a specific follow-up question about related symptoms"
       }
     ],
@@ -77,7 +77,7 @@
         "Can we only prescribe what's absolutely necessary?"
       ]
     },
-    "instructions": "You are LiuXX, a 47-year-old female patient. Your education level is 高中/中专. You work as a sales associate. You are seeing a doctor because of high blood pressure. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+    "instructions": "You are LiuXX, a 47-year-old female patient. Your education level is 高中/中专. You work as a sales associate. You are seeing a doctor because of ischemic heart. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
   },
   "clinical": {
     "vitals": {
@@ -221,6 +221,25 @@
       }
     ],
     "solution_space": {
+      "derived_from": {
+        "symptom_graph": {
+          "volunteer_count": 3,
+          "if_asked_count": 3,
+          "hidden_count": 3,
+          "misleading_count": 2
+        },
+        "minimal_information_sets": {
+          "must_collect": [
+            "ischemic heart",
+            "my weight has changed"
+          ],
+          "must_order": [
+            "total_cholesterol",
+            "ldl_cholesterol"
+          ],
+          "must_match": "coronary artery disease"
+        }
+      },
       "minimal_paths": [
         {
           "description": "Minimum viable consultation",
@@ -232,9 +251,9 @@
             "END"
           ],
           "allowed_to_skip": [
-            "ischemic heart",
-            "heart disease",
-            "coronary heart"
+            "high blood pressure",
+            "atherosclerotic heart",
+            "ihd"
           ]
         }
       ],
@@ -476,7 +495,14 @@
         "temporal_distortion": "patient may report 'a few days' when it has been weeks, or vice versa",
         "severity_bias": "patient may understate or overstate severity based on pain tolerance and anxiety"
       }
-    }
+    },
+    "state_invariants": [
+      "labs_once_observed_cannot_change — same test always returns same value",
+      "revealed_symptoms_are_monotonic — symptom once revealed stays revealed",
+      "diagnosis_irreversible_after_commit — DIAGNOSE overwrites previous, cannot revert",
+      "trust_monotonic_per_action — single action changes trust by at most one step",
+      "state_progresses_forward — no backward state transitions (TREATING → INTAKE forbidden)"
+    ]
   },
   "scoring": {
     "components": {
@@ -506,9 +532,18 @@
       }
     },
     "process_score": {
-      "question_relevance": "ratio of ASK actions that revealed new information to total ASK actions",
-      "information_gain_per_turn": "COUNT(new_symptoms_revealed) / turn_count",
-      "redundancy_penalty": "-0.05 per repeated ASK on same topic without new info"
+      "question_relevance": {
+        "method": "match_to_required_symptoms",
+        "compute": "COUNT(ASK WHERE new_symptom IN required_symptoms) / COUNT(ASK)"
+      },
+      "information_gain_per_turn": {
+        "method": "entropy_reduction",
+        "compute": "COUNT(symptoms_revealed_during_ASK) / turn_count"
+      },
+      "redundancy_penalty": {
+        "method": "repeated_query_penalty",
+        "compute": "COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05"
+      }
     },
     "aggregation": "weighted_sum",
     "pass_threshold": 0.7,

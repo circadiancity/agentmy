@@ -17,7 +17,7 @@
       "occupation": "farm worker",
       "economic_status": "low"
     },
-    "chief_complaint": "ihd, atherosclerotic heart, and heart disease for a few weeks",
+    "chief_complaint": "chd, my weight has changed, and coronary heart for a few weeks",
     "behavior": {
       "type": "confused",
       "cooperation": "moderate",
@@ -26,17 +26,17 @@
     },
     "symptoms": {
       "volunteer": [
-        "ihd",
-        "atherosclerotic heart",
-        "heart disease"
+        "chd",
+        "my weight has changed",
+        "coronary heart"
       ],
       "if_asked": [
-        "ischemic heart",
-        "chd"
+        "atherosclerotic heart",
+        "ischemic heart"
       ],
       "hidden": [
-        "coronary heart",
-        "my weight has changed"
+        "ihd",
+        "heart disease"
       ],
       "resistant": [],
       "misleading": [
@@ -48,12 +48,12 @@
     "progressive_reveal": [
       {
         "after_turn": 3,
-        "symptom": "my weight has changed",
+        "symptom": "heart disease",
         "trigger": "doctor asks a specific follow-up question about related symptoms"
       },
       {
         "after_turn": 5,
-        "symptom": "coronary heart",
+        "symptom": "ihd",
         "trigger": "doctor asks a specific follow-up question about related symptoms"
       }
     ],
@@ -70,7 +70,7 @@
         "Can we only prescribe what's absolutely necessary?"
       ]
     },
-    "instructions": "You are WangXX, a 39-year-old male patient. Your education level is 小学. You work as a farm worker. You are seeing a doctor because of ihd. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+    "instructions": "You are WangXX, a 39-year-old male patient. Your education level is 小学. You work as a farm worker. You are seeing a doctor because of chd. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
   },
   "clinical": {
     "vitals": {
@@ -213,6 +213,25 @@
       }
     ],
     "solution_space": {
+      "derived_from": {
+        "symptom_graph": {
+          "volunteer_count": 3,
+          "if_asked_count": 2,
+          "hidden_count": 2,
+          "misleading_count": 2
+        },
+        "minimal_information_sets": {
+          "must_collect": [
+            "chd",
+            "my weight has changed"
+          ],
+          "must_order": [
+            "total_cholesterol",
+            "ldl_cholesterol"
+          ],
+          "must_match": "coronary artery disease"
+        }
+      },
       "minimal_paths": [
         {
           "description": "Minimum viable consultation",
@@ -224,8 +243,8 @@
             "END"
           ],
           "allowed_to_skip": [
-            "coronary heart",
-            "my weight has changed"
+            "ihd",
+            "heart disease"
           ]
         }
       ],
@@ -462,7 +481,14 @@
         "temporal_distortion": "patient may report 'a few days' when it has been weeks, or vice versa",
         "severity_bias": "patient may understate or overstate severity based on pain tolerance and anxiety"
       }
-    }
+    },
+    "state_invariants": [
+      "labs_once_observed_cannot_change — same test always returns same value",
+      "revealed_symptoms_are_monotonic — symptom once revealed stays revealed",
+      "diagnosis_irreversible_after_commit — DIAGNOSE overwrites previous, cannot revert",
+      "trust_monotonic_per_action — single action changes trust by at most one step",
+      "state_progresses_forward — no backward state transitions (TREATING → INTAKE forbidden)"
+    ]
   },
   "scoring": {
     "components": {
@@ -492,9 +518,18 @@
       }
     },
     "process_score": {
-      "question_relevance": "ratio of ASK actions that revealed new information to total ASK actions",
-      "information_gain_per_turn": "COUNT(new_symptoms_revealed) / turn_count",
-      "redundancy_penalty": "-0.05 per repeated ASK on same topic without new info"
+      "question_relevance": {
+        "method": "match_to_required_symptoms",
+        "compute": "COUNT(ASK WHERE new_symptom IN required_symptoms) / COUNT(ASK)"
+      },
+      "information_gain_per_turn": {
+        "method": "entropy_reduction",
+        "compute": "COUNT(symptoms_revealed_during_ASK) / turn_count"
+      },
+      "redundancy_penalty": {
+        "method": "repeated_query_penalty",
+        "compute": "COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05"
+      }
     },
     "aggregation": "weighted_sum",
     "pass_threshold": 0.7,

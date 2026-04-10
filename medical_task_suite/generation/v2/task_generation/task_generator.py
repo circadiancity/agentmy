@@ -278,7 +278,7 @@ class MedicalTaskGenerator:
         difficulties: Optional[List[str]] = None,
         output_path: Optional[str] = None,
         seed: int = 42,
-    ) -> List[Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         task_types = task_types or TASK_TYPES
         difficulties = difficulties or ["L1", "L2", "L3"]
         rng = random.Random(seed)
@@ -295,12 +295,20 @@ class MedicalTaskGenerator:
             except Exception:
                 continue
 
+        # Build dataset profile (distribution metadata)
+        dataset_profile = self._build_dataset_profile(tasks)
+
+        result = {
+            "tasks": tasks,
+            "dataset_profile": dataset_profile,
+        }
+
         if output_path:
             Path(output_path).parent.mkdir(parents=True, exist_ok=True)
             with open(output_path, "w", encoding="utf-8") as f:
-                json.dump(tasks, f, indent=2, ensure_ascii=False)
+                json.dump(result, f, indent=2, ensure_ascii=False)
 
-        return tasks
+        return result
 
     # ============================================================
     # Task Construction
@@ -633,6 +641,13 @@ class MedicalTaskGenerator:
                     "severity_bias": "patient may understate or overstate severity based on pain tolerance and anxiety",
                 },
             },
+            "state_invariants": [
+                "labs_once_observed_cannot_change — same test always returns same value",
+                "revealed_symptoms_are_monotonic — symptom once revealed stays revealed",
+                "diagnosis_irreversible_after_commit — DIAGNOSE overwrites previous, cannot revert",
+                "trust_monotonic_per_action — single action changes trust by at most one step",
+                "state_progresses_forward — no backward state transitions (TREATING → INTAKE forbidden)",
+            ],
         }
 
     def _build_scoring(self, scenario: ScenarioSpec, disease: str) -> Dict:
@@ -657,9 +672,18 @@ class MedicalTaskGenerator:
                 "process": {"method": "trajectory_analysis", "weight": 0.20},
             },
             "process_score": {
-                "question_relevance": "ratio of ASK actions that revealed new information to total ASK actions",
-                "information_gain_per_turn": "COUNT(new_symptoms_revealed) / turn_count",
-                "redundancy_penalty": "-0.05 per repeated ASK on same topic without new info",
+                "question_relevance": {
+                    "method": "match_to_required_symptoms",
+                    "compute": "COUNT(ASK WHERE new_symptom IN required_symptoms) / COUNT(ASK)",
+                },
+                "information_gain_per_turn": {
+                    "method": "entropy_reduction",
+                    "compute": "COUNT(symptoms_revealed_during_ASK) / turn_count",
+                },
+                "redundancy_penalty": {
+                    "method": "repeated_query_penalty",
+                    "compute": "COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05",
+                },
             },
             "aggregation": "weighted_sum",
             "pass_threshold": 0.7,
@@ -782,6 +806,56 @@ class MedicalTaskGenerator:
                 "diagnosis": "string or null",
                 "errors": "list[error_code]",
             },
+        }
+
+    def _build_dataset_profile(self, tasks: List[Dict]) -> Dict:
+        """Distribution metadata for benchmark statistical validity."""
+        if not tasks:
+            return {}
+
+        # Disease distribution
+        disease_dist = {}
+        for t in tasks:
+            d = t.get("clinical", {}).get("diagnosis", {}).get("primary", "unknown")
+            disease_dist[d] = disease_dist.get(d, 0) + 1
+
+        # Difficulty distribution
+        diff_dist = {}
+        for t in tasks:
+            d = t.get("task_config", {}).get("difficulty", "unknown")
+            diff_dist[d] = diff_dist.get(d, 0) + 1
+
+        # Task type distribution
+        type_dist = {}
+        for t in tasks:
+            tt = t.get("task_config", {}).get("task_type", "unknown")
+            type_dist[tt] = type_dist.get(tt, 0) + 1
+
+        # Domain distribution
+        domain_dist = {}
+        for t in tasks:
+            dm = t.get("task_config", {}).get("domain", "unknown")
+            domain_dist[dm] = domain_dist.get(dm, 0) + 1
+
+        # Symptom overlap matrix (co-occurrence across tasks)
+        symptom_set = {}
+        for t in tasks:
+            pts = t.get("patient", {}).get("symptoms", {})
+            all_syms = []
+            for tier in ["volunteer", "if_asked", "hidden"]:
+                all_syms.extend(pts.get(tier, []))
+            for s in all_syms:
+                symptom_set[s] = symptom_set.get(s, 0) + 1
+
+        return {
+            "n_tasks": len(tasks),
+            "disease_distribution": disease_dist,
+            "difficulty_distribution": diff_dist,
+            "task_type_distribution": type_dist,
+            "domain_distribution": domain_dist,
+            "symptom_frequency": dict(sorted(symptom_set.items(), key=lambda x: -x[1])[:20]),
+            "unique_diseases": len(disease_dist),
+            "coverage_note": "benchmark validity requires ≥5 diseases per task_type, ≥3 tasks per difficulty",
         }
 
     def _build_chief_complaint(self, scenario: ScenarioSpec, symptoms: SymptomSet) -> str:
@@ -1201,6 +1275,19 @@ class MedicalTaskGenerator:
         required_tests = [lab["test_name"] for lab in lab_panel[:5]] if lab_panel else ["CBC", "BMP"]
 
         solution_space = {
+            "derived_from": {
+                "symptom_graph": {
+                    "volunteer_count": len(symptoms.volunteer),
+                    "if_asked_count": len(symptoms.if_asked),
+                    "hidden_count": len(symptoms.hidden) + len(symptoms.resistant),
+                    "misleading_count": len(symptoms.misleading),
+                },
+                "minimal_information_sets": {
+                    "must_collect": key_symptoms[:2],
+                    "must_order": required_tests[:2],
+                    "must_match": disease,
+                },
+            },
             "minimal_paths": [{
                 "description": "Minimum viable consultation",
                 "steps": ["ASK ≥ min_turns questions", "ORDER_LAB ≥ 1 relevant test", "DIAGNOSE correctly", "CHECK_ALLERGY + PRESCRIBE", "END"],

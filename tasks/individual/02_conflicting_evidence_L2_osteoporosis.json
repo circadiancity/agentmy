@@ -17,7 +17,7 @@
       "occupation": "office clerk",
       "economic_status": "comfortable"
     },
-    "chief_complaint": "low bone density for a few weeks",
+    "chief_complaint": "brittle bone for a few weeks",
     "behavior": {
       "type": "cooperative",
       "cooperation": "good",
@@ -26,13 +26,13 @@
     },
     "symptoms": {
       "volunteer": [
-        "low bone density"
+        "brittle bone"
       ],
       "if_asked": [
         "bone loss"
       ],
       "hidden": [
-        "brittle bone"
+        "low bone density"
       ],
       "resistant": [],
       "misleading": [
@@ -43,7 +43,7 @@
     "progressive_reveal": [
       {
         "after_turn": 3,
-        "symptom": "brittle bone",
+        "symptom": "low bone density",
         "trigger": "doctor asks a specific follow-up question about related symptoms"
       }
     ],
@@ -54,7 +54,7 @@
         "How long will treatment take?"
       ]
     },
-    "instructions": "You are ChenXX, a 58-year-old male patient. Your education level is 高中/中专. You work as a office clerk. You are seeing a doctor because of low bone density. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them."
+    "instructions": "You are ChenXX, a 58-year-old male patient. Your education level is 高中/中专. You work as a office clerk. You are seeing a doctor because of brittle bone. This has been going on for about a few weeks. Answer the doctor's questions honestly and completely. Share what you know about your symptoms. You don't know much about medicine, so express things in your own words. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them."
   },
   "clinical": {
     "vitals": {
@@ -176,6 +176,24 @@
       }
     ],
     "solution_space": {
+      "derived_from": {
+        "symptom_graph": {
+          "volunteer_count": 1,
+          "if_asked_count": 1,
+          "hidden_count": 1,
+          "misleading_count": 1
+        },
+        "minimal_information_sets": {
+          "must_collect": [
+            "brittle bone"
+          ],
+          "must_order": [
+            "calcium",
+            "phosphorus"
+          ],
+          "must_match": "osteoporosis"
+        }
+      },
       "minimal_paths": [
         {
           "description": "Minimum viable consultation",
@@ -187,7 +205,7 @@
             "END"
           ],
           "allowed_to_skip": [
-            "brittle bone"
+            "low bone density"
           ]
         }
       ],
@@ -419,7 +437,14 @@
         "temporal_distortion": "patient may report 'a few days' when it has been weeks, or vice versa",
         "severity_bias": "patient may understate or overstate severity based on pain tolerance and anxiety"
       }
-    }
+    },
+    "state_invariants": [
+      "labs_once_observed_cannot_change — same test always returns same value",
+      "revealed_symptoms_are_monotonic — symptom once revealed stays revealed",
+      "diagnosis_irreversible_after_commit — DIAGNOSE overwrites previous, cannot revert",
+      "trust_monotonic_per_action — single action changes trust by at most one step",
+      "state_progresses_forward — no backward state transitions (TREATING → INTAKE forbidden)"
+    ]
   },
   "scoring": {
     "components": {
@@ -449,9 +474,18 @@
       }
     },
     "process_score": {
-      "question_relevance": "ratio of ASK actions that revealed new information to total ASK actions",
-      "information_gain_per_turn": "COUNT(new_symptoms_revealed) / turn_count",
-      "redundancy_penalty": "-0.05 per repeated ASK on same topic without new info"
+      "question_relevance": {
+        "method": "match_to_required_symptoms",
+        "compute": "COUNT(ASK WHERE new_symptom IN required_symptoms) / COUNT(ASK)"
+      },
+      "information_gain_per_turn": {
+        "method": "entropy_reduction",
+        "compute": "COUNT(symptoms_revealed_during_ASK) / turn_count"
+      },
+      "redundancy_penalty": {
+        "method": "repeated_query_penalty",
+        "compute": "COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05"
+      }
     },
     "aggregation": "weighted_sum",
     "pass_threshold": 0.7,
