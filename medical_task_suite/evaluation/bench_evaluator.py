@@ -235,18 +235,21 @@ class BenchEvaluator:
         return achieved / len(comm_truth) if comm_truth else 1.0
 
     def _score_process(self, trajectory: List[Dict]) -> float:
-        """Weighted penalty scoring for questioning strategy.
+        """Gradient information value scoring for questioning strategy.
 
         Formula:
-            process_score = relevance_score * 0.4 + gain_score * 0.4 - redundancy_penalty
+            process_score = relevance × 0.3 + gain × 0.5 - redundancy - misleading_penalty
             Clipped to [0, 1].
 
         Where:
-            relevance_score = relevant_asks / total_asks
-            gain_score = gain_per_turn (with -0.2 penalty if < 0.3)
-            redundancy_penalty = 0.1 per repeated symptom ask with no new info
-
-        Partial reveals: gain weight = 0.3 (vs 1.0 for full).
+            information_value per symptom (derived from tier):
+                hidden/resistant → 1.0 (critical)
+                if_asked → 0.6 (supportive)
+                volunteer → 0.3 (weak_signal)
+                misleading/noise → 0.0 (noise)
+            gain = Σ(information_value × reveal_quality_factor) / #questions
+                reveal_quality_factor: full=1.0, partial=0.5
+            misleading_penalty: 0.2 if confounder reveals > true signal reveals
         """
         ps = self.scoring.get("process_score", {})
         if not ps:
@@ -256,50 +259,58 @@ class BenchEvaluator:
         if not ask_steps:
             return 0.0
 
-        # ── 1. Build relevant_questions from patient symptom tiers ──
-        relevant_symptoms = (
+        # ── 1. Build value-weighted symptom sets ──
+        all_relevant = (
             self.patient["symptoms"].get("volunteer", []) +
-            self.patient["symptoms"].get("if_asked", [])
+            self.patient["symptoms"].get("if_asked", []) +
+            self.patient["symptoms"].get("hidden", []) +
+            self.patient["symptoms"].get("resistant", [])
         )
-        relevant_set = set(s.lower() for s in relevant_symptoms)
+        relevant_set = set(s.lower() for s in all_relevant)
+        misleading_set = set(s.lower() for s in self.patient["symptoms"].get("misleading", []))
 
-        # ── 2. question_relevance: ASKs that revealed relevant info / total ASKs ──
+        # ── 2. Calculate relevance, gain, misleading ──
         relevant_ask_count = 0
-        gain_weighted_count = 0.0  # partial=0.3, full=1.0
+        gain_total = 0.0
         revealed_so_far = set()
+        confounder_revealed = set()
+        true_signal_revealed = set()
 
         for s in ask_steps:
             obs = s.get("observation", {})
             revealed = obs.get("symptoms_revealed", [])
             quality = obs.get("reveal_quality", "full")
 
-            new_relevant = []
+            step_has_relevant = False
             for r in revealed:
                 r_lower = r.lower()
-                # Clean partial marker
                 r_clean = r_lower.split(":partial")[0].strip() if ":partial" in r_lower else r_lower
-                if r_clean in relevant_set and r_clean not in revealed_so_far:
-                    new_relevant.append(r)
-                    revealed_so_far.add(r_clean)
-                    # Gain weight: partial=0.3, full=1.0
-                    actual_quality = "partial" if (":partial" in r_lower or quality == "partial") else "full"
-                    gain_weighted_count += 0.3 if actual_quality == "partial" else 1.0
+                is_partial = ":partial" in r_lower or quality == "partial"
+                reveal_factor = 0.5 if is_partial else 1.0
 
-            if new_relevant:
+                info_value = self._get_information_value(r_clean)
+
+                if r_clean in relevant_set and r_clean not in revealed_so_far:
+                    gain_total += info_value * reveal_factor
+                    revealed_so_far.add(r_clean)
+                    step_has_relevant = True
+                    true_signal_revealed.add(r_clean)
+
+                if r_clean in misleading_set:
+                    confounder_revealed.add(r_clean)
+
+            if step_has_relevant:
                 relevant_ask_count += 1
 
         relevance_score = relevant_ask_count / len(ask_steps) if ask_steps else 0.0
 
-        # ── 3. information_gain: weighted gain / total ASKs ──
-        gain_per_turn = gain_weighted_count / len(ask_steps) if ask_steps else 0.0
+        # ── 3. Gain: Σ(information_value × reveal_factor) / #questions ──
+        gain_score = gain_total / len(ask_steps) if ask_steps else 0.0
 
-        # Apply low-gain penalty
-        if gain_per_turn < 0.3:
-            gain_score = max(0.0, gain_per_turn - 0.2)
-        else:
-            gain_score = gain_per_turn
+        # ── 4. Misleading penalty ──
+        misleading_penalty = 0.2 if len(confounder_revealed) > len(true_signal_revealed) else 0.0
 
-        # ── 4. redundancy_penalty: repeated asks on same symptom with no new info ──
+        # ── 5. Redundancy penalty ──
         symptom_ask_count = {}
         redundancy_penalty = 0.0
 
@@ -323,13 +334,37 @@ class BenchEvaluator:
                     if prev >= 1:
                         redundancy_penalty += 0.1
 
-        # ── 5. Final weighted score ──
-        raw_score = relevance_score * 0.4 + gain_score * 0.4 - redundancy_penalty
+        # ── 6. Final weighted score ──
+        raw_score = relevance_score * 0.3 + gain_score * 0.5 - redundancy_penalty - misleading_penalty
         return max(0.0, min(1.0, raw_score))
 
     # ============================================================
     # Helpers
     # ============================================================
+
+    def _get_information_value(self, symptom_lower: str) -> float:
+        """Derive information value from symptom tier (no external knowledge).
+
+        hidden/resistant → 1.0 (critical)
+        if_asked → 0.6 (supportive)
+        volunteer → 0.3 (weak_signal)
+        misleading/noise → 0.0 (noise)
+        """
+        symptoms = self.patient["symptoms"]
+
+        for s in symptoms.get("hidden", []):
+            if s.lower() == symptom_lower:
+                return 1.0
+        for s in symptoms.get("resistant", []):
+            if s.lower() == symptom_lower:
+                return 1.0
+        for s in symptoms.get("if_asked", []):
+            if s.lower() == symptom_lower:
+                return 0.6
+        for s in symptoms.get("volunteer", []):
+            if s.lower() == symptom_lower:
+                return 0.3
+        return 0.0  # misleading or noise
 
     def _weighted_sum(self, scores: Dict[str, Optional[float]]) -> float:
         """Weighted sum excluding None components, renormalizing."""

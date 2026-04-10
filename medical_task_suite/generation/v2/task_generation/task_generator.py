@@ -727,9 +727,11 @@ class MedicalTaskGenerator:
                 "trust_monotonic_per_action — single action changes trust by at most one step",
                 "state_progresses_forward — no backward state transitions (TREATING → INTAKE forbidden)",
                 "gate_state_is_recoverable — soft_locked symptoms can recover to unlocked via open-ended or partial-match questions; locked (hard) remains locked",
-                "partial_reveal_is_degraded — reveal_quality='partial' gives incomplete symptom info (missing severity/temporal); scores at 0.5 weight for info and 0.3 weight for gain",
+                "partial_reveal_is_degraded — reveal_quality='partial' gives incomplete symptom info (missing severity/temporal); scores at 0.5 weight for info and 0.5 × information_value for gain",
                 "consecutive_miss_resets_on_prerequisite_match — any successful prerequisite match resets miss counter to 0",
                 "confounder_priority_is_turn_gated — CONFOUNDER_DOMINANCE only applies when turn <= 2; after turn 2, normal rules apply",
+                "information_value_is_tier_derived — hidden/resistant=1.0(critical), if_asked=0.6(supportive), volunteer=0.3(weak_signal), misleading/noise=0.0(noise); deterministic from patient.symptoms tiers only",
+                "misleading_penalty_is_count_based — IF confounder_unique_revealed > true_signal_unique_revealed THEN penalty=0.2; no randomness",
             ],
         }
 
@@ -1042,30 +1044,45 @@ class MedicalTaskGenerator:
                     "compute": "COUNT(milestone IN communication_truth WHERE achieved) / COUNT(communication_truth)",
                 },
                 "process": {
-                    "method": "weighted_penalty",
+                    "method": "gradient_information_value",
                     "weight": 0.20,
-                    "compute": "relevance_score * 0.4 + gain_score * 0.4 - redundancy_penalty; IF gain_per_turn < 0.3: apply penalty = -0.2",
+                    "compute": "relevance × 0.3 + gain × 0.5 - redundancy - misleading_penalty; gain = Σ(info_value × reveal_factor) / #asks; misleading_penalty = 0.2 IF confounder_revealed > true_signal_revealed",
                 },
             },
             "process_score": {
+                "information_value": {
+                    "description": "gradient value derived from symptom tier (no external knowledge)",
+                    "mapping": {
+                        "hidden": 1.0,
+                        "resistant": 1.0,
+                        "if_asked": 0.6,
+                        "volunteer": 0.3,
+                        "misleading": 0.0,
+                        "noise": 0.0,
+                    },
+                    "labels": {"1.0": "critical", "0.6": "supportive", "0.3": "weak_signal", "0.0": "noise"},
+                },
                 "relevant_questions": {
                     "source": "ground_truth.solution_space.minimal_information_sets.must_collect",
-                    "description": "symptoms from volunteer+if_asked tiers that agent must discover",
+                    "description": "all non-noise symptoms from volunteer+if_asked+hidden+resistant tiers",
                 },
                 "question_relevance": {
                     "method": "relevant_ask_ratio",
                     "compute": "COUNT(ASK WHERE symptoms_revealed INTERSECT relevant_questions > 0) / COUNT(ASK)",
                 },
                 "information_gain": {
-                    "method": "gain_per_ask",
-                    "compute": "COUNT(new_relevant_symptoms_revealed) / COUNT(ASK); relevant = tier IN [volunteer,if_asked]; noise and misleading excluded",
-                    "low_gain_penalty": "IF gain_per_turn < 0.3: score = gain_per_turn - 0.2; ELSE: score = gain_per_turn",
+                    "method": "value_weighted_gain",
+                    "compute": "Σ(information_value[symptom] × reveal_quality_factor) / COUNT(ASK); reveal_quality_factor: full=1.0, partial=0.5",
+                },
+                "misleading_penalty": {
+                    "method": "confounder_dominance_check",
+                    "compute": "IF COUNT(unique confounder symptoms revealed) > COUNT(unique true signal symptoms revealed) → penalty = 0.2; ELSE penalty = 0.0",
                 },
                 "redundancy_penalty": {
                     "method": "repeated_symptom_penalty",
                     "compute": "IF same symptom asked > 1 time with no new info: penalty += 0.1 per repetition (unbounded)",
                 },
-                "aggregation": "relevance_score * 0.4 + gain_score * 0.4 - redundancy_penalty; clipped to [0, 1]",
+                "aggregation": "relevance × 0.3 + gain × 0.5 - redundancy - misleading_penalty; clipped to [0, 1]",
             },
             "aggregation": "weighted_sum_with_null_exclude",
             "pass_threshold": 0.7,
