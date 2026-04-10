@@ -201,6 +201,54 @@ SYMPTOM_TRIGGER_PROBES = {
     "cough": "doctor asks about cough and sputum",
 }
 
+# Path-dependent revelation: each symptom keyword maps to a prerequisite topic
+# that must be asked first (via targeted_question) before the symptom can be revealed.
+# Format: keyword → (prerequisite_topic, [match_keywords_for_prerequisite])
+SYMPTOM_PREREQUISITE_MAP = {
+    "numb":    ("sensation",    ["sensation", "feeling", "numb", "tingling"]),
+    "tingl":   ("sensation",    ["sensation", "feeling", "numb", "tingling"]),
+    "vision":  ("eye",          ["eye", "vision", "sight", "seeing"]),
+    "blur":    ("eye",          ["eye", "vision", "sight", "seeing"]),
+    "sexual":  ("function",     ["sexual", "function", "libido", "intimate"]),
+    "stomach": ("digestion",    ["stomach", "digest", "bowel", "appetite", "eating"]),
+    "appetite": ("digestion",   ["stomach", "digest", "appetite", "eating"]),
+    "breath":  ("breathing",    ["breath", "lung", "respiratory", "breathing"]),
+    "sleep":   ("sleep",        ["sleep", "insomnia", "rest", "tired"]),
+    "swell":   ("fluid",        ["swell", "edema", "fluid", "puffy"]),
+    "urin":    ("urinary",      ["urin", "bathroom", "bladder", "pee", "toilet"]),
+    "chest":   ("cardiac",      ["chest", "heart", "cardiac"]),
+    "dizzy":   ("dizziness",    ["dizzy", "lighthead", "vertigo", "balance"]),
+    "weak":    ("strength",     ["weak", "strength", "muscle", "fatigue"]),
+    "itch":    ("skin",         ["skin", "itch", "rash", "dry"]),
+    "cough":   ("respiratory",  ["cough", "sputum", "phlegm", "throat"]),
+    "pain":    ("pain",         ["pain", "hurt", "ache", "discomfort", "sore"]),
+    "fatigue": ("energy",       ["tired", "fatigue", "energy", "exhaust", "lethargy"]),
+    "headache": ("head",        ["head", "headache", "migraine"]),
+    "nausea":  ("digestion",    ["nausea", "sick", "vomit", "stomach"]),
+    "fever":   ("temperature",  ["fever", "temperature", "chill", "hot"]),
+    "weight":  ("weight",       ["weight", "pound", "heavy", "light"]),
+    "anxiety": ("mood",         ["mood", "worry", "anxiety", "stress", "nervous"]),
+    "joint":   ("joints",       ["joint", "arthr", "stiff", "mobility"]),
+    "heart":   ("cardiac",      ["heart", "palpitat", "heartbeat", "racing"]),
+    "kidney":  ("renal",        ["kidney", "urin", "renal", "flank"]),
+    "back":    ("musculoskeletal", ["back", "spine", "posture"]),
+    "confusion": ("cognitive",  ["confusion", "memory", "thinking", "cognitive"]),
+    "seizure": ("neurological", ["seizure", "convulsion", "episode", "blackout"]),
+    "tremor":  ("movement",     ["tremor", "shaking", "movement", "shak"]),
+    "rash":    ("skin",         ["skin", "rash", "red", "spot"]),
+    "constipat": ("digestion",  ["bowel", "constipat", "stool"]),
+    "diarrhea": ("digestion",   ["bowel", "diarrhea", "loose"]),
+    "thirst":  ("hydration",    ["thirst", "water", "drink", "hydrat"]),
+    "frequent": ("frequency",   ["frequent", "often", "recurring", "constant"]),
+    "hypertension": ("cardiac", ["blood pressure", "heart", "cardiac"]),
+    "blood pressure": ("cardiac", ["blood pressure", "heart", "cardiac"]),
+    "diabetes": ("metabolic",   ["blood sugar", "glucose", "metabolic", "diabetes"]),
+    "glucose": ("metabolic",    ["blood sugar", "glucose", "metabolic", "sugar"]),
+    "depression": ("mood",      ["mood", "depression", "sad", "emotion"]),
+    "insomnia": ("sleep",       ["sleep", "insomnia", "rest", "awake"]),
+    "palpitat": ("cardiac",     ["heart", "palpitat", "heartbeat", "racing"]),
+}
+
 # ============================================================
 # Environment State Machine
 # ============================================================
@@ -615,7 +663,10 @@ class MedicalTaskGenerator:
         }
 
     def _build_observations(self, scenario: ScenarioSpec, symptoms: SymptomSet, disease: str) -> Dict:
-        """Strict step I/O with delta mode, terminal signal, noise model."""
+        """Strict step I/O with delta mode, terminal signal, path-dependent revelation."""
+        # Build path-dependent revelation gates
+        revelation_gates = self._build_revelation_gates(symptoms)
+
         return {
             "mode": "delta",
             "history_included": False,
@@ -639,7 +690,13 @@ class MedicalTaskGenerator:
                 "max_turns_reached": "turn >= max_turns",
             },
             "update_rules": [
-                "ASK(topic) → symptoms_revealed = match from if_asked/hidden pool; state unchanged",
+                # Volunteer symptoms: no gate, revealed on any ASK
+                "ASK(topic,subtype) WHERE symptom IN volunteer → symptoms_revealed = match from volunteer pool; state unchanged",
+                # Path-dependent gates for if_asked/hidden symptoms (generated per task)
+                *revelation_gates,
+                # Permanent lock rule: 2 consecutive prerequisite misses
+                "PERMANENT_LOCK: IF 2 consecutive ASK(targeted) actions fail to match ANY gated symptom's prerequisite → SET gate='locked' for ALL remaining unrevealed gated symptoms",
+                # Other action rules
                 "ORDER_LAB(tests) → state = LABS_PENDING; no output",
                 "GET_RESULTS(id) → lab_results = {test: value}; state = LABS_READY",
                 "DIAGNOSE(d, c) → state = DIAGNOSING",
@@ -651,9 +708,6 @@ class MedicalTaskGenerator:
                 "END() → state = COMPLETE; done = true",
             ],
             "noise_model": {
-                "patient_recall_accuracy": 0.7,
-                "symptom_reveal_probability": "trust_level * cooperation_level",
-                "resistant_threshold": 0.6,
                 "cognitive_noise": {
                     "symptom_misattribution": "patient may attribute symptom to wrong cause (e.g., fatigue → work stress, not disease)",
                     "temporal_distortion": "patient may report 'a few days' when it has been weeks, or vice versa",
@@ -666,8 +720,125 @@ class MedicalTaskGenerator:
                 "diagnosis_irreversible_after_commit — DIAGNOSE overwrites previous, cannot revert",
                 "trust_monotonic_per_action — single action changes trust by at most one step",
                 "state_progresses_forward — no backward state transitions (TREATING → INTAKE forbidden)",
+                "gate_state_is_irreversible — locked symptoms cannot be unlocked; unlocked symptoms cannot be re-locked",
+                "consecutive_miss_resets_on_prerequisite_match — any successful prerequisite match resets global miss counter to 0",
             ],
         }
+
+    def _build_revelation_gates(self, symptoms: SymptomSet) -> List[str]:
+        """Build deterministic prerequisite-gated revelation rules for if_asked/hidden symptoms.
+
+        Each gate rule encodes:
+        1. The prerequisite topic that must be asked first (via targeted_question)
+        2. The reveal condition: ASK(targeted) matching the symptom AFTER prerequisite is met
+        3. The lock condition: ASK(targeted) matching symptom WITHOUT prerequisite → miss_count += 1
+        4. Permanent lock after 2 consecutive misses on the same symptom
+        """
+        gates = []
+
+        # Collect gated symptoms: if_asked and hidden tiers
+        # Deduplicate by patient-friendly term
+        seen_terms = set()
+        gated_symptoms = []
+        for s in symptoms.if_asked + symptoms.hidden:
+            patient_term = self.lang.to_patient(s)
+            # Skip disease names, abbreviations, non-symptoms
+            _SKIP_TERMS = {
+                "copd", "htn", "hld", "ckd", "cad", "chf", "gerd", "t2dm", "t1dm",
+                "chd", "ihd", "dm", "ckd", "esrd", "bph", "oa", "ra", "sle",
+                "ms", "als", "adhd", "ptsd", "tb", "hiv", "ap", "gid",
+            }
+            if patient_term.lower().strip() in _SKIP_TERMS:
+                continue
+            if len(patient_term) <= 3:
+                continue
+            # Skip terms that are disease names (mapped in CLINICAL_TO_PATIENT as disease→disease)
+            _DISEASE_INDICATORS = {
+                "heart", "disease", "syndrome", "disorder", "heart disease",
+                "atherosclerotic", "ischemic", "coronary",
+            }
+            # If ALL words in the term are disease indicators, skip it
+            words_in_term = set(patient_term.lower().split())
+            if words_in_term and words_in_term.issubset(_DISEASE_INDICATORS):
+                continue
+            if patient_term.lower() in seen_terms:
+                continue
+            seen_terms.add(patient_term.lower())
+            gated_symptoms.append((s, patient_term))
+
+        if not gated_symptoms:
+            return gates
+
+        for symptom_raw, patient_term in gated_symptoms:
+            prereq_topic, prereq_keywords = self._find_prerequisite(symptom_raw)
+
+            # Build the match pattern for prerequisite
+            prereq_pattern = "|".join(prereq_keywords[:3])
+
+            # Build symptom match pattern (patient-friendly term keywords)
+            sym_keywords = self._extract_symptom_keywords(patient_term)
+            sym_pattern = "|".join(sym_keywords[:3])
+
+            gates.append(
+                f"REVELATION_GATE(symptom='{patient_term}', "
+                f"prerequisite='[{prereq_pattern}]'): "
+                f"IF action.type==ASK AND action.subtype==targeted AND question MATCHES [{prereq_pattern}] "
+                f"→ gate_state['{patient_term}']='unlocked'; "
+                f"IF action.type==ASK AND action.subtype==targeted AND question MATCHES [{sym_pattern}] "
+                f"AND gate_state['{patient_term}']=='unlocked' "
+                f"→ symptoms_revealed=['{patient_term}']; "
+                f"IF action.type==ASK AND action.subtype==targeted AND question MATCHES [{sym_pattern}] "
+                f"AND gate_state['{patient_term}'] IN ['locked','init'] "
+                f"→ symptoms_revealed=[]; miss_count['{patient_term}']+=1; "
+                f"IF miss_count['{patient_term}']>=2 → gate_state['{patient_term}']='locked'"
+            )
+
+        return gates
+
+    def _find_prerequisite(self, symptom: str) -> tuple:
+        """Find prerequisite topic and keywords for a symptom based on keyword matching.
+
+        Strategy:
+        1. Direct keyword match in SYMPTOM_PREREQUISITE_MAP
+        2. Check if patient-friendly term maps back to a clinical term in CLINICAL_TO_PATIENT
+        3. Fallback: use the most specific significant word
+        """
+        s = symptom.lower().strip()
+
+        # 1. Direct keyword match
+        for keyword, (topic, keywords) in SYMPTOM_PREREQUISITE_MAP.items():
+            if keyword in s:
+                return topic, keywords
+
+        # 2. Reverse-lookup: find which clinical term maps to this symptom
+        for clinical, patient in CLINICAL_TO_PATIENT.items():
+            if patient.lower() == s or clinical in s:
+                # Found the clinical origin — use its keywords
+                for kw, (topic, kws) in SYMPTOM_PREREQUISITE_MAP.items():
+                    if kw in clinical.lower():
+                        return topic, kws
+
+        # 3. Fallback: use most significant word, but derive prerequisite from broader category
+        words = [w for w in s.split() if len(w) > 3]
+        if words:
+            # Use the most distinctive word as symptom keyword, a broader term as prerequisite
+            distinctive = words[-1] if len(words) > 1 else words[0]
+            broader = words[0] if len(words) > 1 else "general"
+            return broader, [broader]
+        return s, [s]
+
+    def _extract_symptom_keywords(self, patient_term: str) -> List[str]:
+        """Extract searchable keywords from a patient-friendly symptom term."""
+        # Split into words, filter short words, keep meaningful parts
+        words = patient_term.lower().replace("'", "").split()
+        keywords = []
+        for w in words:
+            if len(w) >= 3 and w not in ("the", "and", "for", "has", "been", "have", "with", "not", "but"):
+                keywords.append(w)
+        # Always include the full term as last resort
+        if not keywords:
+            keywords = [patient_term.lower()]
+        return keywords
 
     def _build_scoring(self, scenario: ScenarioSpec, disease: str) -> Dict:
         """Fully specified scoring with compute per component."""
