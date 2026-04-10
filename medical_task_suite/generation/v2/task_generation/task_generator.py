@@ -705,7 +705,7 @@ class MedicalTaskGenerator:
                 # ── OTHER ACTION RULES ──
                 "ORDER_LAB(tests) → state = LABS_PENDING; no output",
                 "GET_RESULTS(id) → lab_results = {test: value}; state = LABS_READY",
-                "DIAGNOSE(d, c) → state = DIAGNOSING",
+                "DIAGNOSE(d, c) → state = DIAGNOSING; diagnosis_locked = true; all subsequent ASK → gain × 0.3; hidden symptoms permanently locked",
                 "CHECK_ALLERGY() → patient_message = allergy info",
                 "CHECK_INTERACTION(drugs) → patient_message = interaction info",
                 "PRESCRIBE(drug) → state = TREATING; IF CHECK_ALLERGY not done: error",
@@ -732,6 +732,9 @@ class MedicalTaskGenerator:
                 "confounder_priority_is_turn_gated — CONFOUNDER_DOMINANCE only applies when turn <= 2; after turn 2, normal rules apply",
                 "information_value_is_tier_derived — hidden/resistant=1.0(critical), if_asked=0.6(supportive), volunteer=0.3(weak_signal), misleading/noise=0.0(noise); deterministic from patient.symptoms tiers only",
                 "misleading_penalty_is_count_based — IF confounder_unique_revealed > true_signal_unique_revealed THEN penalty=0.2; no randomness",
+                "trust_decays_on_irrelevant_ask — each ASK that reveals no new relevant symptom: trust -= 0.05; IF trust < 0.6: revealed symptoms include noise; IF trust < 0.4: previously revealed symptoms get confidence=degraded (info_value × 0.5)",
+                "diagnosis_locks_exploration — after DIAGNOSE: hidden symptoms permanently locked; subsequent ASK gain × 0.3; alternative solution paths disabled",
+                "paths_are_mutually_exclusive — each minimal_information_set has ≥1 unique symptom not in other sets; IF agent mixes symptoms from different paths: inconsistency_penalty = 0.2",
             ],
         }
 
@@ -1078,11 +1081,23 @@ class MedicalTaskGenerator:
                     "method": "confounder_dominance_check",
                     "compute": "IF COUNT(unique confounder symptoms revealed) > COUNT(unique true signal symptoms revealed) → penalty = 0.2; ELSE penalty = 0.0",
                 },
+                "path_consistency": {
+                    "method": "exclusivity_check",
+                    "compute": "IF agent reveals symptoms from >1 minimal_information_set → inconsistency_penalty = 0.2; ELSE penalty = 0.0",
+                },
                 "redundancy_penalty": {
                     "method": "repeated_symptom_penalty",
                     "compute": "IF same symptom asked > 1 time with no new info: penalty += 0.1 per repetition (unbounded)",
                 },
-                "aggregation": "relevance × 0.3 + gain × 0.5 - redundancy - misleading_penalty; clipped to [0, 1]",
+                "trust_decay": {
+                    "method": "irrelevant_ask_decay",
+                    "compute": "trust starts at 1.0; each ASK with no new relevant reveal: trust -= 0.05; IF trust < 0.6: noise contamination; IF trust < 0.4: info_value × 0.5 for all previously revealed",
+                },
+                "delay_penalty": {
+                    "method": "post_diagnosis_ask_cost",
+                    "compute": "IF ASK occurs after DIAGNOSE in trajectory: gain × 0.3 for those steps; IF hidden symptom revealed after DIAGNOSE: value = 0.0",
+                },
+                "aggregation": "relevance × 0.25 + gain × 0.35 + path_consistency × 0.2 - redundancy - misleading_penalty - delay_penalty; clipped to [0, 1]",
             },
             "aggregation": "weighted_sum_with_null_exclude",
             "pass_threshold": 0.7,
@@ -1675,7 +1690,7 @@ class MedicalTaskGenerator:
         hidden_patient = [self.lang.to_patient(s) for s in (symptoms.hidden + symptoms.resistant)[:3]]
         required_tests = [lab["test_name"] for lab in lab_panel[:5]] if lab_panel else ["CBC", "BMP"]
 
-        # ── Build ≥2 minimal_information_sets (different reasoning paths) ──
+        # ── Build ≥2 minimal_information_sets (mutually exclusive paths) ──
         # Path A (classic/optimal): volunteer + if_asked — front-door approach
         #   Lower info_value (0.3–0.6) but no gates required
         path_a_collect = list(volunteer_patient[:1]) + list(if_asked_patient[:1])
@@ -1683,10 +1698,11 @@ class MedicalTaskGenerator:
 
         # Path B (atypical/non-optimal): hidden + resistant — deep-dive approach
         #   Higher info_value (1.0) but requires prerequisite gates → more turns
+        #   MUST have ≥1 unique symptom not in Path A (mutual exclusivity)
         path_b_collect = list(hidden_patient[:2])
         path_b_tests = required_tests[:2]
 
-        # Ensure paths are distinct: no symptom in both paths
+        # Enforce mutual exclusivity: no shared symptoms between paths
         a_lower = set(s.lower() for s in path_a_collect)
         path_b_collect = [s for s in path_b_collect if s.lower() not in a_lower]
 
@@ -1707,6 +1723,28 @@ class MedicalTaskGenerator:
                 candidate = pool.pop(0)
                 if candidate.lower() not in {s.lower() for s in path_collect}:
                     path_collect.append(candidate)
+
+        # Guarantee mutual exclusivity: verify each path has ≥1 unique symptom
+        a_set = set(s.lower() for s in path_a_collect)
+        b_set = set(s.lower() for s in path_b_collect)
+        a_unique = a_set - b_set
+        b_unique = b_set - a_set
+        if not a_unique or not b_unique:
+            # Force uniqueness by moving one symptom
+            all_syms = [s for s in (volunteer_patient + if_asked_patient + hidden_patient)]
+            for s in all_syms:
+                s_lower = s.lower()
+                if s_lower not in a_set and s_lower not in b_set:
+                    if not b_unique:
+                        path_b_collect.append(s)
+                        b_set.add(s_lower)
+                        b_unique.add(s_lower)
+                    elif not a_unique:
+                        path_a_collect.append(s)
+                        a_set.add(s_lower)
+                        a_unique.add(s_lower)
+                    if a_unique and b_unique:
+                        break
 
         minimal_sets = [
             {

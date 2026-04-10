@@ -54,9 +54,13 @@ class BenchEvaluator:
         scores = {}
         errors = []
 
-        scores["diagnosis"] = self._score_diagnosis(trajectory)
+        # Detect path mixing (used by multiple components)
+        revealed_set = self._get_revealed_symptoms_set(trajectory)
+        path_mixing = self._is_path_mixing(revealed_set)
+
+        scores["diagnosis"] = self._score_diagnosis(trajectory, path_mixing=path_mixing)
         scores["safety"] = self._score_safety(trajectory)
-        scores["info"] = self._score_info(trajectory)
+        scores["info"] = self._score_info(trajectory, path_mixing=path_mixing)
         scores["treatment"] = self._score_treatment(trajectory)
         scores["communication"] = self._score_communication(trajectory)
         scores["process"] = self._score_process(trajectory)
@@ -70,6 +74,10 @@ class BenchEvaluator:
         # Critical failure check
         if self._check_critical_failure(scores, trajectory):
             total = 0.0
+
+        # Global inconsistency penalty: path mixing degrades total
+        if path_mixing:
+            total -= 0.1
 
         # Efficiency adjustment
         n_turns = len(trajectory)
@@ -91,12 +99,13 @@ class BenchEvaluator:
     # Component Scorers
     # ============================================================
 
-    def _score_diagnosis(self, trajectory: List[Dict]) -> float:
+    def _score_diagnosis(self, trajectory: List[Dict], path_mixing: bool = False) -> float:
         """set_match: check if agent diagnosis matches target or acceptable.
 
         Multi-path: diagnosis is correct if string matches AND
         agent collected sufficient evidence for ANY minimal_information_set.
         Lucky guess (correct string, no path satisfied) → 0.5.
+        Path mixing: inconsistent evidence → cap at 0.5.
         """
         agent_diagnosis = self._extract_diagnosis(trajectory)
         if agent_diagnosis is None:
@@ -145,6 +154,10 @@ class BenchEvaluator:
             # Lucky guess — correct string but insufficient evidence
             return min(match_score, 0.5)
 
+        # Path mixing: inconsistent evidence → cap diagnosis
+        if path_mixing:
+            return min(match_score, 0.5)
+
         return match_score
 
     def _score_safety(self, trajectory: List[Dict]) -> float:
@@ -173,11 +186,12 @@ class BenchEvaluator:
 
         return max(0.0, 1.0 - violations / len(safety_rules))
 
-    def _score_info(self, trajectory: List[Dict]) -> float:
+    def _score_info(self, trajectory: List[Dict], path_mixing: bool = False) -> float:
         """count_ratio: revealed volunteer+if_asked / total volunteer+if_asked.
 
         Partial reveals count as 0.5 (degraded info).
         Full reveals count as 1.0.
+        Path mixing: info contaminated → score × 0.6.
         """
         symptoms_spec = self.patient["symptoms"]
         relevant_symptoms = (
@@ -212,7 +226,11 @@ class BenchEvaluator:
                 else:
                     score += 0.5  # partial reveal
 
-        return score / len(relevant_symptoms)
+        raw = score / len(relevant_symptoms)
+        # Path mixing: contaminated information → reduce
+        if path_mixing:
+            raw *= 0.6
+        return raw
 
     def _score_treatment(self, trajectory: List[Dict]) -> Optional[float]:
         """required_done: prescribed required drugs / total required drugs."""
@@ -273,21 +291,20 @@ class BenchEvaluator:
         return achieved / len(comm_truth) if comm_truth else 1.0
 
     def _score_process(self, trajectory: List[Dict]) -> float:
-        """Gradient information value scoring for questioning strategy.
+        """Partially reversible, path-dependent scoring.
 
         Formula:
-            process_score = relevance × 0.3 + gain × 0.5 - redundancy - misleading_penalty
+            process = relevance × 0.25 + gain × 0.35 + path_consistency × 0.2
+                      - redundancy - misleading_penalty - delay_penalty
             Clipped to [0, 1].
 
-        Where:
-            information_value per symptom (derived from tier):
-                hidden/resistant → 1.0 (critical)
-                if_asked → 0.6 (supportive)
-                volunteer → 0.3 (weak_signal)
-                misleading/noise → 0.0 (noise)
-            gain = Σ(information_value × reveal_quality_factor) / #questions
-                reveal_quality_factor: full=1.0, partial=0.5
-            misleading_penalty: 0.2 if confounder reveals > true signal reveals
+        Mechanisms:
+            trust_decay: irrelevant/repeated ASK → trust -= 0.05
+                trust < 0.6 → noise contamination
+                trust < 0.4 → info_value × 0.5 for all previously revealed
+            diagnosis_lock: after DIAGNOSE, subsequent ASK gain × 0.3
+                hidden symptoms after DIAGNOSE → value = 0.0
+            path_consistency: mixing paths → penalty 0.2
         """
         ps = self.scoring.get("process_score", {})
         if not ps:
@@ -296,6 +313,13 @@ class BenchEvaluator:
         ask_steps = [s for s in trajectory if self._action_id_to_name(s.get("action")) == "ASK"]
         if not ask_steps:
             return 0.0
+
+        # ── Find DIAGNOSE position for delay penalty ──
+        diagnose_turn = None
+        for step in trajectory:
+            if self._action_id_to_name(step.get("action")) == "DIAGNOSE":
+                diagnose_turn = step.get("t", None)
+                break
 
         # ── 1. Build value-weighted symptom sets ──
         all_relevant = (
@@ -306,18 +330,24 @@ class BenchEvaluator:
         )
         relevant_set = set(s.lower() for s in all_relevant)
         misleading_set = set(s.lower() for s in self.patient["symptoms"].get("misleading", []))
+        hidden_set = set(s.lower() for s in self.patient["symptoms"].get("hidden", []))
 
-        # ── 2. Calculate relevance, gain, misleading ──
+        # ── 2. Compute gain with trust decay + diagnosis lock ──
+        trust = 1.0
         relevant_ask_count = 0
         gain_total = 0.0
         revealed_so_far = set()
         confounder_revealed = set()
         true_signal_revealed = set()
+        # Track which symptoms were revealed AFTER diagnosis (for delay penalty)
+        post_diagnosis_revealed = set()
 
         for s in ask_steps:
             obs = s.get("observation", {})
             revealed = obs.get("symptoms_revealed", [])
             quality = obs.get("reveal_quality", "full")
+            step_turn = s.get("t", 0)
+            is_post_diagnosis = diagnose_turn is not None and step_turn > diagnose_turn
 
             step_has_relevant = False
             for r in revealed:
@@ -328,6 +358,19 @@ class BenchEvaluator:
 
                 info_value = self._get_information_value(r_clean)
 
+                # DIAGNOSE lock: hidden symptoms after DIAGNOSE → value = 0
+                if is_post_diagnosis and r_clean in hidden_set:
+                    continue
+
+                # DIAGNOSE lock: post-diagnosis gain × 0.3
+                if is_post_diagnosis:
+                    info_value *= 0.3
+                    post_diagnosis_revealed.add(r_clean)
+
+                # Trust decay: apply degraded factor
+                if trust < 0.4:
+                    info_value *= 0.5
+
                 if r_clean in relevant_set and r_clean not in revealed_so_far:
                     gain_total += info_value * reveal_factor
                     revealed_so_far.add(r_clean)
@@ -337,21 +380,28 @@ class BenchEvaluator:
                 if r_clean in misleading_set:
                     confounder_revealed.add(r_clean)
 
+            # Trust decay: irrelevant ASK → trust -= 0.05
+            if not step_has_relevant:
+                trust = max(0.0, trust - 0.05)
+
             if step_has_relevant:
                 relevant_ask_count += 1
 
         relevance_score = relevant_ask_count / len(ask_steps) if ask_steps else 0.0
 
-        # ── 3. Gain: Σ(information_value × reveal_factor) / #questions ──
+        # ── 3. Gain ──
         gain_score = gain_total / len(ask_steps) if ask_steps else 0.0
 
         # ── 4. Misleading penalty ──
         misleading_penalty = 0.2 if len(confounder_revealed) > len(true_signal_revealed) else 0.0
 
-        # ── 5. Non-optimal path penalty ──
-        nonoptimal_penalty = self._compute_nonoptimal_penalty(revealed_so_far)
+        # ── 5. Path consistency ──
+        path_consistency = self._compute_path_consistency(revealed_so_far)
 
-        # ── 6. Redundancy penalty ──
+        # ── 6. Delay penalty: ASK after DIAGNOSE ──
+        delay_penalty = 0.05 * len(post_diagnosis_revealed) if post_diagnosis_revealed else 0.0
+
+        # ── 7. Redundancy penalty ──
         symptom_ask_count = {}
         redundancy_penalty = 0.0
 
@@ -375,8 +425,13 @@ class BenchEvaluator:
                     if prev >= 1:
                         redundancy_penalty += 0.1
 
-        # ── 7. Final weighted score ──
-        raw_score = relevance_score * 0.3 + gain_score * 0.5 - redundancy_penalty - misleading_penalty - nonoptimal_penalty
+        # ── 8. Final score ──
+        raw_score = (relevance_score * 0.25
+                     + gain_score * 0.35
+                     + path_consistency * 0.2
+                     - redundancy_penalty
+                     - misleading_penalty
+                     - delay_penalty)
         return max(0.0, min(1.0, raw_score))
 
     # ============================================================
@@ -456,22 +511,40 @@ class BenchEvaluator:
                 revealed.add(s_clean)
         return revealed
 
-    def _compute_nonoptimal_penalty(self, revealed_so_far: set) -> float:
-        """Check if agent used a non-optimal path → penalty 0.1.
+    def _is_path_mixing(self, revealed_so_far: set) -> bool:
+        """Check if agent mixed symptoms from >1 minimal_information_set."""
+        solution_space = self.gt.get("solution_space", {})
+        minimal_sets = solution_space.get("derived_from", {}).get("minimal_information_sets", [])
+        if not minimal_sets or isinstance(minimal_sets, dict):
+            return False
 
-        Logic:
-        1. Find which minimal_information_set the agent best satisfies
-        2. If the best path is non-optimal → penalty
-        3. If optimal path is satisfied → no penalty
+        satisfied_count = 0
+        for path in minimal_sets:
+            must_collect = path.get("must_collect", [])
+            if not must_collect:
+                continue
+            collected = sum(1 for s in must_collect if s.lower() in revealed_so_far)
+            if collected >= max(1, len(must_collect) * 0.7):
+                satisfied_count += 1
+
+        return satisfied_count > 1
+
+    def _compute_path_consistency(self, revealed_so_far: set) -> float:
+        """Compute path consistency score (0.0 to 1.0).
+
+        Rules:
+        1. Identify which paths the agent satisfied (≥70% of must_collect)
+        2. IF agent mixes >1 path → inconsistency_penalty = -0.2 → return 0.0
+        3. IF agent uses non-optimal path only → return 0.5
+        4. IF agent uses optimal path only → return 1.0
+        5. IF no path satisfied → return 0.0
         """
         solution_space = self.gt.get("solution_space", {})
         minimal_sets = solution_space.get("derived_from", {}).get("minimal_information_sets", [])
         if not minimal_sets or isinstance(minimal_sets, dict):
-            return 0.0  # Legacy format
+            return 1.0  # Legacy format — no path constraint
 
-        optimal_satisfied = False
-        nonoptimal_satisfied = False
-
+        satisfied_paths = []
         for path in minimal_sets:
             must_collect = path.get("must_collect", [])
             if not must_collect:
@@ -479,15 +552,18 @@ class BenchEvaluator:
             collected = sum(1 for s in must_collect if s.lower() in revealed_so_far)
             threshold = max(1, len(must_collect) * 0.7)
             if collected >= threshold:
-                if path.get("is_optimal", True):
-                    optimal_satisfied = True
-                else:
-                    nonoptimal_satisfied = True
+                satisfied_paths.append(path)
 
-        # Penalty only if agent used ONLY non-optimal path (optimal not satisfied)
-        if nonoptimal_satisfied and not optimal_satisfied:
-            return 0.1
-        return 0.0
+        if len(satisfied_paths) > 1:
+            # Path mixing penalty
+            return 0.0
+        elif len(satisfied_paths) == 1:
+            if satisfied_paths[0].get("is_optimal", True):
+                return 1.0
+            else:
+                return 0.5
+        else:
+            return 0.0
 
     def _efficiency_adjustment(self, turns: int, min_turns: int, max_turns: int) -> float:
         eff = self.scoring.get("efficiency", {})

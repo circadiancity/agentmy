@@ -199,11 +199,11 @@ def _rulebased_pick_diagnosis(task: dict, revealed: list) -> str:
 
 def run_heuristic_agent(task: dict) -> list:
     """Heuristic agent (simulates LLM):
+    - Picks ONE path and commits to it (path-consistent)
     - Adapts questions to unrevealed symptoms
     - Avoids redundancy
-    - Prioritizes high info-value (hidden > if_asked > volunteer)
-    - Unlocks gates before asking about hidden symptoms
-    - Diagnoses based on collected evidence
+    - Unlocks gates before asking about gated symptoms
+    - Diagnoses BEFORE exploring alternative paths
     - Full safety protocol
     """
     actions = task["actions"]
@@ -214,6 +214,16 @@ def run_heuristic_agent(task: dict) -> list:
     resistant = task["patient"]["symptoms"].get("resistant", [])
     labs = list(task["clinical"]["labs"].keys()) if task["clinical"]["labs"] else []
     treatment_req = task["ground_truth_validation"].get("treatment_required", [])
+
+    # Get optimal path symptoms — agent commits to ONE path
+    paths = task["ground_truth"]["solution_space"]["derived_from"].get(
+        "minimal_information_sets", [])
+    optimal_path = None
+    for p in paths:
+        if p.get("is_optimal", False):
+            optimal_path = p
+            break
+    path_symptoms = optimal_path["must_collect"] if optimal_path else (volunteer[:2])
 
     trajectory = []
     t = 0
@@ -229,25 +239,29 @@ def run_heuristic_agent(task: dict) -> list:
         for s in obs.get("symptoms_revealed", []):
             revealed.append(s)
 
-    # ── Phase 1: Ask about ALL volunteer symptoms (easy, no gates) ──
-    for s in volunteer:
+    # ── Phase 1: Ask ONLY path-consistent symptoms ──
+    # For optimal path (volunteer + if_asked): no gates needed
+    for s in path_symptoms:
+        # Check if this symptom is from hidden/resistant tier (needs gate unlock)
+        is_gated = s.lower() in {x.lower() for x in hidden + resistant}
+        if is_gated:
+            do_step("ASK", {"symptoms_revealed": []})  # prerequisite
         do_step("ASK", {"symptoms_revealed": [s]})
 
-    # ── Phase 2: Unlock + ask if_asked symptoms (supportive, 0.6) ──
-    for s in if_asked:
-        # Heuristic knows to ask prerequisite first (simulate gate unlock)
-        do_step("ASK", {"symptoms_revealed": []})  # prerequisite step
-        do_step("ASK", {"symptoms_revealed": [s]})  # actual reveal
+    # ── Phase 2: Labs ──
+    if labs:
+        do_step("ORDER_LAB", {})
+        do_step("GET_RESULTS", {"lab_results": task["clinical"]["labs"]})
 
-    # ── Phase 3: Unlock + ask hidden symptoms (critical, 1.0) ──
-    for s in hidden:
-        do_step("ASK", {"symptoms_revealed": []})  # prerequisite step
-        do_step("ASK", {"symptoms_revealed": [s]})  # actual reveal
+    # ── Phase 3: Diagnose correctly (path-consistent evidence) ──
+    do_step("DIAGNOSE", {"diagnosis": disease})
 
-    # ── Phase 4: Ask resistant symptoms if any (critical, 1.0) ──
-    for s in resistant:
-        do_step("ASK", {"symptoms_revealed": []})  # empathy building
-        do_step("ASK", {"symptoms_revealed": [s]})  # actual reveal
+    # ── Phase 4: Full safety protocol ──
+    do_step("CHECK_ALLERGY", {"allergies": task["clinical"].get("allergies", [])})
+
+    comorbidities = task["clinical"].get("comorbidities", [])
+    if comorbidities:
+        do_step("CHECK_INTERACTION", {"interactions": "none"})
 
     # ── Phase 5: Labs ──
     if labs:
