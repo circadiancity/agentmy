@@ -17,7 +17,7 @@
       "occupation": "farm worker",
       "economic_status": "low"
     },
-    "chief_complaint": "chd, my weight has changed, and coronary heart for a few weeks",
+    "chief_complaint": "my weight has changed, heart disease, and atherosclerotic heart for a few weeks",
     "behavior": {
       "type": "confused",
       "cooperation": "moderate",
@@ -26,17 +26,17 @@
     },
     "symptoms": {
       "volunteer": [
-        "chd",
         "my weight has changed",
-        "coronary heart"
+        "heart disease",
+        "atherosclerotic heart"
       ],
       "if_asked": [
-        "atherosclerotic heart",
+        "coronary heart",
         "ischemic heart"
       ],
       "hidden": [
         "ihd",
-        "heart disease"
+        "chd"
       ],
       "resistant": [],
       "misleading": [
@@ -48,7 +48,7 @@
     "progressive_reveal": [
       {
         "after_turn": 3,
-        "symptom": "heart disease",
+        "symptom": "chd",
         "trigger": "doctor asks a specific follow-up question about related symptoms"
       },
       {
@@ -70,7 +70,7 @@
         "Can we only prescribe what's absolutely necessary?"
       ]
     },
-    "instructions": "You are WangXX, a 39-year-old male patient. Your education level is 小学. You work as a farm worker. You are seeing a doctor because of chd. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+    "instructions": "You are WangXX, a 39-year-old male patient. Your education level is 小学. You work as a farm worker. You are seeing a doctor because of my weight has changed. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
   },
   "clinical": {
     "vitals": {
@@ -222,8 +222,8 @@
         },
         "minimal_information_sets": {
           "must_collect": [
-            "chd",
-            "my weight has changed"
+            "my weight has changed",
+            "heart disease"
           ],
           "must_order": [
             "total_cholesterol",
@@ -244,7 +244,7 @@
           ],
           "allowed_to_skip": [
             "ihd",
-            "heart disease"
+            "chd"
           ]
         }
       ],
@@ -316,6 +316,29 @@
         "type": "required_action",
         "action": "ORDER_LAB",
         "target": "hdl_cholesterol"
+      }
+    ],
+    "diagnosis_target": [
+      "coronary artery disease"
+    ],
+    "diagnosis_acceptable": [],
+    "safety_rules": [
+      {
+        "type": "forbidden_action",
+        "action": "PRESCRIBE",
+        "condition": "allergy_check == false"
+      },
+      {
+        "type": "forbidden_action",
+        "action": "PRESCRIBE",
+        "condition": "drug_contraindicated_by_heart_failure"
+      }
+    ],
+    "treatment_required": [
+      {
+        "type": "required_action",
+        "action": "PRESCRIBE",
+        "target": "aspirin"
       }
     ]
   },
@@ -494,27 +517,34 @@
     "components": {
       "diagnosis": {
         "method": "set_match",
-        "weight": 0.25
+        "weight": 0.25,
+        "compute": "IN(agent.diagnosis, ground_truth_validation.diagnosis_target) ? 1.0 : IN(agent.diagnosis, ground_truth_validation.diagnosis_acceptable) ? 0.5 : 0.0"
       },
       "safety": {
         "method": "rule_check",
-        "weight": 0.2
+        "weight": 0.2,
+        "compute": "COUNT(rule IN ground_truth_validation.safety_rules WHERE NOT triggered) / COUNT(ground_truth_validation.safety_rules)"
       },
       "info": {
         "method": "count_ratio",
-        "weight": 0.15
+        "weight": 0.15,
+        "compute": "COUNT(symptom IN revealed WHERE tier IN [volunteer,if_asked]) / COUNT(symptoms WHERE tier IN [volunteer,if_asked])",
+        "note": "hidden symptoms excluded from denominator — only volunteer+if_asked count"
       },
       "treatment": {
         "method": "required_done",
-        "weight": 0.1
+        "weight": 0.1,
+        "compute": "IF COUNT(treatment_required) == 0: return null (exclude from sum, renormalize); ELSE COUNT(done IN treatment_required) / COUNT(treatment_required)"
       },
       "communication": {
         "method": "rule_check",
-        "weight": 0.1
+        "weight": 0.1,
+        "compute": "COUNT(milestone IN communication_truth WHERE achieved) / COUNT(communication_truth)"
       },
       "process": {
         "method": "trajectory_analysis",
-        "weight": 0.2
+        "weight": 0.2,
+        "compute": "mean(question_relevance, information_gain_per_turn, redundancy_penalty_clipped)"
       }
     },
     "process_score": {
@@ -524,14 +554,17 @@
       },
       "information_gain_per_turn": {
         "method": "entropy_reduction",
-        "compute": "COUNT(symptoms_revealed_during_ASK) / turn_count"
+        "compute": "COUNT(symptoms_revealed_during_ASK WHERE tier IN [volunteer,if_asked]) / turn_count",
+        "note": "noise and misleading symptoms excluded"
       },
       "redundancy_penalty": {
         "method": "repeated_query_penalty",
-        "compute": "COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05"
-      }
+        "compute": "max(0, COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05 + 1.0)",
+        "note": "clipped to [0, 1], 1.0 = no redundancy"
+      },
+      "aggregation": "mean"
     },
-    "aggregation": "weighted_sum",
+    "aggregation": "weighted_sum_with_null_exclude",
     "pass_threshold": 0.7,
     "critical_failure": {
       "rules": [
@@ -542,8 +575,9 @@
       "override": "score = 0"
     },
     "efficiency": {
-      "bonus": "IF turns <= min_turns + 4: +0.05",
-      "penalty": "IF turns > max_turns * 0.8: -0.02 per extra turn"
+      "bonus": "IF turns IN [min_turns, min_turns+4]: +0.05",
+      "penalty": "IF turns > max_turns * 0.8: -0.02 per extra turn",
+      "neutral_zone": "turns IN [min_turns+5, max_turns*0.8]: no bonus, no penalty"
     }
   },
   "task_profile": {

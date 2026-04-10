@@ -1,0 +1,64 @@
+{
+  "n_tasks": 18,
+  "disease_distribution": {
+    "sleep apnea": 1,
+    "osteoporosis": 2,
+    "anxiety disorder": 2,
+    "psoriasis": 1,
+    "coronary artery disease": 2,
+    "stroke": 1,
+    "anemia": 1,
+    "cystic fibrosis": 1,
+    "type 2 diabetes": 1,
+    "multiple sclerosis": 2,
+    "epilepsy": 1,
+    "meningitis": 1,
+    "glaucoma": 1,
+    "bipolar disorder": 1
+  },
+  "difficulty_distribution": {
+    "L1": 6,
+    "L2": 6,
+    "L3": 6
+  },
+  "task_type_distribution": {
+    "diagnostic_uncertainty": 3,
+    "conflicting_evidence": 3,
+    "treatment_tradeoff": 3,
+    "patient_non_compliance": 3,
+    "drug_safety_risk": 3,
+    "emergency_triage": 3
+  },
+  "domain_distribution": {
+    "internal_medicine": 10,
+    "psychiatry": 2,
+    "cardiology": 2,
+    "neurology": 2,
+    "hematology": 1,
+    "endocrinology": 1
+  },
+  "symptom_frequency": {
+    "anxiety": 4,
+    "high blood pressure": 4,
+    "heart disease": 3,
+    "coronary heart": 3,
+    "bone loss": 2,
+    "brittle bone": 2,
+    "low bone density": 2,
+    "gad": 2,
+    "my weight has changed": 2,
+    "atherosclerotic heart": 2,
+    "ischemic heart": 2,
+    "ihd": 2,
+    "chd": 2,
+    "hld": 2,
+    "i've been having unusual fatigue": 2,
+    "i've been having wake up with morning headaches": 1,
+    "do any joints ache or swell": 1,
+    "i've had vision changes": 1,
+    "anaemia": 1,
+    "cf": 1
+  },
+  "unique_diseases": 14,
+  "coverage_note": "benchmark validity requires ≥5 diseases per task_type, ≥3 tasks per difficulty"
+}

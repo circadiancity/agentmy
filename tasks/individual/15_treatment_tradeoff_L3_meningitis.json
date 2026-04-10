@@ -17,7 +17,7 @@
       "occupation": "manager",
       "economic_status": "moderate"
     },
-    "chief_complaint": "i've been having rash for a few weeks",
+    "chief_complaint": "i've been having sensitive to light for a few weeks",
     "behavior": {
       "type": "pressuring",
       "cooperation": "moderate",
@@ -26,11 +26,11 @@
     },
     "symptoms": {
       "volunteer": [
-        "i've been having rash"
+        "i've been having sensitive to light"
       ],
       "if_asked": [],
       "hidden": [
-        "i've been having sensitive to light"
+        "i've been having rash"
       ],
       "resistant": [],
       "misleading": [
@@ -43,7 +43,7 @@
     "progressive_reveal": [
       {
         "after_turn": 4,
-        "symptom": "i've been having sensitive to light",
+        "symptom": "i've been having rash",
         "trigger": "doctor asks a specific follow-up question about related symptoms"
       }
     ],
@@ -60,7 +60,7 @@
         "Can we only prescribe what's absolutely necessary?"
       ]
     },
-    "instructions": "You are WangXX, a 10-year-old male patient. Your education level is 大学. You work as a manager. You are seeing a doctor because of i've been having rash. This has been going on for about a few weeks. You want this visit to be quick. Express impatience if the doctor asks too many questions. Push for a quick diagnosis and treatment. You've been dealing with this for a while and you want answers NOW. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+    "instructions": "You are WangXX, a 10-year-old male patient. Your education level is 大学. You work as a manager. You are seeing a doctor because of i've been having sensitive to light. This has been going on for about a few weeks. You want this visit to be quick. Express impatience if the doctor asks too many questions. Push for a quick diagnosis and treatment. You've been dealing with this for a while and you want answers NOW. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
   },
   "clinical": {
     "vitals": {
@@ -152,7 +152,7 @@
         },
         "minimal_information_sets": {
           "must_collect": [
-            "i've been having rash"
+            "i've been having sensitive to light"
           ],
           "must_order": [
             "CBC",
@@ -172,7 +172,7 @@
             "END"
           ],
           "allowed_to_skip": [
-            "i've been having sensitive to light"
+            "i've been having rash"
           ]
         }
       ],
@@ -224,6 +224,34 @@
         "type": "forbidden_action",
         "action": "PRESCRIBE",
         "condition": "allergy_check == false"
+      },
+      {
+        "type": "required_action",
+        "action": "PRESCRIBE",
+        "target": "any_appropriate_for_meningitis"
+      }
+    ],
+    "diagnosis_target": [
+      "meningitis"
+    ],
+    "diagnosis_acceptable": [
+      "Encephalitis",
+      "Subarachnoid Hemorrhage",
+      "Migraine",
+      "Brain Abscess"
+    ],
+    "safety_rules": [
+      {
+        "type": "forbidden_action",
+        "action": "PRESCRIBE",
+        "condition": "allergy_check == false"
+      }
+    ],
+    "treatment_required": [
+      {
+        "type": "required_action",
+        "action": "PRESCRIBE",
+        "target": "any_appropriate_for_meningitis"
       }
     ]
   },
@@ -396,27 +424,34 @@
     "components": {
       "diagnosis": {
         "method": "set_match",
-        "weight": 0.25
+        "weight": 0.25,
+        "compute": "IN(agent.diagnosis, ground_truth_validation.diagnosis_target) ? 1.0 : IN(agent.diagnosis, ground_truth_validation.diagnosis_acceptable) ? 0.5 : 0.0"
       },
       "safety": {
         "method": "rule_check",
-        "weight": 0.2
+        "weight": 0.2,
+        "compute": "COUNT(rule IN ground_truth_validation.safety_rules WHERE NOT triggered) / COUNT(ground_truth_validation.safety_rules)"
       },
       "info": {
         "method": "count_ratio",
-        "weight": 0.15
+        "weight": 0.15,
+        "compute": "COUNT(symptom IN revealed WHERE tier IN [volunteer,if_asked]) / COUNT(symptoms WHERE tier IN [volunteer,if_asked])",
+        "note": "hidden symptoms excluded from denominator — only volunteer+if_asked count"
       },
       "treatment": {
         "method": "required_done",
-        "weight": 0.1
+        "weight": 0.1,
+        "compute": "IF COUNT(treatment_required) == 0: return null (exclude from sum, renormalize); ELSE COUNT(done IN treatment_required) / COUNT(treatment_required)"
       },
       "communication": {
         "method": "rule_check",
-        "weight": 0.1
+        "weight": 0.1,
+        "compute": "COUNT(milestone IN communication_truth WHERE achieved) / COUNT(communication_truth)"
       },
       "process": {
         "method": "trajectory_analysis",
-        "weight": 0.2
+        "weight": 0.2,
+        "compute": "mean(question_relevance, information_gain_per_turn, redundancy_penalty_clipped)"
       }
     },
     "process_score": {
@@ -426,14 +461,17 @@
       },
       "information_gain_per_turn": {
         "method": "entropy_reduction",
-        "compute": "COUNT(symptoms_revealed_during_ASK) / turn_count"
+        "compute": "COUNT(symptoms_revealed_during_ASK WHERE tier IN [volunteer,if_asked]) / turn_count",
+        "note": "noise and misleading symptoms excluded"
       },
       "redundancy_penalty": {
         "method": "repeated_query_penalty",
-        "compute": "COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05"
-      }
+        "compute": "max(0, COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05 + 1.0)",
+        "note": "clipped to [0, 1], 1.0 = no redundancy"
+      },
+      "aggregation": "mean"
     },
-    "aggregation": "weighted_sum",
+    "aggregation": "weighted_sum_with_null_exclude",
     "pass_threshold": 0.7,
     "critical_failure": {
       "rules": [
@@ -443,8 +481,9 @@
       "override": "score = 0"
     },
     "efficiency": {
-      "bonus": "IF turns <= min_turns + 4: +0.05",
-      "penalty": "IF turns > max_turns * 0.8: -0.02 per extra turn"
+      "bonus": "IF turns IN [min_turns, min_turns+4]: +0.05",
+      "penalty": "IF turns > max_turns * 0.8: -0.02 per extra turn",
+      "neutral_zone": "turns IN [min_turns+5, max_turns*0.8]: no bonus, no penalty"
     }
   },
   "task_profile": {

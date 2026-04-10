@@ -17,7 +17,7 @@
       "occupation": "factory worker",
       "economic_status": "moderate"
     },
-    "chief_complaint": "heart disease for a few weeks",
+    "chief_complaint": "coronary heart for a few weeks",
     "behavior": {
       "type": "confused",
       "cooperation": "moderate",
@@ -26,15 +26,15 @@
     },
     "symptoms": {
       "volunteer": [
-        "heart disease"
+        "coronary heart"
       ],
       "if_asked": [
-        "kidney disease",
+        "my appetite has changed",
         "hld"
       ],
       "hidden": [
-        "my appetite has changed",
-        "coronary heart"
+        "kidney disease",
+        "heart disease"
       ],
       "resistant": [],
       "misleading": [
@@ -61,8 +61,13 @@
         "trigger": "doctor asks a specific follow-up question about related symptoms"
       },
       {
+        "after_turn": 7,
+        "symptom": "heart disease",
+        "trigger": "doctor asks a specific follow-up question about related symptoms"
+      },
+      {
         "after_turn": 8,
-        "symptom": "my appetite has changed",
+        "symptom": "kidney disease",
         "trigger": "doctor asks a specific follow-up question about related symptoms"
       }
     ],
@@ -92,32 +97,30 @@
         "Can we only prescribe what's absolutely necessary?"
       ]
     },
-    "instructions": "You are HuangXX, a 40-year-old female patient. Your education level is 小学. You work as a factory worker. You are seeing a doctor because of heart disease. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+    "instructions": "You are HuangXX, a 40-year-old female patient. Your education level is 小学. You work as a factory worker. You are seeing a doctor because of coronary heart. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
   },
   "clinical": {
     "vitals": {
-      "blood_pressure": "143/93 mmHg",
-      "bmi": "27.2"
+      "blood_pressure": "156/91 mmHg",
+      "bmi": "27.3"
     },
     "labs": {
       "fasting_glucose": "13.2 mmol/L (abnormal)",
-      "hba1c": "9.76 % (abnormal)",
-      "egfr": "74.4 ml/min/1.73m2",
+      "hba1c": "9.84 % (abnormal)",
+      "egfr": "75.1 ml/min/1.73m2",
       "alt": "56.0 U/L (abnormal)",
-      "total_cholesterol": "6.17 mmol/L (abnormal)",
-      "triglycerides": "2.89 mmol/L (abnormal)",
-      "uric_acid": "485 umol/L (abnormal)"
+      "total_cholesterol": "6.24 mmol/L (abnormal)",
+      "triglycerides": "2.69 mmol/L (abnormal)",
+      "uric_acid": "487 umol/L (abnormal)"
     },
-    "medications": [
-      "metformin 500mg twice daily"
-    ],
+    "medications": [],
     "comorbidities": [
       "heart disease",
       "high cholesterol",
       "kidney disease"
     ],
     "allergies": [
-      "sulfa drugs"
+      "penicillin"
     ],
     "confounders": [
       "diabetes insipidus"
@@ -148,37 +151,37 @@
     },
     "expected_lab_results": {
       "fasting_glucose": {
-        "expected_value": "13.1 mmol/L (abnormal)",
+        "expected_value": "13.3 mmol/L (abnormal)",
         "reference_range": "12.5-14.0 mmol/L",
         "is_abnormal": true,
         "clinical_significance": "high"
       },
       "hba1c": {
-        "expected_value": "9.72 % (abnormal)",
+        "expected_value": "9.77 % (abnormal)",
         "reference_range": "9.3-10.3 %",
         "is_abnormal": true,
         "clinical_significance": "high"
       },
       "egfr": {
-        "expected_value": "74.2 ml/min/1.73m2",
+        "expected_value": "74.7 ml/min/1.73m2",
         "reference_range": "70-80 ml/min/1.73m2",
         "is_abnormal": false,
         "clinical_significance": "moderate"
       },
       "alt": {
-        "expected_value": "52.8 U/L (abnormal)",
+        "expected_value": "55.7 U/L (abnormal)",
         "reference_range": "40-70 U/L",
         "is_abnormal": true,
         "clinical_significance": "moderate"
       },
       "total_cholesterol": {
-        "expected_value": "6.14 mmol/L (abnormal)",
+        "expected_value": "6.23 mmol/L (abnormal)",
         "reference_range": "5.8-6.8 mmol/L",
         "is_abnormal": true,
         "clinical_significance": "moderate"
       },
       "triglycerides": {
-        "expected_value": "2.77 mmol/L (abnormal)",
+        "expected_value": "2.70 mmol/L (abnormal)",
         "reference_range": "2.2-3.5 mmol/L",
         "is_abnormal": true,
         "clinical_significance": "moderate"
@@ -262,7 +265,7 @@
         },
         "minimal_information_sets": {
           "must_collect": [
-            "heart disease"
+            "coronary heart"
           ],
           "must_order": [
             "fasting_glucose",
@@ -282,8 +285,8 @@
             "END"
           ],
           "allowed_to_skip": [
-            "my appetite has changed",
-            "coronary heart"
+            "kidney disease",
+            "heart disease"
           ]
         }
       ],
@@ -369,6 +372,43 @@
         "type": "required_action",
         "action": "ORDER_LAB",
         "target": "egfr"
+      }
+    ],
+    "diagnosis_target": [
+      "type 2 diabetes"
+    ],
+    "diagnosis_acceptable": [
+      "Metabolic Syndrome",
+      "Cushing's Syndrome",
+      "Type 1 Diabetes"
+    ],
+    "safety_rules": [
+      {
+        "type": "forbidden_action",
+        "action": "PRESCRIBE",
+        "condition": "allergy_check == false"
+      },
+      {
+        "type": "forbidden_action",
+        "action": "PRESCRIBE",
+        "condition": "drug_contraindicated_by_coronary_artery_disease"
+      },
+      {
+        "type": "forbidden_action",
+        "action": "PRESCRIBE",
+        "condition": "drug_contraindicated_by_hyperlipidemia"
+      },
+      {
+        "type": "forbidden_action",
+        "action": "PRESCRIBE",
+        "condition": "drug_contraindicated_by_chronic_kidney_disease"
+      }
+    ],
+    "treatment_required": [
+      {
+        "type": "required_action",
+        "action": "PRESCRIBE",
+        "target": "metformin"
       }
     ]
   },
@@ -547,27 +587,34 @@
     "components": {
       "diagnosis": {
         "method": "set_match",
-        "weight": 0.25
+        "weight": 0.25,
+        "compute": "IN(agent.diagnosis, ground_truth_validation.diagnosis_target) ? 1.0 : IN(agent.diagnosis, ground_truth_validation.diagnosis_acceptable) ? 0.5 : 0.0"
       },
       "safety": {
         "method": "rule_check",
-        "weight": 0.2
+        "weight": 0.2,
+        "compute": "COUNT(rule IN ground_truth_validation.safety_rules WHERE NOT triggered) / COUNT(ground_truth_validation.safety_rules)"
       },
       "info": {
         "method": "count_ratio",
-        "weight": 0.15
+        "weight": 0.15,
+        "compute": "COUNT(symptom IN revealed WHERE tier IN [volunteer,if_asked]) / COUNT(symptoms WHERE tier IN [volunteer,if_asked])",
+        "note": "hidden symptoms excluded from denominator — only volunteer+if_asked count"
       },
       "treatment": {
         "method": "required_done",
-        "weight": 0.1
+        "weight": 0.1,
+        "compute": "IF COUNT(treatment_required) == 0: return null (exclude from sum, renormalize); ELSE COUNT(done IN treatment_required) / COUNT(treatment_required)"
       },
       "communication": {
         "method": "rule_check",
-        "weight": 0.1
+        "weight": 0.1,
+        "compute": "COUNT(milestone IN communication_truth WHERE achieved) / COUNT(communication_truth)"
       },
       "process": {
         "method": "trajectory_analysis",
-        "weight": 0.2
+        "weight": 0.2,
+        "compute": "mean(question_relevance, information_gain_per_turn, redundancy_penalty_clipped)"
       }
     },
     "process_score": {
@@ -577,14 +624,17 @@
       },
       "information_gain_per_turn": {
         "method": "entropy_reduction",
-        "compute": "COUNT(symptoms_revealed_during_ASK) / turn_count"
+        "compute": "COUNT(symptoms_revealed_during_ASK WHERE tier IN [volunteer,if_asked]) / turn_count",
+        "note": "noise and misleading symptoms excluded"
       },
       "redundancy_penalty": {
         "method": "repeated_query_penalty",
-        "compute": "COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05"
-      }
+        "compute": "max(0, COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05 + 1.0)",
+        "note": "clipped to [0, 1], 1.0 = no redundancy"
+      },
+      "aggregation": "mean"
     },
-    "aggregation": "weighted_sum",
+    "aggregation": "weighted_sum_with_null_exclude",
     "pass_threshold": 0.7,
     "critical_failure": {
       "rules": [
@@ -597,8 +647,9 @@
       "override": "score = 0"
     },
     "efficiency": {
-      "bonus": "IF turns <= min_turns + 4: +0.05",
-      "penalty": "IF turns > max_turns * 0.8: -0.02 per extra turn"
+      "bonus": "IF turns IN [min_turns, min_turns+4]: +0.05",
+      "penalty": "IF turns > max_turns * 0.8: -0.02 per extra turn",
+      "neutral_zone": "turns IN [min_turns+5, max_turns*0.8]: no bonus, no penalty"
     }
   },
   "task_profile": {

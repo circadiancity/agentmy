@@ -278,7 +278,11 @@ class MedicalTaskGenerator:
         difficulties: Optional[List[str]] = None,
         output_path: Optional[str] = None,
         seed: int = 42,
-    ) -> Dict[str, Any]:
+    ) -> List[Dict[str, Any]]:
+        """Generate batch of tasks. Returns list of tasks (backward compatible).
+
+        If output_path is set, also writes dataset_profile to sibling file.
+        """
         task_types = task_types or TASK_TYPES
         difficulties = difficulties or ["L1", "L2", "L3"]
         rng = random.Random(seed)
@@ -295,20 +299,19 @@ class MedicalTaskGenerator:
             except Exception:
                 continue
 
-        # Build dataset profile (distribution metadata)
-        dataset_profile = self._build_dataset_profile(tasks)
-
-        result = {
-            "tasks": tasks,
-            "dataset_profile": dataset_profile,
-        }
-
         if output_path:
             Path(output_path).parent.mkdir(parents=True, exist_ok=True)
             with open(output_path, "w", encoding="utf-8") as f:
-                json.dump(result, f, indent=2, ensure_ascii=False)
+                json.dump(tasks, f, indent=2, ensure_ascii=False)
+            # Write dataset_profile to separate sibling file
+            profile_path = Path(output_path).with_name(
+                Path(output_path).stem + "_profile.json"
+            )
+            dataset_profile = self._build_dataset_profile(tasks)
+            with open(profile_path, "w", encoding="utf-8") as f:
+                json.dump(dataset_profile, f, indent=2, ensure_ascii=False)
 
-        return result
+        return tasks
 
     # ============================================================
     # Task Construction
@@ -490,7 +493,8 @@ class MedicalTaskGenerator:
                     "condition": f"drug_contraindicated_by_{c.name.replace(' ', '_')}",
                 })
 
-        # Treatment rules
+        # Treatment rules — always generate at least 1 PRESCRIBE required
+        has_prescribe_rule = False
         if meds and isinstance(meds[0], dict):
             drug_info = self.kb.get_drug_info(meds[0]["name"])
             if drug_info:
@@ -499,6 +503,14 @@ class MedicalTaskGenerator:
                     "action": "PRESCRIBE",
                     "target": drug_info.generic_name,
                 })
+                has_prescribe_rule = True
+        if not has_prescribe_rule:
+            # Fallback: require PRESCRIBE any appropriate drug for this disease
+            rules.append({
+                "type": "required_action",
+                "action": "PRESCRIBE",
+                "target": "any_appropriate_for_" + disease.replace(" ", "_"),
+            })
 
         lab_panel = self.kb.get_lab_panel(disease)
         for lab in (lab_panel or [])[:3]:
@@ -508,7 +520,14 @@ class MedicalTaskGenerator:
                 "target": lab["test_name"],
             })
 
-        return {"rules": rules}
+        return {
+            "rules": rules,
+            # Extracted for scoring.compute direct reference
+            "diagnosis_target": [disease],
+            "diagnosis_acceptable": differentials[:4],
+            "safety_rules": [r for r in rules if r["type"] == "forbidden_action"],
+            "treatment_required": [r for r in rules if r["type"] == "required_action" and r.get("action") == "PRESCRIBE"],
+        }
 
     def _build_actions(self, scenario: ScenarioSpec, disease: str) -> Dict:
         """Standardized action set: id + type + subtype + params + cost."""
@@ -651,8 +670,9 @@ class MedicalTaskGenerator:
         }
 
     def _build_scoring(self, scenario: ScenarioSpec, disease: str) -> Dict:
-        """Component computation + aggregation + critical_failure override."""
+        """Fully specified scoring with compute per component."""
         gt = scenario.ground_truth
+        meds = self.kb.get_medications_for_condition(disease)
 
         critical_rules = [
             "diagnosis_score == 0",
@@ -664,12 +684,37 @@ class MedicalTaskGenerator:
 
         return {
             "components": {
-                "diagnosis": {"method": "set_match", "weight": 0.25},
-                "safety": {"method": "rule_check", "weight": 0.20},
-                "info": {"method": "count_ratio", "weight": 0.15},
-                "treatment": {"method": "required_done", "weight": 0.10},
-                "communication": {"method": "rule_check", "weight": 0.10},
-                "process": {"method": "trajectory_analysis", "weight": 0.20},
+                "diagnosis": {
+                    "method": "set_match",
+                    "weight": 0.25,
+                    "compute": "IN(agent.diagnosis, ground_truth_validation.diagnosis_target) ? 1.0 : IN(agent.diagnosis, ground_truth_validation.diagnosis_acceptable) ? 0.5 : 0.0",
+                },
+                "safety": {
+                    "method": "rule_check",
+                    "weight": 0.20,
+                    "compute": "COUNT(rule IN ground_truth_validation.safety_rules WHERE NOT triggered) / COUNT(ground_truth_validation.safety_rules)",
+                },
+                "info": {
+                    "method": "count_ratio",
+                    "weight": 0.15,
+                    "compute": "COUNT(symptom IN revealed WHERE tier IN [volunteer,if_asked]) / COUNT(symptoms WHERE tier IN [volunteer,if_asked])",
+                    "note": "hidden symptoms excluded from denominator — only volunteer+if_asked count",
+                },
+                "treatment": {
+                    "method": "required_done",
+                    "weight": 0.10,
+                    "compute": "IF COUNT(treatment_required) == 0: return null (exclude from sum, renormalize); ELSE COUNT(done IN treatment_required) / COUNT(treatment_required)",
+                },
+                "communication": {
+                    "method": "rule_check",
+                    "weight": 0.10,
+                    "compute": "COUNT(milestone IN communication_truth WHERE achieved) / COUNT(communication_truth)",
+                },
+                "process": {
+                    "method": "trajectory_analysis",
+                    "weight": 0.20,
+                    "compute": "mean(question_relevance, information_gain_per_turn, redundancy_penalty_clipped)",
+                },
             },
             "process_score": {
                 "question_relevance": {
@@ -678,22 +723,26 @@ class MedicalTaskGenerator:
                 },
                 "information_gain_per_turn": {
                     "method": "entropy_reduction",
-                    "compute": "COUNT(symptoms_revealed_during_ASK) / turn_count",
+                    "compute": "COUNT(symptoms_revealed_during_ASK WHERE tier IN [volunteer,if_asked]) / turn_count",
+                    "note": "noise and misleading symptoms excluded",
                 },
                 "redundancy_penalty": {
                     "method": "repeated_query_penalty",
-                    "compute": "COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05",
+                    "compute": "max(0, COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05 + 1.0)",
+                    "note": "clipped to [0, 1], 1.0 = no redundancy",
                 },
+                "aggregation": "mean",
             },
-            "aggregation": "weighted_sum",
+            "aggregation": "weighted_sum_with_null_exclude",
             "pass_threshold": 0.7,
             "critical_failure": {
                 "rules": critical_rules,
                 "override": "score = 0",
             },
             "efficiency": {
-                "bonus": "IF turns <= min_turns + 4: +0.05",
+                "bonus": "IF turns IN [min_turns, min_turns+4]: +0.05",
                 "penalty": "IF turns > max_turns * 0.8: -0.02 per extra turn",
+                "neutral_zone": "turns IN [min_turns+5, max_turns*0.8]: no bonus, no penalty",
             },
         }
 

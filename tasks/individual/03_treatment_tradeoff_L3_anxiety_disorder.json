@@ -29,10 +29,10 @@
         "anxiety"
       ],
       "if_asked": [
-        "anxiety"
+        "gad"
       ],
       "hidden": [
-        "gad"
+        "anxiety"
       ],
       "resistant": [],
       "misleading": [
@@ -45,7 +45,7 @@
     "progressive_reveal": [
       {
         "after_turn": 4,
-        "symptom": "gad",
+        "symptom": "anxiety",
         "trigger": "doctor asks a specific follow-up question about related symptoms"
       }
     ],
@@ -184,7 +184,7 @@
             "END"
           ],
           "allowed_to_skip": [
-            "gad"
+            "anxiety"
           ]
         }
       ],
@@ -237,6 +237,29 @@
         "action": "PRESCRIBE",
         "condition": "allergy_check == false"
       },
+      {
+        "type": "required_action",
+        "action": "PRESCRIBE",
+        "target": "sertraline"
+      }
+    ],
+    "diagnosis_target": [
+      "anxiety disorder"
+    ],
+    "diagnosis_acceptable": [
+      "Hyperthyroidism",
+      "Panic Disorder",
+      "Social Anxiety Disorder",
+      "PTSD"
+    ],
+    "safety_rules": [
+      {
+        "type": "forbidden_action",
+        "action": "PRESCRIBE",
+        "condition": "allergy_check == false"
+      }
+    ],
+    "treatment_required": [
       {
         "type": "required_action",
         "action": "PRESCRIBE",
@@ -413,27 +436,34 @@
     "components": {
       "diagnosis": {
         "method": "set_match",
-        "weight": 0.25
+        "weight": 0.25,
+        "compute": "IN(agent.diagnosis, ground_truth_validation.diagnosis_target) ? 1.0 : IN(agent.diagnosis, ground_truth_validation.diagnosis_acceptable) ? 0.5 : 0.0"
       },
       "safety": {
         "method": "rule_check",
-        "weight": 0.2
+        "weight": 0.2,
+        "compute": "COUNT(rule IN ground_truth_validation.safety_rules WHERE NOT triggered) / COUNT(ground_truth_validation.safety_rules)"
       },
       "info": {
         "method": "count_ratio",
-        "weight": 0.15
+        "weight": 0.15,
+        "compute": "COUNT(symptom IN revealed WHERE tier IN [volunteer,if_asked]) / COUNT(symptoms WHERE tier IN [volunteer,if_asked])",
+        "note": "hidden symptoms excluded from denominator — only volunteer+if_asked count"
       },
       "treatment": {
         "method": "required_done",
-        "weight": 0.1
+        "weight": 0.1,
+        "compute": "IF COUNT(treatment_required) == 0: return null (exclude from sum, renormalize); ELSE COUNT(done IN treatment_required) / COUNT(treatment_required)"
       },
       "communication": {
         "method": "rule_check",
-        "weight": 0.1
+        "weight": 0.1,
+        "compute": "COUNT(milestone IN communication_truth WHERE achieved) / COUNT(communication_truth)"
       },
       "process": {
         "method": "trajectory_analysis",
-        "weight": 0.2
+        "weight": 0.2,
+        "compute": "mean(question_relevance, information_gain_per_turn, redundancy_penalty_clipped)"
       }
     },
     "process_score": {
@@ -443,14 +473,17 @@
       },
       "information_gain_per_turn": {
         "method": "entropy_reduction",
-        "compute": "COUNT(symptoms_revealed_during_ASK) / turn_count"
+        "compute": "COUNT(symptoms_revealed_during_ASK WHERE tier IN [volunteer,if_asked]) / turn_count",
+        "note": "noise and misleading symptoms excluded"
       },
       "redundancy_penalty": {
         "method": "repeated_query_penalty",
-        "compute": "COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05"
-      }
+        "compute": "max(0, COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05 + 1.0)",
+        "note": "clipped to [0, 1], 1.0 = no redundancy"
+      },
+      "aggregation": "mean"
     },
-    "aggregation": "weighted_sum",
+    "aggregation": "weighted_sum_with_null_exclude",
     "pass_threshold": 0.7,
     "critical_failure": {
       "rules": [
@@ -460,8 +493,9 @@
       "override": "score = 0"
     },
     "efficiency": {
-      "bonus": "IF turns <= min_turns + 4: +0.05",
-      "penalty": "IF turns > max_turns * 0.8: -0.02 per extra turn"
+      "bonus": "IF turns IN [min_turns, min_turns+4]: +0.05",
+      "penalty": "IF turns > max_turns * 0.8: -0.02 per extra turn",
+      "neutral_zone": "turns IN [min_turns+5, max_turns*0.8]: no bonus, no penalty"
     }
   },
   "task_profile": {
