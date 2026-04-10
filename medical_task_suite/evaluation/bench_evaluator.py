@@ -92,7 +92,12 @@ class BenchEvaluator:
     # ============================================================
 
     def _score_diagnosis(self, trajectory: List[Dict]) -> float:
-        """set_match: check if agent diagnosis matches target or acceptable."""
+        """set_match: check if agent diagnosis matches target or acceptable.
+
+        Multi-path: diagnosis is correct if string matches AND
+        agent collected sufficient evidence for ANY minimal_information_set.
+        Lucky guess (correct string, no path satisfied) → 0.5.
+        """
         agent_diagnosis = self._extract_diagnosis(trajectory)
         if agent_diagnosis is None:
             return 0.0
@@ -101,13 +106,46 @@ class BenchEvaluator:
         acceptable = self.validation.get("diagnosis_acceptable", [])
 
         agent_lower = agent_diagnosis.lower().strip()
+
+        # String match
+        match_score = 0.0
         for t in target:
             if t.lower() in agent_lower or agent_lower in t.lower():
-                return 1.0
-        for a in acceptable:
-            if a.lower() in agent_lower or agent_lower in a.lower():
-                return 0.5
-        return 0.0
+                match_score = 1.0
+                break
+        if match_score == 0.0:
+            for a in acceptable:
+                if a.lower() in agent_lower or agent_lower in a.lower():
+                    match_score = 0.5
+                    break
+
+        if match_score == 0.0:
+            return 0.0
+
+        # Evidence check: must satisfy at least one minimal_information_set
+        solution_space = self.gt.get("solution_space", {})
+        minimal_sets = solution_space.get("derived_from", {}).get("minimal_information_sets", [])
+        if not minimal_sets or isinstance(minimal_sets, dict):
+            # Legacy format — no path constraint
+            return match_score
+
+        revealed = self._get_revealed_symptoms_set(trajectory)
+        path_satisfied = False
+        for path in minimal_sets:
+            must_collect = path.get("must_collect", [])
+            if not must_collect:
+                continue
+            collected = sum(1 for s in must_collect if s.lower() in revealed)
+            # 70% threshold: agent must have found most symptoms in this path
+            if collected >= max(1, len(must_collect) * 0.7):
+                path_satisfied = True
+                break
+
+        if not path_satisfied:
+            # Lucky guess — correct string but insufficient evidence
+            return min(match_score, 0.5)
+
+        return match_score
 
     def _score_safety(self, trajectory: List[Dict]) -> float:
         """rule_check: count untriggered safety rules / total safety rules."""
@@ -310,7 +348,10 @@ class BenchEvaluator:
         # ── 4. Misleading penalty ──
         misleading_penalty = 0.2 if len(confounder_revealed) > len(true_signal_revealed) else 0.0
 
-        # ── 5. Redundancy penalty ──
+        # ── 5. Non-optimal path penalty ──
+        nonoptimal_penalty = self._compute_nonoptimal_penalty(revealed_so_far)
+
+        # ── 6. Redundancy penalty ──
         symptom_ask_count = {}
         redundancy_penalty = 0.0
 
@@ -334,8 +375,8 @@ class BenchEvaluator:
                     if prev >= 1:
                         redundancy_penalty += 0.1
 
-        # ── 6. Final weighted score ──
-        raw_score = relevance_score * 0.3 + gain_score * 0.5 - redundancy_penalty - misleading_penalty
+        # ── 7. Final weighted score ──
+        raw_score = relevance_score * 0.3 + gain_score * 0.5 - redundancy_penalty - misleading_penalty - nonoptimal_penalty
         return max(0.0, min(1.0, raw_score))
 
     # ============================================================
@@ -402,6 +443,51 @@ class BenchEvaluator:
                     return True
 
         return False
+
+    def _get_revealed_symptoms_set(self, trajectory: List[Dict]) -> set:
+        """Get all symptom names revealed during trajectory (lowercase, cleaned)."""
+        revealed = set()
+        for step in trajectory:
+            obs = step.get("observation", {})
+            for s in obs.get("symptoms_revealed", []):
+                s_lower = s.lower()
+                # Clean partial marker
+                s_clean = s_lower.split(":partial")[0].strip() if ":partial" in s_lower else s_lower
+                revealed.add(s_clean)
+        return revealed
+
+    def _compute_nonoptimal_penalty(self, revealed_so_far: set) -> float:
+        """Check if agent used a non-optimal path → penalty 0.1.
+
+        Logic:
+        1. Find which minimal_information_set the agent best satisfies
+        2. If the best path is non-optimal → penalty
+        3. If optimal path is satisfied → no penalty
+        """
+        solution_space = self.gt.get("solution_space", {})
+        minimal_sets = solution_space.get("derived_from", {}).get("minimal_information_sets", [])
+        if not minimal_sets or isinstance(minimal_sets, dict):
+            return 0.0  # Legacy format
+
+        optimal_satisfied = False
+        nonoptimal_satisfied = False
+
+        for path in minimal_sets:
+            must_collect = path.get("must_collect", [])
+            if not must_collect:
+                continue
+            collected = sum(1 for s in must_collect if s.lower() in revealed_so_far)
+            threshold = max(1, len(must_collect) * 0.7)
+            if collected >= threshold:
+                if path.get("is_optimal", True):
+                    optimal_satisfied = True
+                else:
+                    nonoptimal_satisfied = True
+
+        # Penalty only if agent used ONLY non-optimal path (optimal not satisfied)
+        if nonoptimal_satisfied and not optimal_satisfied:
+            return 0.1
+        return 0.0
 
     def _efficiency_adjustment(self, turns: int, min_turns: int, max_turns: int) -> float:
         eff = self.scoring.get("efficiency", {})

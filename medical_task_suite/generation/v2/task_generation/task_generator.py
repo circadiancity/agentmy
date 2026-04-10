@@ -1670,9 +1670,58 @@ class MedicalTaskGenerator:
         ]
 
         # Solution space: multi-path convergence (replaces decision_tree)
-        key_symptoms = [self.lang.to_patient(s) for s in symptoms.volunteer[:3]]
-        hidden_symptoms = [self.lang.to_patient(s) for s in (symptoms.hidden + symptoms.resistant)[:3]]
+        volunteer_patient = [self.lang.to_patient(s) for s in symptoms.volunteer[:3]]
+        if_asked_patient = [self.lang.to_patient(s) for s in symptoms.if_asked[:3]]
+        hidden_patient = [self.lang.to_patient(s) for s in (symptoms.hidden + symptoms.resistant)[:3]]
         required_tests = [lab["test_name"] for lab in lab_panel[:5]] if lab_panel else ["CBC", "BMP"]
+
+        # ── Build ≥2 minimal_information_sets (different reasoning paths) ──
+        # Path A (classic/optimal): volunteer + if_asked — front-door approach
+        #   Lower info_value (0.3–0.6) but no gates required
+        path_a_collect = list(volunteer_patient[:1]) + list(if_asked_patient[:1])
+        path_a_tests = required_tests[:2]
+
+        # Path B (atypical/non-optimal): hidden + resistant — deep-dive approach
+        #   Higher info_value (1.0) but requires prerequisite gates → more turns
+        path_b_collect = list(hidden_patient[:2])
+        path_b_tests = required_tests[:2]
+
+        # Ensure paths are distinct: no symptom in both paths
+        a_lower = set(s.lower() for s in path_a_collect)
+        path_b_collect = [s for s in path_b_collect if s.lower() not in a_lower]
+
+        # Fallback if path_b empty: use remaining if_asked
+        if not path_b_collect:
+            path_b_collect = [s for s in if_asked_patient if s.lower() not in a_lower][:2]
+
+        # Fallback if still empty: use remaining hidden
+        if not path_b_collect:
+            path_b_collect = [s for s in hidden_patient if s.lower() not in a_lower][:2]
+
+        # Ensure each path has ≥2 symptoms (pad from pool, no overlap)
+        pool = [s for s in (volunteer_patient + if_asked_patient + hidden_patient)
+                if s.lower() not in a_lower
+                and s.lower() not in {x.lower() for x in path_b_collect}]
+        for path_collect in [path_a_collect, path_b_collect]:
+            while len(path_collect) < 2 and pool:
+                candidate = pool.pop(0)
+                if candidate.lower() not in {s.lower() for s in path_collect}:
+                    path_collect.append(candidate)
+
+        minimal_sets = [
+            {
+                "must_collect": path_a_collect,
+                "must_order": path_a_tests,
+                "must_match": disease,
+                "is_optimal": True,
+            },
+            {
+                "must_collect": path_b_collect,
+                "must_order": path_b_tests,
+                "must_match": disease,
+                "is_optimal": False,
+            },
+        ]
 
         solution_space = {
             "derived_from": {
@@ -1682,17 +1731,24 @@ class MedicalTaskGenerator:
                     "hidden_count": len(symptoms.hidden) + len(symptoms.resistant),
                     "misleading_count": len(symptoms.misleading),
                 },
-                "minimal_information_sets": {
-                    "must_collect": key_symptoms[:2],
-                    "must_order": required_tests[:2],
-                    "must_match": disease,
-                },
+                "minimal_information_sets": minimal_sets,
             },
-            "minimal_paths": [{
-                "description": "Minimum viable consultation",
-                "steps": ["ASK ≥ min_turns questions", "ORDER_LAB ≥ 1 relevant test", "DIAGNOSE correctly", "CHECK_ALLERGY + PRESCRIBE", "END"],
-                "allowed_to_skip": hidden_symptoms,
-            }],
+            "minimal_paths": [
+                {
+                    "path_id": "path_a_classic",
+                    "description": "Classic presentation — volunteer + if_asked symptoms",
+                    "must_collect": path_a_collect,
+                    "steps": ["ASK volunteer symptoms", "ASK if_asked symptoms", "ORDER_LAB key tests", "DIAGNOSE correctly", "CHECK_ALLERGY + PRESCRIBE", "END"],
+                    "is_optimal": True,
+                },
+                {
+                    "path_id": "path_b_atypical",
+                    "description": "Atypical presentation — hidden + resistant symptoms",
+                    "must_collect": path_b_collect,
+                    "steps": ["ASK prerequisite for hidden symptoms", "ASK hidden symptoms (critical)", "ORDER_LAB key tests", "DIAGNOSE correctly", "CHECK_ALLERGY + PRESCRIBE", "END"],
+                    "is_optimal": False,
+                },
+            ],
             "acceptable_variants": [
                 {
                     "description": "Thorough history + targeted labs",
