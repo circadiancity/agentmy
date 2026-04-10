@@ -218,7 +218,17 @@ class BenchEvaluator:
         return achieved / len(comm_truth) if comm_truth else 1.0
 
     def _score_process(self, trajectory: List[Dict]) -> float:
-        """trajectory_analysis: mean of process sub-metrics."""
+        """Weighted penalty scoring for questioning strategy.
+
+        Formula:
+            process_score = relevance_score * 0.4 + gain_score * 0.4 - redundancy_penalty
+            Clipped to [0, 1].
+
+        Where:
+            relevance_score = relevant_asks / total_asks
+            gain_score = gain_per_turn (with -0.2 penalty if < 0.3)
+            redundancy_penalty = 0.1 per repeated symptom ask with no new info
+        """
         ps = self.scoring.get("process_score", {})
         if not ps:
             return 0.5
@@ -227,39 +237,71 @@ class BenchEvaluator:
         if not ask_steps:
             return 0.0
 
-        # question_relevance: ASKs that revealed new info / total ASKs
-        relevant_asks = sum(
-            1 for s in ask_steps
-            if s.get("observation", {}).get("symptoms_revealed")
-        )
-        relevance = relevant_asks / len(ask_steps) if ask_steps else 0.0
-
-        # information_gain_per_turn: symptoms revealed / turns (excl noise/misleading)
+        # ── 1. Build relevant_questions from patient symptom tiers ──
+        # relevant = volunteer + if_asked (true symptoms agent should discover)
+        # exclude noise and misleading
         relevant_symptoms = (
             self.patient["symptoms"].get("volunteer", []) +
             self.patient["symptoms"].get("if_asked", [])
         )
-        all_revealed = []
-        for s in trajectory:
-            for r in s.get("observation", {}).get("symptoms_revealed", []):
-                if any(r.lower() in rs.lower() for rs in relevant_symptoms):
-                    all_revealed.append(r)
-        info_gain = len(all_revealed) / len(trajectory) if trajectory else 0.0
+        relevant_set = set(s.lower() for s in relevant_symptoms)
 
-        # redundancy_penalty: repeated ASK on same topic with no new info
-        topics_asked = {}
-        redundancy = 0
+        # ── 2. question_relevance: ASKs that revealed relevant info / total ASKs ──
+        relevant_ask_count = 0
+        all_revealed_relevant = []
+        revealed_so_far = set()
+
         for s in ask_steps:
             obs = s.get("observation", {})
-            topic = obs.get("topic", "unknown")
             revealed = obs.get("symptoms_revealed", [])
-            if topic in topics_asked and not revealed:
-                redundancy += 1
-            topics_asked[topic] = True
-        redundancy_score = max(0.0, 1.0 + redundancy * -0.05)
+            # Check if any revealed symptom is in relevant set AND is new
+            new_relevant = [r for r in revealed
+                           if r.lower() in relevant_set and r.lower() not in revealed_so_far]
+            if new_relevant:
+                relevant_ask_count += 1
+                all_revealed_relevant.extend(new_relevant)
+                revealed_so_far.update(r.lower() for r in new_relevant)
 
-        # Aggregate: mean
-        return (relevance + info_gain + redundancy_score) / 3.0
+        relevance_score = relevant_ask_count / len(ask_steps) if ask_steps else 0.0
+
+        # ── 3. information_gain: relevant symptoms revealed / total ASKs ──
+        gain_per_turn = len(all_revealed_relevant) / len(ask_steps) if ask_steps else 0.0
+
+        # Apply low-gain penalty
+        if gain_per_turn < 0.3:
+            gain_score = max(0.0, gain_per_turn - 0.2)
+        else:
+            gain_score = gain_per_turn
+
+        # ── 4. redundancy_penalty: repeated asks on same symptom with no new info ──
+        symptom_ask_count = {}  # symptom → number of times asked
+        redundancy_penalty = 0.0
+
+        for s in ask_steps:
+            obs = s.get("observation", {})
+            revealed = obs.get("symptoms_revealed", [])
+
+            if revealed:
+                for r in revealed:
+                    r_lower = r.lower()
+                    prev = symptom_ask_count.get(r_lower, 0)
+                    symptom_ask_count[r_lower] = prev + 1
+                    # Penalty: asking about a symptom already revealed = redundancy
+                    if prev >= 1:
+                        redundancy_penalty += 0.1
+            else:
+                # Asked but got nothing — track by topic if available
+                topic = obs.get("topic", "")
+                if topic:
+                    topic_lower = topic.lower()
+                    prev = symptom_ask_count.get(topic_lower, 0)
+                    symptom_ask_count[topic_lower] = prev + 1
+                    if prev >= 1:
+                        redundancy_penalty += 0.1
+
+        # ── 5. Final weighted score ──
+        raw_score = relevance_score * 0.4 + gain_score * 0.4 - redundancy_penalty
+        return max(0.0, min(1.0, raw_score))
 
     # ============================================================
     # Helpers

@@ -1036,27 +1036,30 @@ class MedicalTaskGenerator:
                     "compute": "COUNT(milestone IN communication_truth WHERE achieved) / COUNT(communication_truth)",
                 },
                 "process": {
-                    "method": "trajectory_analysis",
+                    "method": "weighted_penalty",
                     "weight": 0.20,
-                    "compute": "mean(question_relevance, information_gain_per_turn, redundancy_penalty_clipped)",
+                    "compute": "relevance_score * 0.4 + gain_score * 0.4 - redundancy_penalty; IF gain_per_turn < 0.3: apply penalty = -0.2",
                 },
             },
             "process_score": {
-                "question_relevance": {
-                    "method": "match_to_required_symptoms",
-                    "compute": "COUNT(ASK WHERE new_symptom IN required_symptoms) / COUNT(ASK)",
+                "relevant_questions": {
+                    "source": "ground_truth.solution_space.minimal_information_sets.must_collect",
+                    "description": "symptoms from volunteer+if_asked tiers that agent must discover",
                 },
-                "information_gain_per_turn": {
-                    "method": "entropy_reduction",
-                    "compute": "COUNT(symptoms_revealed_during_ASK WHERE tier IN [volunteer,if_asked]) / turn_count",
-                    "note": "noise and misleading symptoms excluded",
+                "question_relevance": {
+                    "method": "relevant_ask_ratio",
+                    "compute": "COUNT(ASK WHERE symptoms_revealed INTERSECT relevant_questions > 0) / COUNT(ASK)",
+                },
+                "information_gain": {
+                    "method": "gain_per_ask",
+                    "compute": "COUNT(new_relevant_symptoms_revealed) / COUNT(ASK); relevant = tier IN [volunteer,if_asked]; noise and misleading excluded",
+                    "low_gain_penalty": "IF gain_per_turn < 0.3: score = gain_per_turn - 0.2; ELSE: score = gain_per_turn",
                 },
                 "redundancy_penalty": {
-                    "method": "repeated_query_penalty",
-                    "compute": "max(0, COUNT(ASK on same topic WHERE symptoms_revealed == []) * -0.05 + 1.0)",
-                    "note": "clipped to [0, 1], 1.0 = no redundancy",
+                    "method": "repeated_symptom_penalty",
+                    "compute": "IF same symptom asked > 1 time with no new info: penalty += 0.1 per repetition (unbounded)",
                 },
-                "aggregation": "mean",
+                "aggregation": "relevance_score * 0.4 + gain_score * 0.4 - redundancy_penalty; clipped to [0, 1]",
             },
             "aggregation": "weighted_sum_with_null_exclude",
             "pass_threshold": 0.7,
