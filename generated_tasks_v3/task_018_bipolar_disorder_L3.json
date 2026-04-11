@@ -1,0 +1,813 @@
+{
+  "id": "v27_emergency_triage_L3_bipolar_disorder_01acc0",
+  "task_config": {
+    "domain": "internal_medicine",
+    "task_type": "emergency_triage",
+    "difficulty": "L3",
+    "seed": 33326,
+    "max_turns": 6,
+    "min_turns": 3,
+    "version": "3.0",
+    "reproducibility_hash": "770b8852ef853942"
+  },
+  "patient": {
+    "profile": {
+      "age": 46,
+      "gender": "female",
+      "education": "elementary",
+      "occupation": "delivery driver",
+      "economic_status": "moderate"
+    },
+    "chief_complaint": "constant tiredness for a few weeks",
+    "behavior": {
+      "type": "confused",
+      "cooperation": "moderate",
+      "communication": "uncertain",
+      "empathy_needed": true
+    },
+    "symptoms": {
+      "volunteer": [
+        "fatigue"
+      ],
+      "if_asked": [],
+      "hidden": [
+        "pain",
+        "dizziness",
+        "constant tiredness",
+        "anxiety"
+      ],
+      "resistant": [],
+      "misleading": [
+        "night sweats",
+        "anxiety",
+        "insomnia",
+        "fatigue",
+        "swelling"
+      ],
+      "noise": [
+        "trouble going to the bathroom",
+        "mild fatigue"
+      ]
+    },
+    "progressive_reveal": [
+      {
+        "after_turn": 3,
+        "symptom": "dizziness",
+        "trigger": "doctor asks a specific follow-up question about related symptoms"
+      },
+      {
+        "after_turn": 3,
+        "symptom": "pain",
+        "trigger": "doctor asks a specific follow-up question about related symptoms"
+      }
+    ],
+    "misconceptions": {
+      "general_concerns": [
+        "Is this serious?",
+        "Will I need surgery?",
+        "How long will treatment take?"
+      ],
+      "economic_concerns": [
+        "How much will this medication cost per month?",
+        "Is there a cheaper alternative?",
+        "Will my insurance cover this?",
+        "Can we only prescribe what's absolutely necessary?"
+      ]
+    },
+    "instructions": "You are ChenXX, a 46-year-old female patient. Your education level is 小学. You work as a delivery driver. You are seeing a doctor because of constant tiredness. This has been going on for about a few weeks. You don't understand medical terms. Express your symptoms in your own simple words. Ask for clarification if the doctor uses terms you don't understand. You've been reading about your symptoms online and you're worried it might be something serious. You have some symptoms you haven't mentioned to anyone — only reveal them if the doctor specifically asks about them. You are sensitive about medical costs. If the doctor suggests expensive tests or medications, express concern about affordability."
+  },
+  "clinical": {
+    "vitals": {
+      "blood_pressure": "144/87 mmHg",
+      "bmi": "23.4"
+    },
+    "labs": {},
+    "medications": [],
+    "comorbidities": [],
+    "allergies": [],
+    "confounders": [
+      {
+        "name": "anxiety disorder",
+        "overlapping_symptoms": [
+          "anxiety",
+          "insomnia",
+          "fatigue"
+        ],
+        "full_symptoms": [
+          "anxiety",
+          "insomnia",
+          "fatigue"
+        ],
+        "mimics": "anxiety disorder presents with overlapping symptoms that closely resemble bipolar disorder"
+      },
+      {
+        "name": "chronic kidney disease",
+        "overlapping_symptoms": [
+          "fatigue",
+          "swelling",
+          "nausea"
+        ],
+        "full_symptoms": [
+          "fatigue",
+          "swelling",
+          "nausea"
+        ],
+        "mimics": "chronic kidney disease presents with overlapping symptoms that closely resemble bipolar disorder"
+      }
+    ],
+    "diagnosis": {
+      "primary": "bipolar disorder",
+      "differentials": [
+        "Major Depressive Disorder",
+        "Schizophrenia",
+        "Borderline Personality Disorder",
+        "ADHD"
+      ]
+    },
+    "likelihood_table": {
+      "constant tiredness": {
+        "bipolar disorder": 0.8679
+      },
+      "dizziness": {
+        "bipolar disorder": 0.7606
+      },
+      "night sweats": {
+        "bipolar disorder": 0.4042
+      },
+      "pain": {
+        "bipolar disorder": 0.6009
+      }
+    }
+  },
+  "ground_truth": {
+    "correct_diagnosis": {
+      "primary": "bipolar disorder",
+      "confidence_threshold": 0.8,
+      "acceptable_alternatives": [
+        "Major Depressive Disorder",
+        "Schizophrenia",
+        "Borderline Personality Disorder"
+      ],
+      "required_evidence": [
+        "symptom_cluster_matching"
+      ]
+    },
+    "expected_lab_results": {},
+    "correct_treatment_plan": {
+      "medications": [],
+      "non_pharmacological": [
+        "Lifestyle modification counseling",
+        "Dietary guidance"
+      ],
+      "follow_up": "2-4 weeks"
+    },
+    "required_safety_checks": [
+      {
+        "check": "allergy_check",
+        "before": "prescribing",
+        "critical": true
+      },
+      {
+        "check": "drug_interaction_check",
+        "before": "prescribing",
+        "critical": true
+      }
+    ],
+    "communication_truth": [
+      {
+        "milestone": "explain_diagnosis",
+        "must_include": [
+          "diagnosis name in patient terms",
+          "what it means"
+        ]
+      },
+      {
+        "milestone": "explain_treatment",
+        "must_include": [
+          "medication name and purpose",
+          "how to take it",
+          "expected effects"
+        ]
+      },
+      {
+        "milestone": "address_concerns",
+        "must_include": [
+          "acknowledge patient worries",
+          "correct misconceptions"
+        ]
+      }
+    ],
+    "solution_space": {
+      "derived_from": {
+        "symptom_graph": {
+          "volunteer_count": 1,
+          "if_asked_count": 0,
+          "hidden_count": 2,
+          "misleading_count": 1
+        },
+        "minimal_information_sets": [
+          {
+            "must_collect": [
+              "constant tiredness"
+            ],
+            "must_order": [
+              "CBC",
+              "BMP"
+            ],
+            "must_match": "bipolar disorder",
+            "is_optimal": true
+          },
+          {
+            "must_collect": [
+              "pain",
+              "dizziness"
+            ],
+            "must_order": [
+              "CBC",
+              "BMP"
+            ],
+            "must_match": "bipolar disorder",
+            "is_optimal": false
+          }
+        ]
+      },
+      "minimal_paths": [
+        {
+          "path_id": "path_a_classic",
+          "description": "Classic presentation — volunteer + if_asked symptoms",
+          "must_collect": [
+            "constant tiredness"
+          ],
+          "steps": [
+            "ASK volunteer symptoms",
+            "ASK if_asked symptoms",
+            "ORDER_LAB key tests",
+            "DIAGNOSE correctly",
+            "CHECK_ALLERGY + PRESCRIBE",
+            "END"
+          ],
+          "is_optimal": true
+        },
+        {
+          "path_id": "path_b_atypical",
+          "description": "Atypical presentation — hidden + resistant symptoms",
+          "must_collect": [
+            "pain",
+            "dizziness"
+          ],
+          "steps": [
+            "ASK prerequisite for hidden symptoms",
+            "ASK hidden symptoms (critical)",
+            "ORDER_LAB key tests",
+            "DIAGNOSE correctly",
+            "CHECK_ALLERGY + PRESCRIBE",
+            "END"
+          ],
+          "is_optimal": false
+        }
+      ],
+      "acceptable_variants": [
+        {
+          "description": "Thorough history + targeted labs",
+          "steps": [
+            "ASK all symptom categories",
+            "ORDER_LAB full panel",
+            "DIAGNOSE with differentials",
+            "safety checks + PRESCRIBE",
+            "EDUCATE + SCHEDULE_FOLLOWUP"
+          ]
+        },
+        {
+          "description": "Quick triage + confirm",
+          "steps": [
+            "ASK chief complaint + 1 follow-up",
+            "ORDER_LAB focused tests",
+            "DIAGNOSE",
+            "PRESCRIBE if safe",
+            "END"
+          ]
+        }
+      ],
+      "redundant_safe_paths": [
+        "ORDER_LAB extra tests is safe (cost penalty only)",
+        "ASK extra questions is safe (cost penalty only)",
+        "Multiple DIAGNOSE attempts allowed (last one counts)"
+      ]
+    }
+  },
+  "ground_truth_validation": {
+    "rules": [
+      {
+        "type": "diagnosis_match",
+        "operator": "in",
+        "target": [
+          "bipolar disorder"
+        ],
+        "acceptable": [
+          "Major Depressive Disorder",
+          "Schizophrenia",
+          "Borderline Personality Disorder",
+          "ADHD"
+        ]
+      },
+      {
+        "type": "forbidden_action",
+        "action": "PRESCRIBE",
+        "condition": "allergy_check == false"
+      },
+      {
+        "type": "required_action",
+        "action": "PRESCRIBE",
+        "target": "any_appropriate_for_bipolar_disorder"
+      }
+    ],
+    "diagnosis_target": [
+      "bipolar disorder"
+    ],
+    "diagnosis_acceptable": [
+      "Major Depressive Disorder",
+      "Schizophrenia",
+      "Borderline Personality Disorder",
+      "ADHD"
+    ],
+    "safety_rules": [
+      {
+        "type": "forbidden_action",
+        "action": "PRESCRIBE",
+        "condition": "allergy_check == false"
+      }
+    ],
+    "treatment_required": [
+      {
+        "type": "required_action",
+        "action": "PRESCRIBE",
+        "target": "any_appropriate_for_bipolar_disorder"
+      }
+    ]
+  },
+  "actions": {
+    "ASK": {
+      "id": 0,
+      "type": "ASK",
+      "subtype": "enum[open_question,targeted_question,clarification]",
+      "params": {
+        "topic": "enum[symptoms,history,medications,allergies,lifestyle,family_history]"
+      },
+      "cost": 1,
+      "quality_tiers": {
+        "open_question": "broad probe — lower info gain, safer for rapport",
+        "targeted_question": "specific probe — higher info gain, may miss unexpected findings",
+        "clarification": "follow-up on previous answer — resolves ambiguity"
+      }
+    },
+    "ORDER_LAB": {
+      "id": 1,
+      "type": "ORDER_LAB",
+      "subtype": "diagnostic",
+      "params": {
+        "tests": "list[string]"
+      },
+      "cost": 2,
+      "recommended": []
+    },
+    "GET_RESULTS": {
+      "id": 2,
+      "type": "GET_RESULTS",
+      "subtype": null,
+      "params": {
+        "order_id": "string"
+      },
+      "cost": 0,
+      "precondition": "ORDER_LAB executed"
+    },
+    "DIAGNOSE": {
+      "id": 3,
+      "type": "DIAGNOSE",
+      "subtype": null,
+      "params": {
+        "diagnosis": "string",
+        "confidence": "float[0,1]"
+      },
+      "cost": 0
+    },
+    "CHECK_ALLERGY": {
+      "id": 4,
+      "type": "CHECK_ALLERGY",
+      "subtype": null,
+      "params": {},
+      "cost": 0
+    },
+    "CHECK_INTERACTION": {
+      "id": 5,
+      "type": "CHECK_INTERACTION",
+      "subtype": null,
+      "params": {
+        "drugs": "list[string]"
+      },
+      "cost": 0
+    },
+    "PRESCRIBE": {
+      "id": 6,
+      "type": "PRESCRIBE",
+      "subtype": "medication",
+      "params": {
+        "drug": "string",
+        "dose": "string",
+        "frequency": "string"
+      },
+      "cost": 0,
+      "precondition": "CHECK_ALLERGY executed"
+    },
+    "EDUCATE": {
+      "id": 7,
+      "type": "EDUCATE",
+      "subtype": "patient",
+      "params": {
+        "topic": "string"
+      },
+      "cost": 1
+    },
+    "SCHEDULE_FOLLOWUP": {
+      "id": 8,
+      "type": "SCHEDULE_FOLLOWUP",
+      "subtype": null,
+      "params": {
+        "weeks": "int"
+      },
+      "cost": 0
+    },
+    "END": {
+      "id": 9,
+      "type": "END",
+      "subtype": null,
+      "params": {},
+      "cost": 0
+    }
+  },
+  "observations": {
+    "mode": "delta",
+    "history_included": false,
+    "fields": [
+      "symptoms_revealed",
+      "lab_results",
+      "patient_message",
+      "state",
+      "done"
+    ],
+    "initial": {
+      "visible": [
+        "patient.age",
+        "patient.gender",
+        "patient.chief_complaint"
+      ],
+      "hidden": [
+        "clinical.labs",
+        "clinical.diagnosis",
+        "patient.symptoms.hidden"
+      ]
+    },
+    "step_output": {
+      "symptoms_revealed": "list[string] — new symptoms this step only",
+      "lab_results": "dict or null — only when GET_RESULTS executed",
+      "patient_message": "string or null",
+      "state": "enum[INTAKE,HISTORY,EXAM,LABS_PENDING,LABS_READY,DIAGNOSING,TREATING,COMPLETE]",
+      "turn": "int",
+      "done": "bool"
+    },
+    "terminal_signal": {
+      "diagnosis_ready": "state == DIAGNOSING AND confidence >= 0.7",
+      "treatment_complete": "state == TREATING AND prescription_issued",
+      "critical_event": "state == COMPLETE",
+      "max_turns_reached": "turn >= max_turns"
+    },
+    "update_rules": [
+      "CONFOUNDER_DOMINANCE: IF turn <= 2 AND ASK(any subtype) MATCHES [night|sweats] → symptoms_revealed = FIRST MATCH in [night sweats]; IF turn <= 2 AND ASK(any subtype) MATCHES [pain|dizziness] → symptoms_revealed = [] (true signal suppressed during early stage)",
+      "TRUE_SIGNAL_UNLOCK: IF turn > 2 → confounder_dominance = OFF; normal REVELATION_GATE rules resume for all symptoms",
+      "ASK(topic,subtype) WHERE symptom IN volunteer → symptoms_revealed = match from volunteer pool; state unchanged",
+      "REVELATION_GATE(symptom='pain', prerequisite='[pain|hurt|ache]', initial_state='locked'): IF ASK(targeted) MATCHES [pain|hurt|ache] → gate_state['pain']='unlocked'; IF ASK(targeted) MATCHES [pain] AND gate_state=='unlocked' → symptoms_revealed=['pain']; reveal_quality='full'; IF ASK(targeted) MATCHES [pain] AND gate_state IN ['locked','soft_locked'] → symptoms_revealed=[]; miss_count+=1; IF miss_count>=2 → gate_state='soft_locked'; IF ASK(open_question) AND topic RELATED TO [pain|hurt|ache] AND gate_state=='soft_locked' → gate_state='unlocked'; reveal_quality='pain:partial' (missing severity and temporal details)",
+      "REVELATION_GATE(symptom='dizziness', prerequisite='[general]', initial_state='locked'): IF ASK(targeted) MATCHES [general] → gate_state['dizziness']='unlocked'; IF ASK(targeted) MATCHES [dizziness] AND gate_state=='unlocked' → symptoms_revealed=['dizziness']; reveal_quality='full'; IF ASK(targeted) MATCHES [dizziness] AND gate_state IN ['locked','soft_locked'] → symptoms_revealed=[]; miss_count+=1; IF miss_count>=2 → gate_state='soft_locked'; IF ASK(open_question) AND topic RELATED TO [general] AND gate_state=='soft_locked' → gate_state='unlocked'; reveal_quality='dizziness:partial' (missing severity and temporal details)",
+      "SOFT_LOCK_RECOVERY: IF gate_state[symptom]=='soft_locked' AND (ASK(open_question) with relevant topic OR ASK(targeted) partially matching prerequisite) → gate_state[symptom]='unlocked'; reveal_quality[symptom]='partial'",
+      "ORDER_LAB(tests) → state = LABS_PENDING; no output",
+      "GET_RESULTS(id) → lab_results = {test: value}; state = LABS_READY",
+      "DIAGNOSE(d, c) → state = DIAGNOSING; diagnosis_locked = true; all subsequent ASK → gain × 0.3; hidden symptoms permanently locked",
+      "CHECK_ALLERGY() → patient_message = allergy info",
+      "CHECK_INTERACTION(drugs) → patient_message = interaction info",
+      "PRESCRIBE(drug) → state = TREATING; IF CHECK_ALLERGY not done: error",
+      "EDUCATE(topic) → patient_message = understanding score",
+      "SCHEDULE_FOLLOWUP(weeks) → state = COMPLETE; done = true",
+      "END() → state = COMPLETE; done = true",
+      "SEVERITY_PROGRESSION: severity_level starts at 'stable'; IF turn > max_turns * 0.35 AND no correct treatment given → severity = 'worsening'; IF wrong treatment given (PRESCRIBE without safety check or wrong drug) → severity = 'critical'; IF turn > max_turns * 0.7 AND no correct treatment given → severity = 'critical'; IF severity == 'worsening': noise_level += 0.2, trust_decay_rate × 2, gain × 0.7, total -= 0.18; IF severity == 'critical': gain × 0.5, total -= 0.20",
+      "PATH_COMMITMENT: agent commits to a path when ≥50% of any minimal_information_set.must_collect symptoms have been collected via ASK; IF agent switches to collecting symptoms from another path after commitment: irrecoverable_penalty = -0.3 per switch; correct_path_evidence locked; path_consistency = 0.0"
+    ],
+    "noise_model": {
+      "cognitive_noise": {
+        "symptom_misattribution": "patient may attribute symptom to wrong cause (e.g., fatigue → work stress, not disease)",
+        "temporal_distortion": "patient may report 'a few days' when it has been weeks, or vice versa",
+        "severity_bias": "patient may understate or overstate severity based on pain tolerance and anxiety"
+      }
+    },
+    "state_invariants": [
+      "labs_once_observed_cannot_change — same test always returns same value",
+      "revealed_symptoms_are_monotonic — symptom once revealed stays revealed",
+      "diagnosis_irreversible_after_commit — DIAGNOSE overwrites previous, cannot revert",
+      "trust_monotonic_per_action — single action changes trust by at most one step",
+      "state_progresses_forward — no backward state transitions (TREATING → INTAKE forbidden)",
+      "gate_state_is_recoverable — soft_locked symptoms can recover to unlocked via open-ended or partial-match questions; locked (hard) remains locked",
+      "partial_reveal_is_degraded — reveal_quality='partial' gives incomplete symptom info (missing severity/temporal); scores at 0.5 weight for info and 0.5 × information_value for gain",
+      "consecutive_miss_resets_on_prerequisite_match — any successful prerequisite match resets miss counter to 0",
+      "confounder_priority_is_turn_gated — CONFOUNDER_DOMINANCE only applies when turn <= 2; after turn 2, normal rules apply",
+      "information_value_is_conditional — value = entropy_reduction(s, S) where S = already-observed symptoms; depends on current hypothesis posterior, not static ranking; forces sequential reasoning",
+      "misleading_penalty_is_count_based — IF confounder_unique_revealed > true_signal_unique_revealed THEN penalty=0.2; no randomness",
+      "trust_decays_on_irrelevant_ask — each ASK that reveals no new relevant symptom: trust -= 0.05; IF trust < 0.6: revealed symptoms include noise; IF trust < 0.4: previously revealed symptoms get confidence=degraded (info_value × 0.5)",
+      "diagnosis_locks_exploration — after DIAGNOSE: hidden symptoms permanently locked; subsequent ASK gain × 0.3; alternative solution paths disabled",
+      "paths_are_mutually_exclusive — each minimal_information_set has ≥1 unique symptom not in other sets; IF agent mixes symptoms from different paths: inconsistency_penalty = 0.2",
+      "severity_progresses_monotonically — severity can only increase: stable → worsening → critical; never reverses",
+      "severity_worsening_reduces_information_access — worsening: per-step info_value × 0.7, trust_decay step 0.07 (not 0.05); critical: hidden info_value = 0.0, trust starts at 0.3, info_score × 0.5",
+      "severity_does_NOT_reduce_total — severity constrains information access not score; no global score penalty for severity",
+      "path_switch_blocks_evidence — HARD CONSTRAINT: IF path_switches > 0: gain=0, relevance=0, path_consistency=0 (evidence nullified, not penalized)",
+      "path_switch_contaminates_diagnosis — HARD CONSTRAINT: IF path_switches > 1: diagnosis=0.0, info=0.0, process capped at 0.3 (cannot recover by trading penalty for info)",
+      "path_commitment_is_irreversible — once committed (≥50% of must_collect via ASK), switching is evidence nullification not score deduction",
+      "trajectory_dependency_is_composited — time_to_correct_path 0.35 + branch_switch 0.35 + unnecessary_actions_ratio 0.30",
+      "unnecessary_actions_are_penalized — duplicate non-ASK actions reduce trajectory_dependency sub-score"
+    ]
+  },
+  "scoring": {
+    "components": {
+      "diagnosis": {
+        "method": "set_match",
+        "weight": 0.25,
+        "compute": "IN(agent.diagnosis, ground_truth_validation.diagnosis_target) ? 1.0 : IN(agent.diagnosis, ground_truth_validation.diagnosis_acceptable) ? 0.5 : 0.0"
+      },
+      "safety": {
+        "method": "rule_check",
+        "weight": 0.2,
+        "compute": "COUNT(rule IN ground_truth_validation.safety_rules WHERE NOT triggered) / COUNT(ground_truth_validation.safety_rules)"
+      },
+      "info": {
+        "method": "count_ratio",
+        "weight": 0.15,
+        "compute": "COUNT(symptom IN revealed WHERE tier IN [volunteer,if_asked]) / COUNT(symptoms WHERE tier IN [volunteer,if_asked])",
+        "note": "hidden symptoms excluded from denominator — only volunteer+if_asked count"
+      },
+      "treatment": {
+        "method": "required_done",
+        "weight": 0.1,
+        "compute": "IF COUNT(treatment_required) == 0: return null (exclude from sum, renormalize); ELSE COUNT(done IN treatment_required) / COUNT(treatment_required)"
+      },
+      "communication": {
+        "method": "rule_check",
+        "weight": 0.1,
+        "compute": "COUNT(milestone IN communication_truth WHERE achieved) / COUNT(communication_truth)"
+      },
+      "process": {
+        "method": "gradient_information_value",
+        "weight": 0.2,
+        "compute": "relevance × 0.3 + gain × 0.5 - redundancy - misleading_penalty; gain = Σ(info_value × reveal_factor) / #asks; misleading_penalty = 0.2 IF confounder_revealed > true_signal_revealed"
+      }
+    },
+    "process_score": {
+      "information_value": {
+        "description": "conditional entropy reduction: value depends on already-observed symptoms",
+        "formula": "info_value(s, S) = H(P(H|S)) - E[H(P(H|S∪{s}))]; normalized by log₂|H|",
+        "properties": [
+          "globally non-discriminative symptom can become high-value after specific observations",
+          "discriminative symptom becomes low-value once hypothesis is resolved",
+          "forces sequential reasoning, not static ranking"
+        ],
+        "hypothesis_space": "correct_disease + confounders from clinical.confounders",
+        "posterior": "P(h|S) ∝ Π P(sᵢ|h); P(sᵢ|h) from stochastic Beta-distributed likelihood table",
+        "likelihood_model": "P(s|h) ~ Beta(α, β); α,β depend on symptom-hypothesis association (core/peripheral), severity, patient age, comorbidity count; sampled once per task"
+      },
+      "relevant_questions": {
+        "source": "ground_truth.solution_space.minimal_information_sets.must_collect",
+        "description": "all non-noise symptoms from volunteer+if_asked+hidden+resistant tiers"
+      },
+      "question_relevance": {
+        "method": "relevant_ask_ratio",
+        "compute": "COUNT(ASK WHERE symptoms_revealed INTERSECT relevant_questions > 0) / COUNT(ASK)"
+      },
+      "information_gain": {
+        "method": "value_weighted_gain",
+        "compute": "Σ(information_value[symptom] × reveal_quality_factor) / COUNT(ASK); reveal_quality_factor: full=1.0, partial=0.5"
+      },
+      "misleading_penalty": {
+        "method": "confounder_dominance_check",
+        "compute": "IF COUNT(unique confounder symptoms revealed) > COUNT(unique true signal symptoms revealed) → penalty = 0.2; ELSE penalty = 0.0"
+      },
+      "path_consistency": {
+        "method": "exclusivity_check",
+        "compute": "IF agent reveals symptoms from >1 minimal_information_set → inconsistency_penalty = 0.2; ELSE penalty = 0.0"
+      },
+      "redundancy_penalty": {
+        "method": "repeated_symptom_penalty",
+        "compute": "IF same symptom asked > 1 time with no new info: penalty += 0.1 per repetition (unbounded)"
+      },
+      "trust_decay": {
+        "method": "irrelevant_ask_decay",
+        "compute": "trust starts at 1.0; each ASK with no new relevant reveal: trust -= 0.05; IF trust < 0.6: noise contamination; IF trust < 0.4: info_value × 0.5 for all previously revealed"
+      },
+      "delay_penalty": {
+        "method": "post_diagnosis_ask_cost",
+        "compute": "IF ASK occurs after DIAGNOSE in trajectory: gain × 0.3 for those steps; IF hidden symptom revealed after DIAGNOSE: value = 0.0"
+      },
+      "severity_penalty": {
+        "method": "temporal_state_penalty",
+        "compute": "severity starts 'stable'; IF turn > max_turns*0.35 AND no correct treatment → 'worsening' (gain × 0.7, total -= 0.18); IF wrong treatment or turn > max_turns*0.7 without treatment → 'critical' (gain × 0.5, total -= 0.20)"
+      },
+      "trajectory_dependency": {
+        "method": "composite_temporal_score",
+        "sub_metrics": {
+          "time_to_correct_path": {
+            "weight": 0.35,
+            "compute": "optimal_turn = len(optimal_path.must_collect); IF commit_turn <= optimal_turn + 1: 1.0; IF <= optimal_turn + 3: 0.7; ELSE: max(0, 1.0 - 0.2*(delay-3)); IF no commitment: 0.0"
+          },
+          "branch_switch_count": {
+            "weight": 0.35,
+            "compute": "1.0 - 0.1 × path switches after commitment; floor at 0.0"
+          },
+          "unnecessary_actions_ratio": {
+            "weight": 0.3,
+            "compute": "1.0 - (duplicate non-ASK actions / total non-ASK actions); necessary = first ORDER_LAB, GET_RESULTS, DIAGNOSE, CHECK_ALLERGY, PRESCRIBE; all subsequent duplicates are unnecessary"
+          }
+        }
+      },
+      "irrecoverable_path_commitment": {
+        "method": "hard_constraint_not_penalty",
+        "compute": "IF path_switches > 0: gain=0, relevance=0, path_consistency=0 (evidence nullified); IF path_switches > 1: diagnosis=0, info=0, process capped at 0.3 (HARD CONSTRAINT — cannot trade penalty for info)"
+      },
+      "aggregation": "relevance × 0.20 + gain × 0.25 + path_consistency × 0.20 + trajectory_dependency × 0.35 - redundancy - misleading_penalty - delay_penalty; HARD CAP: if path_switches > 1 then max 0.3; clipped to [0, 1]"
+    },
+    "aggregation": "weighted_sum_with_null_exclude",
+    "pass_threshold": 0.7,
+    "critical_failure": {
+      "rules": [
+        "diagnosis_score == 0",
+        "prescribe_without_allergy_check"
+      ],
+      "override": "score = 0"
+    },
+    "efficiency": {
+      "bonus": "IF turns IN [min_turns, min_turns+4]: +0.05",
+      "penalty": "IF turns > max_turns * 0.8: -0.02 per extra turn",
+      "neutral_zone": "turns IN [min_turns+5, max_turns*0.8]: no bonus, no penalty"
+    }
+  },
+  "task_profile": {
+    "dimensions": {
+      "info": 0.15,
+      "diagnosis": 0.25,
+      "treatment": 0.15,
+      "safety": 0.15,
+      "communication": 0.1,
+      "efficiency": 0.2
+    },
+    "difficulty_factors": {
+      "symptom_complexity": 1,
+      "diagnostic_ambiguity": 2,
+      "treatment_complexity": 1,
+      "patient_behavior": 2,
+      "information_asymmetry": 2,
+      "comorbidity_burden": 0,
+      "time_pressure": 3
+    },
+    "overall_difficulty_score": 11,
+    "max_possible": 21,
+    "adversarial": {
+      "noise": true,
+      "partial_observability": true,
+      "adversarial_behavior": false,
+      "misleading_symptoms": true
+    },
+    "calibrated_difficulty": {
+      "components": {
+        "confounder_count": 0.6667,
+        "drop_rate": 0.0,
+        "atypical_count": 1.0,
+        "symptom_overlap": 0.2254,
+        "initial_entropy": 0.4771
+      },
+      "raw_score": 0.4882,
+      "normalized_score": 0.4882,
+      "weights": {
+        "confounder_count": 0.3,
+        "drop_rate": 0.1,
+        "atypical_count": 0.1,
+        "symptom_overlap": 0.2,
+        "initial_entropy": 0.3
+      },
+      "target_band": "L3",
+      "in_band": false,
+      "adjustments": [
+        "added confounder 'anxiety disorder'",
+        "added confounder 'chronic kidney disease'",
+        "moved 'constant tiredness' from volunteer→hidden",
+        "moved 'anxiety' from volunteer→hidden",
+        "added noise 'mild fatigue'"
+      ],
+      "calibration_rounds": 3
+    },
+    "discriminative_ratio": 0.6
+  },
+  "baseline": {
+    "random": {
+      "policy": "uniform_action_sampling",
+      "expected_score": 0.1
+    },
+    "rule_based": {
+      "policy": "fixed_sequence: ASK→ORDER_LAB→GET_RESULTS→DIAGNOSE→CHECK_ALLERGY→PRESCRIBE→END",
+      "expected_score": 0.35
+    },
+    "llm_baseline": {
+      "model": "gpt-4 or claude-3.5 (fill before run)",
+      "prompt_template": "You are a doctor. Patient presents with {chief_complaint}. Use available tools to diagnose and treat.",
+      "tool_usage_policy": "agent may call any action in actions dict; must follow preconditions",
+      "expected_score": null,
+      "note": "Run with fixed seed, record score here"
+    },
+    "protocol": "v1_standard"
+  },
+  "error_taxonomy": [
+    {
+      "code": "E01",
+      "type": "wrong_diagnosis",
+      "severity": "critical",
+      "trigger": "agent.diagnosis NOT IN [primary + acceptable]"
+    },
+    {
+      "code": "E02",
+      "type": "missed_safety_check",
+      "severity": "critical",
+      "trigger": "PRESCRIBE without prior CHECK_ALLERGY"
+    },
+    {
+      "code": "E03",
+      "type": "contraindicated_prescription",
+      "severity": "critical",
+      "trigger": "prescribed drug contraindicated by comorbidities"
+    },
+    {
+      "code": "E04",
+      "type": "incomplete_history",
+      "severity": "major",
+      "trigger": "info_score < 0.5"
+    },
+    {
+      "code": "E05",
+      "type": "wrong_treatment",
+      "severity": "major",
+      "trigger": "treatment_score == 0"
+    },
+    {
+      "code": "E06",
+      "type": "missed_hidden_symptom",
+      "severity": "moderate",
+      "trigger": "hidden symptom never revealed"
+    },
+    {
+      "code": "E07",
+      "type": "ignored_patient_concern",
+      "severity": "moderate",
+      "trigger": "patient expressed concern, agent did not address"
+    },
+    {
+      "code": "E08",
+      "type": "poor_communication",
+      "severity": "minor",
+      "trigger": "communication_score < 0.5"
+    },
+    {
+      "code": "E09",
+      "type": "inefficient",
+      "severity": "minor",
+      "trigger": "turns > max_turns * 0.8"
+    },
+    {
+      "code": "E10",
+      "type": "unnecessary_test",
+      "severity": "minor",
+      "trigger": "ordered test not in recommended list"
+    }
+  ],
+  "eval_modes": {
+    "quick_eval": "score = diagnosis_component + safety_component; PASS if both > 0",
+    "full_eval": "score = weighted_sum(all_components); PASS if score >= pass_threshold",
+    "leaderboard_metric": "mean(normalized_score) across tasks",
+    "run_command": "for each task: agent.step(action) loop until done; score with scoring formula",
+    "comparable_across": "same task_type + difficulty group"
+  },
+  "trajectory_schema": {
+    "step": {
+      "t": "int",
+      "action": "action_id",
+      "observation": "dict",
+      "reward": "float or null",
+      "done": "bool"
+    },
+    "episode": {
+      "total_reward": "float",
+      "total_turns": "int",
+      "diagnosis": "string or null",
+      "errors": "list[error_code]"
+    }
+  }
+}
