@@ -288,6 +288,10 @@ class MedicalTaskGenerator:
     # Public API
     # ============================================================
 
+    # Discriminative ratio floor — below this, structural uncertainty
+    # has destroyed the diagnostic signal and the task must be regenerated.
+    DISCRIMINATIVE_RATIO_FLOOR = 0.3
+
     def generate_task(
         self,
         task_type: str = "diagnostic_uncertainty",
@@ -298,16 +302,32 @@ class MedicalTaskGenerator:
         # Deterministic RNG: same seed always produces identical task
         self._rng = random.Random(seed if seed is not None else 42)
 
-        # Step 1: Generate scenario
-        scenario = self.scenario_gen.generate(
-            task_type, difficulty,
-            target_disease=target_disease,
-            seed=seed,
-        )
+        # Regeneration loop: retry with different seeds if discriminative
+        # signal is destroyed by structural uncertainty.
+        max_attempts = 5
+        for attempt in range(max_attempts):
+            attempt_seed = (seed if seed is not None else 42) + attempt * 1009
 
-        # Step 2: Generate symptoms
-        disease = scenario.target_disease or "fatigue"
-        symptoms = self.symptom_gen.generate(disease, scenario, seed=seed)
+            # Step 1: Generate scenario
+            scenario = self.scenario_gen.generate(
+                task_type, difficulty,
+                target_disease=target_disease,
+                seed=attempt_seed,
+            )
+
+            # Step 2: Generate symptoms
+            disease = scenario.target_disease or "fatigue"
+            symptoms = self.symptom_gen.generate(disease, scenario, seed=attempt_seed)
+
+            # Step 2b: Check discriminative ratio
+            if symptoms.discriminative_ratio < self.DISCRIMINATIVE_RATIO_FLOOR:
+                # Signal destroyed — try next seed
+                continue
+
+            break
+        else:
+            # All attempts failed — use last attempt anyway (graceful degradation)
+            pass
 
         # Step 3: Get disease profile from KB
         profile = self.kb.get_disease_profile(disease)
@@ -316,10 +336,10 @@ class MedicalTaskGenerator:
         persona = self._generate_patient_persona(scenario, profile)
 
         # Step 5: Build task
-        task = self._build_task(scenario, symptoms, profile, persona, seed=seed)
+        task = self._build_task(scenario, symptoms, profile, persona, seed=attempt_seed)
 
         # Step 6: Post-generation difficulty calibration
-        task = self._calibrate_task(task, difficulty, seed)
+        task = self._calibrate_task(task, difficulty, attempt_seed)
 
         return task
 
@@ -403,6 +423,10 @@ class MedicalTaskGenerator:
         # Stochastic likelihood table (needs patient symptoms + confounders)
         task["clinical"]["likelihood_table"] = self._build_likelihood_table(
             scenario, disease, symptoms, persona, seed)
+
+        # Reproducibility hash: covers all stochastic inputs
+        task["task_config"]["reproducibility_hash"] = self._compute_reproducibility_hash(
+            task, scenario, symptoms)
 
         return task
 
@@ -836,7 +860,51 @@ class MedicalTaskGenerator:
             "max_turns": scenario.constraints.max_turns,
             "min_turns": max(3, scenario.constraints.min_required_questions),
             "version": "3.0",
+            "reproducibility_hash": None,  # Populated in _build_task after all components ready
         }
+
+    def _compute_reproducibility_hash(
+        self, task: Dict[str, Any], scenario: ScenarioSpec, symptoms: SymptomSet,
+    ) -> str:
+        """Compute deterministic hash of all task-generating inputs.
+
+        Hash covers: seed, disease, confounders, beta params, symptom set.
+        Same inputs → same hash. Different inputs → different hash (overwhelmingly).
+        """
+        import hashlib
+        disease = scenario.target_disease or "unknown"
+        gt = scenario.ground_truth
+
+        # Confounders
+        confounders = []
+        if gt and gt.confounders:
+            for c in gt.confounders:
+                confounders.append(c.name if hasattr(c, 'name') else str(c))
+        confounders.sort()
+
+        # Beta params from likelihood table (sorted for determinism)
+        likelihood = task.get("clinical", {}).get("likelihood_table", {})
+        beta_parts = []
+        for sym in sorted(likelihood.keys()):
+            for hyp in sorted(likelihood[sym].keys()):
+                beta_parts.append(f"{sym}|{hyp}|{likelihood[sym][hyp]}")
+
+        # Symptom set (sorted tiers for determinism)
+        sym_parts = []
+        for tier in ("volunteer", "if_asked", "hidden", "resistant", "misleading", "noise"):
+            tier_list = task.get("patient", {}).get("symptoms", {}).get(tier, [])
+            for s in sorted(tier_list):
+                sym_parts.append(f"{tier}:{s}")
+
+        hash_input = "|".join([
+            str(task["task_config"]["seed"]),
+            disease,
+            ",".join(confounders),
+            ",".join(beta_parts),
+            ",".join(sym_parts),
+        ])
+
+        return hashlib.sha256(hash_input.encode("utf-8")).hexdigest()[:16]
 
     def _build_patient(self, scenario: ScenarioSpec, symptoms: SymptomSet, persona: Dict, disease: str) -> Dict:
         behavior = BEHAVIOR_PROFILES.get(scenario.behavior_type, BEHAVIOR_PROFILES["cooperative"])
@@ -1732,6 +1800,8 @@ class MedicalTaskGenerator:
             },
             # Populated post-generation by _calibrate_task
             "calibrated_difficulty": None,
+            # Discriminative signal quality from symptom generation
+            "discriminative_ratio": round(symptoms.discriminative_ratio, 4),
         }
 
     def _build_baseline(self, scenario: ScenarioSpec, disease: str) -> Dict:

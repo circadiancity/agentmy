@@ -365,7 +365,7 @@ class PatientLanguageLayer:
     def __init__(self):
         self._mapping = CLINICAL_TO_PATIENT
         self._templates = PATIENT_COMPLAINT_TEMPLATES
-        self._rng = random.Random()
+        self._rng = random.Random(42)  # Fixed seed for deterministic template selection
 
     def to_patient(self, clinical_term: str) -> str:
         """

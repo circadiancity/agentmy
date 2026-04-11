@@ -5,9 +5,10 @@ Symptom Generator — Generate symptoms with controlled noise/missing/misleading
 
 v1: all real symptoms revealed upfront.
 v2: symptoms distributed across visibility tiers based on scenario uncertainty.
+v2.9: fully deterministic — all randomness via local RNG, no global random state.
 """
 
-import random
+import random as _random
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
 
@@ -59,6 +60,12 @@ except ImportError:
 NOISE_SYMPTOM_POOL = _NOISE_POOL
 MISLEADING_SYMPTOM_MAP = _MISLEADING_MAP
 
+# Component hash offsets for deriving sub-RNGs from a single seed
+_SYMPTOM_RNG_OFFSET = 0
+_STRUCT_RNG_OFFSET = 1000
+_NOISE_RNG_OFFSET = 2000
+_MISLEAD_RNG_OFFSET = 3000
+
 
 @dataclass
 class SymptomSet:
@@ -76,6 +83,9 @@ class SymptomSet:
     noise: List[str] = field(default_factory=list)
     misleading: List[str] = field(default_factory=list)
 
+    # Discriminative quality metric
+    discriminative_ratio: float = 0.0
+
     # All symptoms the patient might mention (for dialogue generation)
     @property
     def presented_symptoms(self) -> List[str]:
@@ -87,7 +97,11 @@ class SymptomSet:
 
 
 class SymptomGenerator:
-    """Generate symptoms with controlled uncertainty for a scenario."""
+    """Generate symptoms with controlled uncertainty for a scenario.
+
+    Fully deterministic: all randomness via local RNG instances derived
+    from the seed. No global random state is used or modified.
+    """
 
     def __init__(self, clinical_kb, primekg=None):
         self.kb = clinical_kb
@@ -104,24 +118,21 @@ class SymptomGenerator:
         """
         Generate a complete symptom set for the disease-scenario pair.
 
-        v2.8: Confounder-dominant early presentation.
-        - Confounder symptoms → volunteer + if_asked (prominent in early turns)
-        - True critical symptoms → hidden + resistant (suppressed until later)
-        - Confounder mimics the primary, making early misdiagnosis likely
+        v2.9: Fully deterministic. Creates local RNG instances from seed.
+        No global random state is touched.
         """
-        if seed is not None:
-            random.seed(seed)
+        base_seed = seed if seed is not None else 42
+
+        # Derive sub-RNGs for each stage (isolated, reproducible)
+        symptom_rng = _random.Random(base_seed + _SYMPTOM_RNG_OFFSET)
+        struct_rng = _random.Random(base_seed + _STRUCT_RNG_OFFSET)
+        noise_rng = _random.Random(base_seed + _NOISE_RNG_OFFSET)
+        mislead_rng = _random.Random(base_seed + _MISLEAD_RNG_OFFSET)
 
         # 1. Get real symptoms for the PRIMARY disease
         real_symptoms = self._get_real_symptoms(disease)
         if not real_symptoms:
             real_symptoms = ["fatigue", "general discomfort"]
-
-        # 1b. STRUCTURAL UNCERTAINTY: randomly modify canonical symptom set
-        #     Same disease produces different symptom sets across tasks.
-        real_symptoms = self._apply_structural_uncertainty(
-            real_symptoms, disease, scenario.difficulty
-        )
 
         # 2. Merge comorbidity symptoms
         gt = scenario.ground_truth
@@ -133,7 +144,7 @@ class SymptomGenerator:
             n_include = max(1, int(len(c_symptoms) * contribution))
             comorbidity_symptoms.extend(c_symptoms[:n_include])
 
-        # 3. Get confounder symptoms
+        # 3. Get confounder symptoms (needed BEFORE structural uncertainty)
         confounder_symptoms = []
         confounder_names = []
         for conf in gt.confounders:
@@ -143,12 +154,22 @@ class SymptomGenerator:
             # Confounders contribute up to 3 overlapping/mimicking symptoms
             confounder_symptoms.extend(c_symptoms[:3])
 
+        # 1b. STRUCTURAL UNCERTAINTY: randomly modify canonical symptom set
+        #     Pass confounder symptoms so discriminative signals are preserved.
+        #     Uses struct_rng for full determinism.
+        real_symptoms = self._apply_structural_uncertainty(
+            real_symptoms, disease, scenario.difficulty,
+            confounder_symptoms=confounder_symptoms,
+            rng=struct_rng,
+        )
+
         # 4. Build uncertainty config
         config = UncertaintyConfig.from_difficulty(scenario.difficulty, scenario.task_type)
 
         # 5. Distribute TRUE symptoms: push critical ones to hidden/resistant
+        #    Pass symptom_rng for deterministic shuffling.
         all_real = real_symptoms + comorbidity_symptoms
-        distribution = self.uncertainty.apply_uncertainty(all_real, config)
+        distribution = self.uncertainty.apply_uncertainty(all_real, config, rng=symptom_rng)
 
         # 6. CONFOUNDER DOMINANCE: redistribute tiers
         #    Confounder symptoms → volunteer + if_asked (front-loaded)
@@ -187,13 +208,14 @@ class SymptomGenerator:
         final_hidden = true_hidden
         final_resistant = true_resistant
 
-        # 8. Generate noise
-        noise = self._generate_noise(scenario, config)
+        # 8. Generate noise (uses noise_rng)
+        noise = self._generate_noise(scenario, config, rng=noise_rng)
 
         # 9. Misleading = confounder symptoms that aren't already in volunteer/if_asked
         remaining_conf = [s for s in confounder_symptoms
                           if s not in volunteer_conf and s not in if_asked_conf]
-        misleading = remaining_conf if remaining_conf else self._generate_misleading(disease, scenario, config)
+        misleading = remaining_conf if remaining_conf else self._generate_misleading(
+            disease, scenario, config, rng=mislead_rng)
 
         # 10. Floor: ensure at least 3 true symptoms for discrimination
         MIN_SYMPTOMS = 3
@@ -206,7 +228,7 @@ class SymptomGenerator:
                 supplement_pool = ["fatigue", "headache", "nausea", "dizziness", "appetite loss"]
                 supplement_pool = [s for s in supplement_pool if s not in existing]
             needed = MIN_SYMPTOMS - true_count
-            random.shuffle(supplement_pool)
+            symptom_rng.shuffle(supplement_pool)
             extra = supplement_pool[:needed]
             for i, s in enumerate(extra):
                 tier = "hidden" if i % 2 == 0 else "resistant"
@@ -223,6 +245,16 @@ class SymptomGenerator:
         noise = [self.language.to_patient(s) for s in noise]
         misleading = [self.language.to_patient(s) for s in misleading]
 
+        # 12. Compute discriminative ratio
+        # True disease symptoms = volunteer + if_asked + hidden + resistant (excluding confounder-contributed)
+        true_syms = final_volunteer + final_if_asked + final_hidden + final_resistant
+        conf_lower = [s.lower() for s in confounder_symptoms]
+        noise_lower = [s.lower() for s in noise]
+        misleading_lower = [s.lower() for s in misleading]
+        disc_ratio = self.compute_discriminative_ratio(
+            true_syms, conf_lower, noise_lower, misleading_lower,
+        )
+
         return SymptomSet(
             real_symptoms=all_real,
             volunteer=volunteer,
@@ -231,6 +263,7 @@ class SymptomGenerator:
             hidden=hidden,
             noise=noise,
             misleading=misleading,
+            discriminative_ratio=round(disc_ratio, 4),
         )
 
     # Disease-name terms that should not appear as symptoms
@@ -305,26 +338,32 @@ class SymptomGenerator:
         return fallback.get(disease.lower(), ["fatigue", "pain"])
 
     def _generate_noise(
-        self, scenario: ScenarioSpec, config: UncertaintyConfig
+        self, scenario: ScenarioSpec, config: UncertaintyConfig,
+        rng: _random.Random = None,
     ) -> List[str]:
         """Generate unrelated noise symptoms from expanded pool."""
+        if rng is None:
+            rng = _random.Random(42)
         n_noise = max(0, int(config.noise_fraction * 5))  # Scale to ~5 base symptoms
         if n_noise == 0:
             return []
 
         pool = [s for s in _NOISE_POOL]
-        random.shuffle(pool)
+        rng.shuffle(pool)
         return pool[:n_noise]
 
     def _generate_misleading(
-        self, disease: str, scenario: ScenarioSpec, config: UncertaintyConfig
+        self, disease: str, scenario: ScenarioSpec, config: UncertaintyConfig,
+        rng: _random.Random = None,
     ) -> List[str]:
         """Generate misleading symptoms that point to wrong diagnosis."""
+        if rng is None:
+            rng = _random.Random(42)
         if config.misleading_fraction <= 0:
             return []
 
         # Check for disease-specific misleading symptoms (expanded map)
-        candidates = _MISLEADING_MAP.get(disease.lower(), [])
+        candidates = list(_MISLEADING_MAP.get(disease.lower(), []))  # Copy to avoid mutating module data
 
         if not candidates:
             # Generic misleading pool
@@ -334,7 +373,7 @@ class SymptomGenerator:
             ]
 
         n = max(1, int(config.misleading_fraction * 3))
-        random.shuffle(candidates)
+        rng.shuffle(candidates)
         return candidates[:n]
 
     def _apply_structural_uncertainty(
@@ -342,33 +381,81 @@ class SymptomGenerator:
         symptoms: List[str],
         disease: str,
         difficulty: str,
+        confounder_symptoms: Optional[List[str]] = None,
+        rng: _random.Random = None,
     ) -> List[str]:
         """Apply structural uncertainty: drop, perturb, and inject atypical symptoms.
 
         Three transformations applied per-task (seed-controlled):
         1. DROP: randomly remove some canonical symptoms
+           → Protected: at least 2 high-discriminative symptoms always kept
         2. PERTURB: replace some canonical symptom descriptions with variants
         3. INJECT: add atypical/rare symptoms not in the canonical list
+           → Protected: injected count ≤ discriminative signal count
 
         This makes the same disease produce different symptom sets across tasks,
-        preventing agents from memorizing disease-symptom mappings.
+        preventing agents from memorizing disease-symptom mappings, while
+        preserving enough discriminative signal for correct diagnosis.
+
+        Fully deterministic: uses local rng parameter.
         """
+        if rng is None:
+            rng = _random.Random(42)
+
         if not symptoms or not _STRUCT_CFG:
             return symptoms
 
         cfg = _STRUCT_CFG.get(difficulty, _STRUCT_CFG.get("L2", {}))
         result = list(symptoms)
 
+        # ── Pre-compute discriminative (unique-to-disease) symptoms ──
+        confounder_syms_lower = set()
+        if confounder_symptoms:
+            confounder_syms_lower = {s.lower() for s in confounder_symptoms}
+
+        discriminative = []
+        for s in result:
+            s_lower = s.lower()
+            is_overlap = any(
+                s_lower in cs or cs in s_lower
+                for cs in confounder_syms_lower
+            )
+            if not is_overlap:
+                discriminative.append(s)
+
         # ── 1. DROP canonical symptoms ──
         drop_low, drop_high = cfg.get("canonical_drop_rate", (0.0, 0.15))
-        drop_rate = random.uniform(drop_low, drop_high)
-        # Always keep at least 2 symptoms (floor)
+        drop_rate = rng.uniform(drop_low, drop_high)
         min_keep = 2
+        min_discriminative = 2
+
         if len(result) > min_keep:
             n_to_drop = max(0, int(len(result) * drop_rate))
             if n_to_drop > 0 and len(result) - n_to_drop >= min_keep:
-                # Drop from the END (less canonical symptoms tend to be later)
-                result = result[:len(result) - n_to_drop]
+                non_disc = [s for s in result if s not in discriminative]
+                disc_remaining = list(discriminative)
+
+                # Drop from non-discriminative pool first
+                dropped = 0
+                result_after_drop = []
+                for s in result:
+                    if dropped < n_to_drop and s in non_disc:
+                        dropped += 1
+                    else:
+                        result_after_drop.append(s)
+
+                # If still need to drop more, drop from discriminative tail
+                if dropped < n_to_drop and len(disc_remaining) > min_discriminative:
+                    can_drop_from_disc = len(disc_remaining) - min_discriminative
+                    extra_drop = min(n_to_drop - dropped, can_drop_from_disc)
+                    if extra_drop > 0:
+                        disc_to_remove = set(disc_remaining[-extra_drop:])
+                        result_after_drop = [
+                            s for s in result_after_drop
+                            if s not in disc_to_remove
+                        ]
+
+                result = result_after_drop
 
         # ── 2. PERTURB symptom descriptions ──
         variant_rate = cfg.get("variant_replace_rate", 0.1)
@@ -377,8 +464,8 @@ class SymptomGenerator:
             s_lower = s.lower().strip()
             replaced = False
             for canonical, variants in _VARIANTS.items():
-                if canonical in s_lower and random.random() < variant_rate:
-                    perturbed.append(random.choice(variants))
+                if canonical in s_lower and rng.random() < variant_rate:
+                    perturbed.append(rng.choice(variants))
                     replaced = True
                     break
             if not replaced:
@@ -387,20 +474,67 @@ class SymptomGenerator:
 
         # ── 3. INJECT atypical/rare symptoms ──
         inj_low, inj_high = cfg.get("atypical_inject_rate", (0.0, 0.2))
-        inject_prob = random.uniform(inj_low, inj_high)
+        inject_prob = rng.uniform(inj_low, inj_high)
         max_atypical = cfg.get("max_atypical_added", 1)
 
-        atypical_pool = _ATYPICAL.get(disease.lower(), [])
-        if atypical_pool and random.random() < inject_prob:
-            # Pick 1..max_atypical symptoms from the atypical pool
-            n_inject = random.randint(1, max_atypical)
-            random.shuffle(atypical_pool)
-            injected = atypical_pool[:n_inject]
-            # Add to result (avoid exact duplicates)
-            existing_lower = {s.lower() for s in result}
-            for s in injected:
-                if s.lower() not in existing_lower:
-                    result.append(s)
-                    existing_lower.add(s.lower())
+        atypical_pool = list(_ATYPICAL.get(disease.lower(), []))  # Copy to avoid mutating module data
+        if atypical_pool and rng.random() < inject_prob:
+            current_discriminative = sum(
+                1 for s in result
+                if not any(s.lower() in cs or cs in s.lower()
+                           for cs in confounder_syms_lower)
+            )
+            max_inject = min(max_atypical, current_discriminative)
+
+            if max_inject >= 1:
+                n_inject = rng.randint(1, max_inject)
+                rng.shuffle(atypical_pool)
+                injected = atypical_pool[:n_inject]
+                existing_lower = {s.lower() for s in result}
+                for s in injected:
+                    if s.lower() not in existing_lower:
+                        result.append(s)
+                        existing_lower.add(s.lower())
 
         return result
+
+    def compute_discriminative_ratio(
+        self,
+        disease_symptoms: List[str],
+        confounder_symptoms: List[str],
+        noise: List[str],
+        misleading: List[str],
+    ) -> float:
+        """Compute discriminative ratio: fraction of symptoms unique to correct disease.
+
+        discriminative_ratio = (# symptoms unique to correct disease) /
+                               (# total symptoms in the scenario)
+
+        A symptom is "unique to correct disease" if it does NOT overlap with
+        any confounder/noise/misleading symptom (case-insensitive substring match).
+        """
+        # All non-disease symptoms (the "distractor" pool)
+        distractor_lower = set()
+        for s in confounder_symptoms + noise + misleading:
+            distractor_lower.add(s.lower().strip())
+
+        if not disease_symptoms:
+            return 0.0
+
+        # Count disease symptoms that are NOT in distractor pool
+        unique_count = 0
+        for s in disease_symptoms:
+            s_lower = s.lower().strip()
+            is_shared = any(
+                s_lower in d or d in s_lower
+                for d in distractor_lower
+            )
+            if not is_shared:
+                unique_count += 1
+
+        # Total = all disease symptoms + distractors
+        total = len(disease_symptoms) + len(confounder_symptoms) + len(noise) + len(misleading)
+        if total == 0:
+            return 1.0  # No distractors at all → fully discriminative
+
+        return unique_count / total

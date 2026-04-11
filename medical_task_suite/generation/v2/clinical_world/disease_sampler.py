@@ -12,7 +12,7 @@ v2 starts from the scenario type and selects diseases that create
 the right kind of decision pressure.
 """
 
-import random
+import random as _random
 from typing import Dict, List, Optional, Set
 
 from ..scenario_engine.scenario_schema import ScenarioSpec, TASK_TYPES
@@ -119,9 +119,16 @@ class DiseaseSampler:
         return self._sample_for_task_type(scenario.task_type, scenario.difficulty)
 
     def _sample_for_task_type(
-        self, task_type: str, difficulty: str
+        self, task_type: str, difficulty: str,
+        rng: _random.Random = None,
     ) -> Optional[str]:
-        """Sample disease weighted by fitness for the task type."""
+        """Sample disease weighted by fitness for the task type.
+
+        Deterministic when rng is provided.
+        """
+        if rng is None:
+            rng = _random.Random(42)
+
         has_primekg = self._ensure_primekg_index()
 
         # Build expanded disease pool
@@ -135,12 +142,12 @@ class DiseaseSampler:
         if not scored:
             # Final fallback: random from KB
             if kb_diseases:
-                return random.choice(kb_diseases)
+                return rng.choice(kb_diseases)
             return None
 
         # Weighted random selection
         total = sum(s for _, s in scored)
-        r = random.uniform(0, total)
+        r = rng.uniform(0, total)
         cumulative = 0
         for disease, score in scored:
             cumulative += score
