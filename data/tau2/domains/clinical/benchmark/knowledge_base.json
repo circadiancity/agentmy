@@ -1,0 +1,186 @@
+{
+  "diseases": [
+    {
+      "disease_id": "d001",
+      "name": "hypertension",
+      "symptoms": ["elevated blood pressure", "headache", "dizziness", "shortness of breath"],
+      "risk_factors": ["obesity", "sedentary lifestyle", "high sodium intake", "family history"],
+      "diagnostic_criteria": "Systolic BP ≥130 mmHg and/or Diastolic BP ≥80 mmHg on repeated measurements",
+      "treatment_options": ["lifestyle modification", "ACE inhibitors", "beta-blockers", "thiazide diuretics"],
+      "prevalence": "~30% of adult population"
+    },
+    {
+      "disease_id": "d002",
+      "name": "type 2 diabetes",
+      "symptoms": ["increased thirst", "frequent urination", "fatigue", "blurred vision"],
+      "risk_factors": ["obesity", "sedentary lifestyle", "family history", "age"],
+      "diagnostic_criteria": "Fasting glucose ≥126 mg/dL or HbA1c ≥6.5%",
+      "treatment_options": ["lifestyle modification", "metformin", "GLP-1 agonists", "insulin"],
+      "prevalence": "~10% of adult population"
+    },
+    {
+      "disease_id": "d003",
+      "name": "asthma",
+      "symptoms": ["wheezing", "shortness of breath", "chest tightness", "cough"],
+      "risk_factors": ["allergies", "family history", "air pollution", "respiratory infections"],
+      "diagnostic_criteria": "Variable airflow obstruction on spirometry, reversible with bronchodilators",
+      "treatment_options": ["inhaled corticosteroids", "bronchodilators", "leukotriene inhibitors", "antihistamines"],
+      "prevalence": "~8% of population"
+    },
+    {
+      "disease_id": "d004",
+      "name": "coronary artery disease",
+      "symptoms": ["chest pain", "shortness of breath", "fatigue", "nausea"],
+      "risk_factors": ["smoking", "hypertension", "diabetes", "high cholesterol", "family history"],
+      "diagnostic_criteria": "Significant stenosis on angiography or positive stress test",
+      "treatment_options": ["statins", "beta-blockers", "ACE inhibitors", "antiplatelet agents", "percutaneous intervention"],
+      "prevalence": "~7% of population"
+    },
+    {
+      "disease_id": "d005",
+      "name": "depression",
+      "symptoms": ["persistent sadness", "loss of interest", "sleep disturbance", "fatigue", "guilt"],
+      "risk_factors": ["stress", "trauma", "family history", "chronic illness", "social isolation"],
+      "diagnostic_criteria": "≥5 symptoms for ≥2 weeks affecting daily functioning",
+      "treatment_options": ["SSRIs", "SNRIs", "cognitive therapy", "psychotherapy", "lifestyle modifications"],
+      "prevalence": "~5% of population"
+    },
+    {
+      "disease_id": "d006",
+      "name": "chronic kidney disease",
+      "symptoms": ["fatigue", "swelling", "nausea", "decreased urination"],
+      "risk_factors": ["diabetes", "hypertension", "glomerulonephritis", "family history"],
+      "diagnostic_criteria": "eGFR <60 mL/min/1.73m² or albuminuria for ≥3 months",
+      "treatment_options": ["ACE inhibitors", "ARBs", "diuretics", "phosphate binders", "dialysis if advanced"],
+      "prevalence": "~10% of population"
+    },
+    {
+      "disease_id": "d007",
+      "name": "atrial fibrillation",
+      "symptoms": ["palpitations", "shortness of breath", "dizziness", "chest discomfort"],
+      "risk_factors": ["age", "hypertension", "heart disease", "thyroid disease"],
+      "diagnostic_criteria": "Irregular rhythm on EKG without P waves",
+      "treatment_options": ["rate control agents", "anticoagulation", "rhythm control", "cardioversion"],
+      "prevalence": "~2-4% in adults"
+    },
+    {
+      "disease_id": "d008",
+      "name": "pneumonia",
+      "symptoms": ["cough", "fever", "dyspnea", "chest pain", "sputum production"],
+      "risk_factors": ["smoking", "immunosuppression", "aspiration risk", "elderly"],
+      "diagnostic_criteria": "Infiltrate on chest imaging plus clinical symptoms",
+      "treatment_options": ["antibiotics", "supportive care", "oxygen therapy", "antipyretics"],
+      "prevalence": "Community-acquired: 2-18 per 1000 per year"
+    },
+    {
+      "disease_id": "d009",
+      "name": "migraine",
+      "symptoms": ["severe headache", "nausea", "photophobia", "phonophobia", "aura"],
+      "risk_factors": ["hormonal changes", "stress", "sleep deprivation", "family history"],
+      "diagnostic_criteria": "≥5 attacks with unilateral pain, pulsating quality, duration 4-72 hours",
+      "treatment_options": ["NSAIDs", "triptans", "beta-blockers", "tricyclic antidepressants"],
+      "prevalence": "~12% of population"
+    },
+    {
+      "disease_id": "d010",
+      "name": "hyperlipidemia",
+      "symptoms": ["usually asymptomatic", "xanthomas", "corneal arcus"],
+      "risk_factors": ["family history", "diet", "obesity", "sedentary lifestyle"],
+      "diagnostic_criteria": "Total cholesterol >200 mg/dL or LDL >100 mg/dL",
+      "treatment_options": ["statins", "ezetimibe", "fibrates", "PCSK9 inhibitors", "diet"],
+      "prevalence": "~40% of adults"
+    }
+  ],
+  "drugs": [
+    {
+      "drug_id": "dr001",
+      "name": "metformin",
+      "class": "biguanide",
+      "indications": ["type 2 diabetes", "prediabetes", "PCOS"],
+      "contraindications": ["renal impairment (eGFR <30)", "liver disease", "acute illness"],
+      "common_side_effects": ["GI upset", "metallic taste", "vitamin B12 deficiency"],
+      "interactions": ["contrast dye", "certain diuretics"]
+    },
+    {
+      "drug_id": "dr002",
+      "name": "lisinopril",
+      "class": "ACE inhibitor",
+      "indications": ["hypertension", "heart failure", "post-MI", "CKD"],
+      "contraindications": ["pregnancy", "bilateral renal artery stenosis", "history of angioedema"],
+      "common_side_effects": ["dry cough", "hyperkalemia", "dizziness"],
+      "interactions": ["NSAIDs", "potassium supplements", "diuretics"]
+    },
+    {
+      "drug_id": "dr003",
+      "name": "atorvastatin",
+      "class": "statin",
+      "indications": ["hyperlipidemia", "CAD prevention", "post-MI"],
+      "contraindications": ["active liver disease", "pregnancy", "lactation"],
+      "common_side_effects": ["muscle pain", "liver enzyme elevation", "headache"],
+      "interactions": ["certain antibiotics", "antifungals", "warfarin"]
+    },
+    {
+      "drug_id": "dr004",
+      "name": "sertraline",
+      "class": "SSRI",
+      "indications": ["depression", "anxiety", "OCD", "PTSD"],
+      "contraindications": ["MAOI use", "pimozide", "uncontrolled narrow-angle glaucoma"],
+      "common_side_effects": ["sexual dysfunction", "nausea", "insomnia", "headache"],
+      "interactions": ["MAOIs", "warfarin", "NSAIDs"]
+    },
+    {
+      "drug_id": "dr005",
+      "name": "amlodipine",
+      "class": "calcium channel blocker",
+      "indications": ["hypertension", "angina"],
+      "contraindications": ["hypotension", "cardiogenic shock"],
+      "common_side_effects": ["edema", "flushing", "headache", "palpitations"],
+      "interactions": ["certain statins", "beta-blockers"]
+    },
+    {
+      "drug_id": "dr006",
+      "name": "amoxicillin",
+      "class": "beta-lactam antibiotic",
+      "indications": ["bacterial infections", "pneumonia", "otitis media", "UTI"],
+      "contraindications": ["penicillin allergy", "mononucleosis with rash"],
+      "common_side_effects": ["rash", "GI upset", "diarrhea", "allergic reactions"],
+      "interactions": ["oral contraceptives", "warfarin"]
+    },
+    {
+      "drug_id": "dr007",
+      "name": "albuterol",
+      "class": "beta-2 agonist",
+      "indications": ["asthma", "COPD", "bronchospasm"],
+      "contraindications": ["hypersensitivity", "certain arrhythmias"],
+      "common_side_effects": ["tremor", "tachycardia", "nervousness", "headache"],
+      "interactions": ["MAOIs", "tricyclic antidepressants"]
+    },
+    {
+      "drug_id": "dr008",
+      "name": "warfarin",
+      "class": "anticoagulant",
+      "indications": ["atrial fibrillation", "DVT prevention", "post-MI"],
+      "contraindications": ["active bleeding", "severe liver disease", "thrombocytopenia"],
+      "common_side_effects": ["bleeding", "skin necrosis"],
+      "interactions": ["NSAIDs", "aspirin", "antibiotics", "statins", "many others"]
+    },
+    {
+      "drug_id": "dr009",
+      "name": "metoprolol",
+      "class": "beta-blocker",
+      "indications": ["hypertension", "angina", "heart failure", "post-MI"],
+      "contraindications": ["bradycardia", "cardiogenic shock", "AV block", "asthma/COPD"],
+      "common_side_effects": ["fatigue", "bradycardia", "sexual dysfunction"],
+      "interactions": ["calcium channel blockers", "verapamil", "diltiazem"]
+    },
+    {
+      "drug_id": "dr010",
+      "name": "sumatriptan",
+      "class": "triptan",
+      "indications": ["migraine", "cluster headaches"],
+      "contraindications": ["uncontrolled hypertension", "CAD", "vasospastic angina"],
+      "common_side_effects": ["chest tightness", "flushing", "tingling", "dizziness"],
+      "interactions": ["SSRIs (serotonin syndrome risk)", "MAOIs", "ergot-containing drugs"]
+    }
+  ]
+}

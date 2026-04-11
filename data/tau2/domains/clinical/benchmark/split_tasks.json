@@ -1,0 +1,28 @@
+{
+  "base": [
+    "clinical_benchmark_0000",
+    "clinical_benchmark_0001",
+    "clinical_benchmark_0002",
+    "clinical_benchmark_0003",
+    "clinical_benchmark_0004",
+    "clinical_benchmark_0005",
+    "clinical_benchmark_0006",
+    "clinical_benchmark_0007",
+    "clinical_benchmark_0008",
+    "clinical_benchmark_0009"
+  ],
+  "train": [
+    "clinical_benchmark_0000",
+    "clinical_benchmark_0001",
+    "clinical_benchmark_0002",
+    "clinical_benchmark_0003",
+    "clinical_benchmark_0004",
+    "clinical_benchmark_0005",
+    "clinical_benchmark_0006",
+    "clinical_benchmark_0007"
+  ],
+  "test": [
+    "clinical_benchmark_0008",
+    "clinical_benchmark_0009"
+  ]
+}

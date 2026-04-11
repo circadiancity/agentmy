@@ -1,0 +1,602 @@
+[
+  {
+    "id": "clinical_benchmark_0000",
+    "description": {
+      "purpose": "Medical consultation for depression",
+      "notes": "Generated from PrimeKG path. Disease: depression"
+    },
+    "user_scenario": {
+      "persona": "45-year-old M patient",
+      "instructions": {
+        "domain": "clinical_benchmark",
+        "reason_for_call": "Chief complaint: persistent sadness",
+        "known_info": "Patient is 45 years old",
+        "unknown_info": "Medical history not yet disclosed",
+        "task_instructions": "You are a 45-year-old m patient with depression. Describe your symptoms and answer the doctor's questions."
+      }
+    },
+    "ticket": "Chief complaint: persistent sadness",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_clinical_benchmark_0000",
+            "age": 45,
+            "gender": "M"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "search_disease",
+          "requestor": "assistant",
+          "name": "search_disease_info",
+          "arguments": {
+            "disease_name": "depression"
+          }
+        },
+        {
+          "action_id": "order_test",
+          "requestor": "assistant",
+          "name": "order_lab_test",
+          "arguments": {
+            "test_name": "CBC",
+            "urgency": "routine"
+          }
+        }
+      ],
+      "communicate_info": [
+        "Provide diagnosis",
+        "Explain treatment plan"
+      ],
+      "reward_basis": [
+        "ACTION",
+        "COMMUNICATE"
+      ]
+    }
+  },
+  {
+    "id": "clinical_benchmark_0001",
+    "description": {
+      "purpose": "Medical consultation for depression",
+      "notes": "Generated from PrimeKG path. Disease: depression"
+    },
+    "user_scenario": {
+      "persona": "45-year-old F patient",
+      "instructions": {
+        "domain": "clinical_benchmark",
+        "reason_for_call": "Chief complaint: persistent sadness",
+        "known_info": "Patient is 45 years old",
+        "unknown_info": "Medical history not yet disclosed",
+        "task_instructions": "You are a 45-year-old f patient with depression. Describe your symptoms and answer the doctor's questions."
+      }
+    },
+    "ticket": "Chief complaint: persistent sadness",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_clinical_benchmark_0001",
+            "age": 45,
+            "gender": "F"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "search_disease",
+          "requestor": "assistant",
+          "name": "search_disease_info",
+          "arguments": {
+            "disease_name": "depression"
+          }
+        },
+        {
+          "action_id": "order_test",
+          "requestor": "assistant",
+          "name": "order_lab_test",
+          "arguments": {
+            "test_name": "CBC",
+            "urgency": "routine"
+          }
+        }
+      ],
+      "communicate_info": [
+        "Provide diagnosis",
+        "Explain treatment plan"
+      ],
+      "reward_basis": [
+        "ACTION",
+        "COMMUNICATE"
+      ]
+    }
+  },
+  {
+    "id": "clinical_benchmark_0002",
+    "description": {
+      "purpose": "Medical consultation for type 2 diabetes",
+      "notes": "Generated from PrimeKG path. Disease: type 2 diabetes"
+    },
+    "user_scenario": {
+      "persona": "25-year-old M patient",
+      "instructions": {
+        "domain": "clinical_benchmark",
+        "reason_for_call": "Chief complaint: increased thirst",
+        "known_info": "Patient is 25 years old",
+        "unknown_info": "Medical history not yet disclosed",
+        "task_instructions": "You are a 25-year-old m patient with type 2 diabetes. Describe your symptoms and answer the doctor's questions."
+      }
+    },
+    "ticket": "Chief complaint: increased thirst",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_clinical_benchmark_0002",
+            "age": 25,
+            "gender": "M"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "search_disease",
+          "requestor": "assistant",
+          "name": "search_disease_info",
+          "arguments": {
+            "disease_name": "type 2 diabetes"
+          }
+        },
+        {
+          "action_id": "order_test",
+          "requestor": "assistant",
+          "name": "order_lab_test",
+          "arguments": {
+            "test_name": "CBC",
+            "urgency": "routine"
+          }
+        }
+      ],
+      "communicate_info": [
+        "Provide diagnosis",
+        "Explain treatment plan"
+      ],
+      "reward_basis": [
+        "ACTION",
+        "COMMUNICATE"
+      ]
+    }
+  },
+  {
+    "id": "clinical_benchmark_0003",
+    "description": {
+      "purpose": "Medical consultation for pneumonia",
+      "notes": "Generated from PrimeKG path. Disease: pneumonia"
+    },
+    "user_scenario": {
+      "persona": "55-year-old F patient",
+      "instructions": {
+        "domain": "clinical_benchmark",
+        "reason_for_call": "Chief complaint: cough",
+        "known_info": "Patient is 55 years old",
+        "unknown_info": "Medical history not yet disclosed",
+        "task_instructions": "You are a 55-year-old f patient with pneumonia. Describe your symptoms and answer the doctor's questions."
+      }
+    },
+    "ticket": "Chief complaint: cough",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_clinical_benchmark_0003",
+            "age": 55,
+            "gender": "F"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "search_disease",
+          "requestor": "assistant",
+          "name": "search_disease_info",
+          "arguments": {
+            "disease_name": "pneumonia"
+          }
+        },
+        {
+          "action_id": "order_test",
+          "requestor": "assistant",
+          "name": "order_lab_test",
+          "arguments": {
+            "test_name": "CBC",
+            "urgency": "routine"
+          }
+        }
+      ],
+      "communicate_info": [
+        "Provide diagnosis",
+        "Explain treatment plan"
+      ],
+      "reward_basis": [
+        "ACTION",
+        "COMMUNICATE"
+      ]
+    }
+  },
+  {
+    "id": "clinical_benchmark_0004",
+    "description": {
+      "purpose": "Medical consultation for type 2 diabetes",
+      "notes": "Generated from PrimeKG path. Disease: type 2 diabetes"
+    },
+    "user_scenario": {
+      "persona": "65-year-old M patient",
+      "instructions": {
+        "domain": "clinical_benchmark",
+        "reason_for_call": "Chief complaint: increased thirst",
+        "known_info": "Patient is 65 years old",
+        "unknown_info": "Medical history not yet disclosed",
+        "task_instructions": "You are a 65-year-old m patient with type 2 diabetes. Describe your symptoms and answer the doctor's questions."
+      }
+    },
+    "ticket": "Chief complaint: increased thirst",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_clinical_benchmark_0004",
+            "age": 65,
+            "gender": "M"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "search_disease",
+          "requestor": "assistant",
+          "name": "search_disease_info",
+          "arguments": {
+            "disease_name": "type 2 diabetes"
+          }
+        },
+        {
+          "action_id": "order_test",
+          "requestor": "assistant",
+          "name": "order_lab_test",
+          "arguments": {
+            "test_name": "CBC",
+            "urgency": "routine"
+          }
+        }
+      ],
+      "communicate_info": [
+        "Provide diagnosis",
+        "Explain treatment plan"
+      ],
+      "reward_basis": [
+        "ACTION",
+        "COMMUNICATE"
+      ]
+    }
+  },
+  {
+    "id": "clinical_benchmark_0005",
+    "description": {
+      "purpose": "Medical consultation for migraine",
+      "notes": "Generated from PrimeKG path. Disease: migraine"
+    },
+    "user_scenario": {
+      "persona": "75-year-old F patient",
+      "instructions": {
+        "domain": "clinical_benchmark",
+        "reason_for_call": "Chief complaint: severe headache",
+        "known_info": "Patient is 75 years old",
+        "unknown_info": "Medical history not yet disclosed",
+        "task_instructions": "You are a 75-year-old f patient with migraine. Describe your symptoms and answer the doctor's questions."
+      }
+    },
+    "ticket": "Chief complaint: severe headache",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_clinical_benchmark_0005",
+            "age": 75,
+            "gender": "F"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "search_disease",
+          "requestor": "assistant",
+          "name": "search_disease_info",
+          "arguments": {
+            "disease_name": "migraine"
+          }
+        },
+        {
+          "action_id": "order_test",
+          "requestor": "assistant",
+          "name": "order_lab_test",
+          "arguments": {
+            "test_name": "CBC",
+            "urgency": "routine"
+          }
+        }
+      ],
+      "communicate_info": [
+        "Provide diagnosis",
+        "Explain treatment plan"
+      ],
+      "reward_basis": [
+        "ACTION",
+        "COMMUNICATE"
+      ]
+    }
+  },
+  {
+    "id": "clinical_benchmark_0006",
+    "description": {
+      "purpose": "Medical consultation for pneumonia",
+      "notes": "Generated from PrimeKG path. Disease: pneumonia"
+    },
+    "user_scenario": {
+      "persona": "55-year-old M patient",
+      "instructions": {
+        "domain": "clinical_benchmark",
+        "reason_for_call": "Chief complaint: cough",
+        "known_info": "Patient is 55 years old",
+        "unknown_info": "Medical history not yet disclosed",
+        "task_instructions": "You are a 55-year-old m patient with pneumonia. Describe your symptoms and answer the doctor's questions."
+      }
+    },
+    "ticket": "Chief complaint: cough",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_clinical_benchmark_0006",
+            "age": 55,
+            "gender": "M"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "search_disease",
+          "requestor": "assistant",
+          "name": "search_disease_info",
+          "arguments": {
+            "disease_name": "pneumonia"
+          }
+        },
+        {
+          "action_id": "order_test",
+          "requestor": "assistant",
+          "name": "order_lab_test",
+          "arguments": {
+            "test_name": "CBC",
+            "urgency": "routine"
+          }
+        }
+      ],
+      "communicate_info": [
+        "Provide diagnosis",
+        "Explain treatment plan"
+      ],
+      "reward_basis": [
+        "ACTION",
+        "COMMUNICATE"
+      ]
+    }
+  },
+  {
+    "id": "clinical_benchmark_0007",
+    "description": {
+      "purpose": "Medical consultation for chronic kidney disease",
+      "notes": "Generated from PrimeKG path. Disease: chronic kidney disease"
+    },
+    "user_scenario": {
+      "persona": "65-year-old F patient",
+      "instructions": {
+        "domain": "clinical_benchmark",
+        "reason_for_call": "Chief complaint: fatigue",
+        "known_info": "Patient is 65 years old",
+        "unknown_info": "Medical history not yet disclosed",
+        "task_instructions": "You are a 65-year-old f patient with chronic kidney disease. Describe your symptoms and answer the doctor's questions."
+      }
+    },
+    "ticket": "Chief complaint: fatigue",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_clinical_benchmark_0007",
+            "age": 65,
+            "gender": "F"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "search_disease",
+          "requestor": "assistant",
+          "name": "search_disease_info",
+          "arguments": {
+            "disease_name": "chronic kidney disease"
+          }
+        },
+        {
+          "action_id": "order_test",
+          "requestor": "assistant",
+          "name": "order_lab_test",
+          "arguments": {
+            "test_name": "CBC",
+            "urgency": "routine"
+          }
+        }
+      ],
+      "communicate_info": [
+        "Provide diagnosis",
+        "Explain treatment plan"
+      ],
+      "reward_basis": [
+        "ACTION",
+        "COMMUNICATE"
+      ]
+    }
+  },
+  {
+    "id": "clinical_benchmark_0008",
+    "description": {
+      "purpose": "Medical consultation for hyperlipidemia",
+      "notes": "Generated from PrimeKG path. Disease: hyperlipidemia"
+    },
+    "user_scenario": {
+      "persona": "25-year-old F patient",
+      "instructions": {
+        "domain": "clinical_benchmark",
+        "reason_for_call": "Chief complaint: usually asymptomatic",
+        "known_info": "Patient is 25 years old",
+        "unknown_info": "Medical history not yet disclosed",
+        "task_instructions": "You are a 25-year-old f patient with hyperlipidemia. Describe your symptoms and answer the doctor's questions."
+      }
+    },
+    "ticket": "Chief complaint: usually asymptomatic",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_clinical_benchmark_0008",
+            "age": 25,
+            "gender": "F"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "search_disease",
+          "requestor": "assistant",
+          "name": "search_disease_info",
+          "arguments": {
+            "disease_name": "hyperlipidemia"
+          }
+        },
+        {
+          "action_id": "order_test",
+          "requestor": "assistant",
+          "name": "order_lab_test",
+          "arguments": {
+            "test_name": "CBC",
+            "urgency": "routine"
+          }
+        }
+      ],
+      "communicate_info": [
+        "Provide diagnosis",
+        "Explain treatment plan"
+      ],
+      "reward_basis": [
+        "ACTION",
+        "COMMUNICATE"
+      ]
+    }
+  },
+  {
+    "id": "clinical_benchmark_0009",
+    "description": {
+      "purpose": "Medical consultation for hypertension",
+      "notes": "Generated from PrimeKG path. Disease: hypertension"
+    },
+    "user_scenario": {
+      "persona": "25-year-old M patient",
+      "instructions": {
+        "domain": "clinical_benchmark",
+        "reason_for_call": "Chief complaint: elevated blood pressure",
+        "known_info": "Patient is 25 years old",
+        "unknown_info": "Medical history not yet disclosed",
+        "task_instructions": "You are a 25-year-old m patient with hypertension. Describe your symptoms and answer the doctor's questions."
+      }
+    },
+    "ticket": "Chief complaint: elevated blood pressure",
+    "initial_state": {
+      "initialization_actions": [
+        {
+          "env_type": "user",
+          "func_name": "set_user_info",
+          "arguments": {
+            "name": "Patient_clinical_benchmark_0009",
+            "age": 25,
+            "gender": "M"
+          }
+        }
+      ]
+    },
+    "evaluation_criteria": {
+      "actions": [
+        {
+          "action_id": "search_disease",
+          "requestor": "assistant",
+          "name": "search_disease_info",
+          "arguments": {
+            "disease_name": "hypertension"
+          }
+        },
+        {
+          "action_id": "order_test",
+          "requestor": "assistant",
+          "name": "order_lab_test",
+          "arguments": {
+            "test_name": "CBC",
+            "urgency": "routine"
+          }
+        }
+      ],
+      "communicate_info": [
+        "Provide diagnosis",
+        "Explain treatment plan"
+      ],
+      "reward_basis": [
+        "ACTION",
+        "COMMUNICATE"
+      ]
+    }
+  }
+]

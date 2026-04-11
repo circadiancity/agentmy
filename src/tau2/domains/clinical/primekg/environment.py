@@ -3,54 +3,26 @@ Environment Setup for PrimeKG Domain
 Medical consultation tasks generated from Harvard Medical School PrimeKG knowledge graph
 """
 
+import logging
 from pathlib import Path
 from typing import Optional
 
 from tau2.data_model.tasks import Task
+from tau2.domains.clinical.primekg.data_model import ClinicalDB
+from tau2.domains.clinical.primekg.tools import ClinicalTools
 from tau2.domains.clinical.user_simulator import ClinicalUserDB, ClinicalUserTools
 from tau2.environment.environment import Environment
 from tau2.environment.toolkit import ToolKitBase
 from tau2.utils import DATA_DIR, load_file
 
+logger = logging.getLogger(__name__)
 
 # === PATHS ===
 DOMAIN_DIR = DATA_DIR / "tau2" / "domains" / "clinical" / "primekg"
 TASKS_PATH = DOMAIN_DIR / "tasks.json"
 SPLIT_PATH = DOMAIN_DIR / "split_tasks.json"
 POLICY_PATH = DOMAIN_DIR / "policy.md"
-
-
-class PrimeKGTools(ToolKitBase):
-    """ToolKit for PrimeKG domain - no specific tools needed for medical consultation"""
-
-    pass
-
-
-def get_default_policy() -> str:
-    """Get default policy for PrimeKG domain"""
-    return """# PrimeKG Medical Consultation Policy
-
-You are a medical consultation AI assistant. Your role is to:
-
-1. **Gather Information**: Ask relevant questions about the patient's symptoms, duration, and severity
-2. **Provide Medical Advice**: Based on the symptoms, provide accurate medical guidance
-3. **Consider PrimeKG Knowledge**: Use your knowledge of medical conditions, diseases, and treatments
-4. **Safety First**: Always consider patient safety and recommend appropriate follow-up care
-5. **Clear Communication**: Explain medical concepts in an accessible way
-
-## Guidelines:
-- Be empathetic and professional
-- Ask clarifying questions when needed
-- Provide evidence-based medical information
-- Recommend appropriate diagnostic steps when relevant
-- Consider drug contraindications and interactions
-- Refer to specialists when appropriate
-
-## Important Notes:
-- These tasks are generated from the PrimeKG knowledge graph (Harvard Medical School)
-- All medical knowledge is based on real clinical data
-- Tasks cover various medical specialties and conditions
-"""
+DB_PATH = DOMAIN_DIR / "db.json"
 
 
 def get_environment(solo_mode: bool = False) -> Environment:
@@ -67,15 +39,24 @@ def get_environment(solo_mode: bool = False) -> Environment:
     user_db = ClinicalUserDB()
     user_tools = ClinicalUserTools(user_db)
 
-    # Create tools (empty toolkit for PrimeKG - no specific tools needed)
-    tools = PrimeKGTools()
+    # Load clinical database and create tools
+    try:
+        clinical_db = ClinicalDB.load(str(DB_PATH))
+        tools = ClinicalTools(clinical_db)
+        logger.info(
+            "Loaded ClinicalDB: %s", clinical_db.get_statistics()
+        )
+    except Exception as e:
+        logger.warning("Failed to load ClinicalDB from %s: %s. Using empty DB.", DB_PATH, e)
+        clinical_db = ClinicalDB()
+        tools = ClinicalTools(clinical_db)
 
     # Load policy
     try:
         with open(POLICY_PATH, "r") as fp:
             policy = fp.read()
     except Exception:
-        policy = get_default_policy()
+        policy = _get_default_policy()
 
     # Create environment
     env = Environment(
@@ -87,6 +68,16 @@ def get_environment(solo_mode: bool = False) -> Environment:
     )
 
     return env
+
+
+def _get_default_policy() -> str:
+    """Fallback policy if policy.md cannot be loaded."""
+    return (
+        "# PrimeKG Clinical Consultation Policy\n\n"
+        "You are a clinical consultation AI assistant. Follow standard clinical workflow: "
+        "gather patient information, assess symptoms, order diagnostics, form diagnosis, "
+        "plan treatment with safety checks, and arrange follow-up.\n"
+    )
 
 
 def get_tasks(task_split_name: Optional[str] = None) -> list[Task]:
@@ -115,10 +106,21 @@ def get_tasks(task_split_name: Optional[str] = None) -> list[Task]:
     with open(SPLIT_PATH, 'r', encoding='utf-8') as f:
         split_data = json.load(f)
 
-    if task_split_name not in ["train", "test"]:
-        raise ValueError(f"Invalid split name: {task_split_name}. Must be 'train' or 'test'")
+    # "base" means all tasks — return unfiltered
+    if task_split_name == "base":
+        return all_tasks
 
-    task_ids = split_data[task_split_name]
+    if task_split_name not in split_data:
+        raise ValueError(f"Invalid split name: {task_split_name}. Must be one of {list(split_data.keys()) + ['base']}")
+
+    split_ids = split_data[task_split_name]
+    # Handle both formats: list of ID strings or list of task objects
+    task_ids = set()
+    for item in split_ids:
+        if isinstance(item, str):
+            task_ids.add(item)
+        elif isinstance(item, dict) and "id" in item:
+            task_ids.add(item["id"])
     filtered_tasks = [t for t in all_tasks if t.id in task_ids]
 
     return filtered_tasks
