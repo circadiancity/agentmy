@@ -353,12 +353,17 @@ class BenchEvaluator:
         severity, severity_timeline = self._compute_severity(trajectory)
 
         # ── 3. Compute gain with trust decay + diagnosis lock + severity constraints ──
+        # Clear hypothesis cache for fresh computation
+        if hasattr(self, '_hypothesis_cache'):
+            del self._hypothesis_cache
+
         trust = 1.0
         if severity == "critical":
             trust = 0.3  # Patient deteriorated — trust already degraded
         relevant_ask_count = 0
         gain_total = 0.0
         revealed_so_far = set()
+        observed_for_value = set()  # Tracks ALL observations for conditional value
         confounder_revealed = set()
         true_signal_revealed = set()
         post_diagnosis_revealed = set()
@@ -380,7 +385,8 @@ class BenchEvaluator:
                 is_partial = ":partial" in r_lower or quality == "partial"
                 reveal_factor = 0.5 if is_partial else 1.0
 
-                info_value = self._get_information_value(r_clean)
+                info_value = self._get_information_value(r_clean, observed_for_value)
+                observed_for_value.add(r_clean)
 
                 # DIAGNOSE lock: hidden symptoms after DIAGNOSE → value = 0
                 if is_post_diagnosis and r_clean in hidden_set:
@@ -486,56 +492,191 @@ class BenchEvaluator:
     # Helpers
     # ============================================================
 
-    def _get_information_value(self, symptom_lower: str) -> float:
-        """Derive information value from discriminative power (not tier).
+    def _get_information_value(self, symptom_lower: str,
+                               revealed_so_far: set = None) -> float:
+        """Conditional information value via expected entropy reduction.
 
-        Value = how specific this symptom is to the correct disease
-        vs. how much it overlaps with confounders.
+        info_value(s, S) = H(P(H|S)) - E[H(P(H|S ∪ {s}))]
+        normalized by log₂|H| → [0, 1]
 
-        - Unique to correct disease (not in confounders) → high value
-        - Shared with confounders → low value (doesn't help distinguish)
-        - Misleading/noise → 0.0
+        Properties:
+        - Depends on already-observed symptoms S
+        - Non-discriminative symptom can become valuable after certain observations
+        - Discriminative symptom becomes low-value once hypothesis resolved
         """
-        symptoms = self.patient["symptoms"]
+        if revealed_so_far is None:
+            revealed_so_far = set()
 
-        # Check if symptom exists in any tier
-        is_real = False
+        # Check symptom exists in real tiers
+        if not self._is_real_symptom(symptom_lower):
+            return 0.0
+
+        # Build hypothesis space
+        hypotheses = self._get_hypothesis_symptoms()
+        n_hyp = len(hypotheses)
+
+        if n_hyp <= 1:
+            return 0.5  # No ambiguity — confirming evidence has base value
+
+        # Current posterior given observed symptoms
+        posteriors = self._compute_posteriors(hypotheses, revealed_so_far)
+        H_current = self._entropy(posteriors)
+
+        # If already resolved, minimal value
+        max_H = math.log2(n_hyp)
+        if max_H == 0 or H_current < 0.05 * max_H:
+            return 0.1
+
+        # ── Expected entropy after observing this symptom ──
+        # P(s|h) for each hypothesis
+        p_s_given_h = {}
+        for h_name, h_syms in hypotheses.items():
+            matches = self._symptom_matches_hypothesis(symptom_lower, h_syms)
+            p_s_given_h[h_name] = 0.9 if matches else 0.1
+
+        # Marginal P(symptom present | S)
+        p_present = sum(
+            posteriors.get(h, 0) * p_s_given_h.get(h, 0.1)
+            for h in hypotheses
+        )
+        p_present = max(0.01, min(0.99, p_present))
+
+        # Posterior if symptom present
+        new_obs = revealed_so_far | {symptom_lower}
+        posteriors_present = self._compute_posteriors(hypotheses, new_obs)
+        H_present = self._entropy(posteriors_present)
+
+        # Posterior if symptom absent
+        posteriors_absent = self._compute_posteriors_absent(
+            posteriors, hypotheses, symptom_lower, p_s_given_h)
+        H_absent = self._entropy(posteriors_absent)
+
+        # Expected entropy
+        expected_H = p_present * H_present + (1 - p_present) * H_absent
+
+        # Information gain normalized to [0, 1]
+        IG = H_current - expected_H
+        return max(0.0, min(1.0, IG / max_H if max_H > 0 else 0.0))
+
+    # ── Hypothesis-space helpers ──
+
+    def _get_hypothesis_symptoms(self) -> Dict[str, set]:
+        """Build hypothesis space: disease + confounders with symptom sets."""
+        if hasattr(self, '_hypothesis_cache'):
+            return self._hypothesis_cache
+
+        hypotheses = {}
+
+        # Correct disease: all real symptoms
+        disease = self.task["clinical"]["diagnosis"]["primary"]
+        real_syms = set()
         for tier in ("volunteer", "if_asked", "hidden", "resistant"):
-            if any(s.lower() == symptom_lower for s in symptoms.get(tier, [])):
-                is_real = True
-                break
-        if not is_real:
-            return 0.0  # misleading or noise
+            for s in self.patient["symptoms"].get(tier, []):
+                real_syms.add(s.lower())
+        hypotheses[disease] = real_syms
 
-        # Compute discriminative value: how much does this symptom
-        # distinguish the correct disease from confounders?
-        confounder_overlap = self._count_confounder_overlap(symptom_lower)
-
-        # No confounders or no overlap → maximum discriminative value
-        if confounder_overlap == 0:
-            return 1.0
-
-        # Overlaps with confounders → reduced value
-        # 1 confounder overlap → 0.5, 2+ → 0.2
-        if confounder_overlap == 1:
-            return 0.5
-        return 0.2
-
-    def _count_confounder_overlap(self, symptom_lower: str) -> int:
-        """Count how many confounders share this symptom."""
-        confounders = self.task.get("clinical", {}).get("confounders", [])
-        if not confounders:
-            return 0
-        overlap_count = 0
-        for conf in confounders:
+        # Confounders
+        for conf in self.task.get("clinical", {}).get("confounders", []):
             if not isinstance(conf, dict):
                 continue
-            for overlap_sym in conf.get("overlapping_symptoms", []):
-                if (overlap_sym.lower() in symptom_lower
-                        or symptom_lower in overlap_sym.lower()):
-                    overlap_count += 1
-                    break
-        return overlap_count
+            name = conf.get("name", "")
+            if not name:
+                continue
+            conf_syms = set()
+            for s in conf.get("full_symptoms",
+                              conf.get("overlapping_symptoms", [])):
+                conf_syms.add(s.lower())
+            hypotheses[name] = conf_syms
+
+        self._hypothesis_cache = hypotheses
+        return hypotheses
+
+    def _is_real_symptom(self, symptom_lower: str) -> bool:
+        """Check if symptom exists in any real tier."""
+        for tier in ("volunteer", "if_asked", "hidden", "resistant"):
+            if any(s.lower() == symptom_lower
+                   for s in self.patient["symptoms"].get(tier, [])):
+                return True
+        return False
+
+    def _symptom_matches_hypothesis(self, symptom_lower: str,
+                                     h_syms: set) -> bool:
+        """Check if symptom is associated with a hypothesis."""
+        for hs in h_syms:
+            if symptom_lower in hs or hs in symptom_lower:
+                return True
+        return False
+
+    def _compute_posteriors(self, hypotheses: Dict[str, set],
+                             observed: set) -> Dict[str, float]:
+        """Bayesian posterior P(H|S) via likelihood product.
+
+        P(h|S) ∝ Π_{s∈S} P(s|h)
+        P(s|h) = 0.9 if s matches h, 0.1 if not
+        """
+        if not hypotheses:
+            return {}
+        if not observed:
+            n = len(hypotheses)
+            return {h: 1.0 / n for h in hypotheses}
+
+        log_probs = {}
+        for h_name, h_syms in hypotheses.items():
+            log_p = 0.0
+            for obs_s in observed:
+                obs_lower = obs_s.lower() if isinstance(obs_s, str) else obs_s
+                if self._symptom_matches_hypothesis(obs_lower, h_syms):
+                    log_p += math.log(0.9)
+                else:
+                    log_p += math.log(0.1)
+            log_probs[h_name] = log_p
+
+        # Softmax normalization
+        max_log = max(log_probs.values())
+        probs = {}
+        total = 0.0
+        for h, lp in log_probs.items():
+            probs[h] = math.exp(lp - max_log)
+            total += probs[h]
+        if total > 0:
+            for h in probs:
+                probs[h] /= total
+        return probs
+
+    def _compute_posteriors_absent(self, posteriors: Dict[str, float],
+                                    hypotheses: Dict[str, set],
+                                    symptom_lower: str,
+                                    p_s_given_h: Dict[str, float]
+                                    ) -> Dict[str, float]:
+        """Posterior assuming symptom is ABSENT: P(H|S, ¬s)."""
+        log_probs = {}
+        for h_name in hypotheses:
+            p_h = posteriors.get(h_name, 1.0 / len(hypotheses))
+            log_p = math.log(max(p_h, 1e-20))
+            # Update with P(¬s|h) = 1 - P(s|h)
+            p_s = p_s_given_h.get(h_name, 0.1)
+            log_p += math.log(max(1 - p_s, 1e-10))
+            log_probs[h_name] = log_p
+
+        max_log = max(log_probs.values())
+        probs = {}
+        total = 0.0
+        for h, lp in log_probs.items():
+            probs[h] = math.exp(lp - max_log)
+            total += probs[h]
+        if total > 0:
+            for h in probs:
+                probs[h] /= total
+        return probs
+
+    @staticmethod
+    def _entropy(distribution: Dict[str, float]) -> float:
+        """Shannon entropy H(P) = -Σ P(h) log₂ P(h)."""
+        H = 0.0
+        for p in distribution.values():
+            if p > 0:
+                H -= p * math.log2(p)
+        return H
 
     def _weighted_sum(self, scores: Dict[str, Optional[float]]) -> float:
         """Weighted sum excluding None components, renormalizing."""

@@ -734,7 +734,7 @@ class MedicalTaskGenerator:
                 "partial_reveal_is_degraded — reveal_quality='partial' gives incomplete symptom info (missing severity/temporal); scores at 0.5 weight for info and 0.5 × information_value for gain",
                 "consecutive_miss_resets_on_prerequisite_match — any successful prerequisite match resets miss counter to 0",
                 "confounder_priority_is_turn_gated — CONFOUNDER_DOMINANCE only applies when turn <= 2; after turn 2, normal rules apply",
-                "information_value_is_discriminative — value derived from confounder overlap: unique to disease=1.0, shared with 1 confounder=0.5, shared with 2+ confounders=0.2, misleading/noise=0.0; independent of symptom tier",
+                "information_value_is_conditional — value = entropy_reduction(s, S) where S = already-observed symptoms; depends on current hypothesis posterior, not static ranking; forces sequential reasoning",
                 "misleading_penalty_is_count_based — IF confounder_unique_revealed > true_signal_unique_revealed THEN penalty=0.2; no randomness",
                 "trust_decays_on_irrelevant_ask — each ASK that reveals no new relevant symptom: trust -= 0.05; IF trust < 0.6: revealed symptoms include noise; IF trust < 0.4: previously revealed symptoms get confidence=degraded (info_value × 0.5)",
                 "diagnosis_locks_exploration — after DIAGNOSE: hidden symptoms permanently locked; subsequent ASK gain × 0.3; alternative solution paths disabled",
@@ -927,6 +927,7 @@ class MedicalTaskGenerator:
         Each confounder entry includes:
         - name: confounder disease name
         - overlapping_symptoms: symptoms shared with primary diagnosis (≥2)
+        - full_symptoms: all known symptoms of the confounder (patient-friendly)
         - mimics: how this confounder mimics the primary
         """
         gt = scenario.ground_truth
@@ -971,9 +972,13 @@ class MedicalTaskGenerator:
                     if key not in [o.lower() for o in overlapping]:
                         overlapping.append(val)
 
+            # Full symptom list for conditional info_value computation
+            full_patient = [self.lang.to_patient(s) for s in conf_symptoms]
+
             confounders.append({
                 "name": conf_name,
                 "overlapping_symptoms": overlapping[:3],
+                "full_symptoms": full_patient,
                 "mimics": f"{conf_name} presents with overlapping symptoms that closely resemble {disease}",
             })
 
@@ -1066,14 +1071,15 @@ class MedicalTaskGenerator:
             },
             "process_score": {
                 "information_value": {
-                    "description": "discriminative value: how specific symptom is to correct disease vs confounders",
-                    "mapping": {
-                        "unique_to_disease": 1.0,
-                        "shared_with_1_confounder": 0.5,
-                        "shared_with_2+_confounders": 0.2,
-                        "misleading_or_noise": 0.0,
-                    },
-                    "labels": {"1.0": "discriminative", "0.5": "partially_discriminative", "0.2": "non_discriminative", "0.0": "noise"},
+                    "description": "conditional entropy reduction: value depends on already-observed symptoms",
+                    "formula": "info_value(s, S) = H(P(H|S)) - E[H(P(H|S∪{s}))]; normalized by log₂|H|",
+                    "properties": [
+                        "globally non-discriminative symptom can become high-value after specific observations",
+                        "discriminative symptom becomes low-value once hypothesis is resolved",
+                        "forces sequential reasoning, not static ranking",
+                    ],
+                    "hypothesis_space": "correct_disease + confounders from clinical.confounders",
+                    "posterior": "P(h|S) ∝ Π P(sᵢ|h); P(sᵢ|h) = 0.9 if consistent, 0.1 if not",
                 },
                 "relevant_questions": {
                     "source": "ground_truth.solution_space.minimal_information_sets.must_collect",
