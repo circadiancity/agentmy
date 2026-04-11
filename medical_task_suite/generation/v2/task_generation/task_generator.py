@@ -912,9 +912,13 @@ class MedicalTaskGenerator:
             "profile": {
                 "age": persona["age"],
                 "gender": persona["gender"],
-                "education": persona.get("education_level", "high_school"),
-                "occupation": persona.get("occupation", ""),
-                "economic_status": persona.get("economic_status", "moderate"),
+                "bmi": persona.get("bmi"),
+                "smoking_status": persona.get("smoking_status", "never"),
+                "alcohol_use": persona.get("alcohol_use", "none"),
+                "past_medical_history": persona.get("past_medical_history", []),
+                "current_medications": persona.get("current_medications", []),
+                "allergies": persona.get("allergies", []),
+                "family_history": persona.get("family_history", ""),
             },
             "chief_complaint": self._build_chief_complaint(scenario, symptoms),
             "behavior": {
@@ -996,6 +1000,7 @@ class MedicalTaskGenerator:
         return {
             "vitals": vitals,
             "labs": labs,
+            "imaging": self._build_imaging(disease, scenario),
             "medications": current_meds,
             "comorbidities": comorbidities,
             "allergies": allergies,
@@ -1006,15 +1011,136 @@ class MedicalTaskGenerator:
             },
         }
 
+    # Imaging study database — disease-specific with expected findings
+    IMAGING_STUDIES = {
+        "ct_head": {
+            "indication": ["stroke", "tia", "head trauma", "headache with red flags", "seizure"],
+            "description": "Non-contrast CT of the head",
+            "finding_key": "ct_head_findings",
+        },
+        "chest_xray": {
+            "indication": ["copd", "pneumonia", "heart failure", "lung", "cough", "shortness of breath", "chest pain"],
+            "description": "Chest X-ray (PA and lateral)",
+            "finding_key": "chest_xray_findings",
+        },
+        "echocardiogram": {
+            "indication": ["heart failure", "atrial fibrillation", "heart", "coronary", "valvular", "cardiomyopathy"],
+            "description": "Transthoracic echocardiogram",
+            "finding_key": "echo_findings",
+        },
+        "abdominal_ultrasound": {
+            "indication": ["liver", "kidney", "gallbladder", "pancrea", "abdominal"],
+            "description": "Abdominal ultrasound",
+            "finding_key": "abd_us_findings",
+        },
+        "carotid_doppler": {
+            "indication": ["stroke", "tia", "carotid"],
+            "description": "Carotid artery Doppler ultrasound",
+            "finding_key": "carotid_findings",
+        },
+    }
+
+    DISEASE_IMAGING_FINDINGS = {
+        "stroke": {
+            "ct_head_findings": {"status": "must be ordered before treatment", "expected": "acute ischemic changes or hemorrhage — determines tPA eligibility"},
+            "carotid_findings": {"status": "recommended", "expected": "may show carotid stenosis as stroke etiology"},
+        },
+        "heart failure": {
+            "chest_xray_findings": {"status": "recommended", "expected": "cardiomegaly, pulmonary vascular congestion, possible pleural effusions"},
+            "echo_findings": {"status": "essential", "expected": "reduced LVEF (<40% for HFrEF), chamber enlargement, valvular assessment"},
+        },
+        "copd": {
+            "chest_xray_findings": {"status": "recommended", "expected": "hyperinflated lungs, flattened diaphragms, increased AP diameter"},
+        },
+        "pneumonia": {
+            "chest_xray_findings": {"status": "essential", "expected": "focal consolidation, infiltrate, possible pleural effusion"},
+        },
+        "atrial fibrillation": {
+            "echo_findings": {"status": "essential", "expected": "LA size, LV function, valvular status — required before antiarrhythmic therapy"},
+        },
+        "coronary artery disease": {
+            "echo_findings": {"status": "recommended", "expected": "regional wall motion abnormalities, LVEF assessment"},
+        },
+        "chronic kidney disease": {
+            "abd_us_findings": {"status": "recommended", "expected": "kidney size and echogenicity — small echogenic kidneys suggest CKD"},
+        },
+        "cirrhosis": {
+            "abd_us_findings": {"status": "recommended", "expected": "coarse echotexture, nodular surface, possible ascites"},
+        },
+    }
+
+    def _build_imaging(self, disease: str, scenario: ScenarioSpec) -> Dict:
+        """Build disease-appropriate imaging studies with expected findings."""
+        disease_lower = disease.lower()
+
+        # Determine which studies are relevant for this disease
+        relevant_studies = {}
+        for study_id, study_info in self.IMAGING_STUDIES.items():
+            if any(ind in disease_lower for ind in study_info["indication"]):
+                relevant_studies[study_id] = {
+                    "description": study_info["description"],
+                    "status": "available_to_order",
+                }
+
+        # If no disease-specific matches, provide basic studies based on domain
+        if not relevant_studies:
+            domain = self._infer_domain(disease)
+            domain_defaults = {
+                "cardiology": {"echocardiogram": True, "chest_xray": True},
+                "pulmonology": {"chest_xray": True},
+                "nephrology": {"abdominal_ultrasound": True},
+                "gastroenterology": {"abdominal_ultrasound": True},
+                "neurology": {"ct_head": True},
+                "rheumatology": {},
+                "oncology": {"chest_xray": True},
+            }
+            defaults = domain_defaults.get(domain, {})
+            for study_id in defaults:
+                if study_id in self.IMAGING_STUDIES:
+                    relevant_studies[study_id] = {
+                        "description": self.IMAGING_STUDIES[study_id]["description"],
+                        "status": "available_to_order",
+                    }
+
+        # Add expected findings from disease-specific database
+        disease_findings = self.DISEASE_IMAGING_FINDINGS.get(disease_lower, {})
+        for study_id, study_data in relevant_studies.items():
+            finding_key = self.IMAGING_STUDIES.get(study_id, {}).get("finding_key", "")
+            if finding_key and finding_key in disease_findings:
+                study_data["expected_findings"] = disease_findings[finding_key]["expected"]
+                study_data["clinical_priority"] = disease_findings[finding_key]["status"]
+            elif study_id in disease_findings:
+                study_data.update(disease_findings[study_id])
+
+        # Determine which studies are required vs optional
+        required = [
+            sid for sid, sdata in relevant_studies.items()
+            if sdata.get("clinical_priority") in ("essential", "must be ordered before treatment")
+        ]
+
+        return {
+            "available_studies": relevant_studies,
+            "required_for_diagnosis": required,
+            "note": "Imaging results are only available after agent orders the study via order_lab_tests or appropriate tool",
+        }
+
     def _build_ground_truth_validation(self, scenario: ScenarioSpec, disease: str) -> Dict:
-        """Unified rule list — evaluator loops rules, applies operator, no interpretation."""
+        """Unified rule list with disease-specific required tools from tool_registry.
+
+        Generates clinically correct validation rules:
+        - Required DIAGNOSIS tools from disease_tool_map
+        - Required TREATMENT from first-line medications in KB
+        - Safety rules from ordering_constraints + baseline_forbidden
+        - Required EVIDENCE before diagnosis
+        """
         gt = scenario.ground_truth
         meds = self.kb.get_medications_for_condition(disease)
         differentials = self.kb.get_differential_diagnoses(disease)
+        lab_panel = self.kb.get_lab_panel(disease)
 
         rules = []
 
-        # Diagnosis rules
+        # ── Diagnosis rules ──
         rules.append({
             "type": "diagnosis_match",
             "operator": "in",
@@ -1022,40 +1148,16 @@ class MedicalTaskGenerator:
             "acceptable": differentials[:4],
         })
 
-        # Safety rules
-        rules.append({
-            "type": "forbidden_action",
-            "action": "PRESCRIBE",
-            "condition": "allergy_check == false",
-        })
-        if gt and gt.comorbidities:
-            for c in gt.comorbidities:
-                rules.append({
-                    "type": "forbidden_action",
-                    "action": "PRESCRIBE",
-                    "condition": f"drug_contraindicated_by_{c.name.replace(' ', '_')}",
-                })
-
-        # Treatment rules — always generate at least 1 PRESCRIBE required
-        has_prescribe_rule = False
-        if meds and isinstance(meds[0], dict):
-            drug_info = self.kb.get_drug_info(meds[0]["name"])
-            if drug_info:
-                rules.append({
-                    "type": "required_action",
-                    "action": "PRESCRIBE",
-                    "target": drug_info.generic_name,
-                })
-                has_prescribe_rule = True
-        if not has_prescribe_rule:
-            # Fallback: require PRESCRIBE any appropriate drug for this disease
+        # ── Required diagnosis tools from disease_tool_map ──
+        disease_tools = self._resolve_disease_tools(disease)
+        for tool_name in disease_tools:
             rules.append({
                 "type": "required_action",
-                "action": "PRESCRIBE",
-                "target": "any_appropriate_for_" + disease.replace(" ", "_"),
+                "action": "DIAGNOSIS_TOOL",
+                "target": tool_name,
             })
 
-        lab_panel = self.kb.get_lab_panel(disease)
+        # ── Required lab tests ──
         for lab in (lab_panel or [])[:3]:
             rules.append({
                 "type": "required_action",
@@ -1063,98 +1165,223 @@ class MedicalTaskGenerator:
                 "target": lab["test_name"],
             })
 
+        # ── Safety rules from ordering_constraints ──
+        rules.append({
+            "type": "forbidden_action",
+            "action": "prescribe_medication",
+            "condition": "check_allergy == false",
+            "severity": "critical",
+        })
+        rules.append({
+            "type": "forbidden_action",
+            "action": "prescribe_medication",
+            "condition": "check_drug_interactions == false",
+            "severity": "critical",
+        })
+        # Comorbidity-specific contraindication rules
+        if gt and gt.comorbidities:
+            for c in gt.comorbidities:
+                rules.append({
+                    "type": "forbidden_action",
+                    "action": "prescribe_medication",
+                    "condition": f"drug_contraindicated_by_{c.name.replace(' ', '_')}",
+                    "severity": "critical",
+                })
+
+        # ── Required evidence before diagnosis ──
+        required_evidence = ["symptom_cluster_matching"]
+        if lab_panel:
+            required_evidence.append("lab_result_confirmation")
+        if disease_tools:
+            required_evidence.append(f"disease_specific_tool: {', '.join(disease_tools[:2])}")
+        rules.append({
+            "type": "required_before",
+            "before_action": "record_diagnosis",
+            "required_evidence": required_evidence,
+        })
+
+        # ── Treatment rules — first-line medications from KB ──
+        has_prescribe_rule = False
+        if meds and isinstance(meds[0], dict):
+            drug_info = self.kb.get_drug_info(meds[0]["name"])
+            if drug_info:
+                rules.append({
+                    "type": "required_action",
+                    "action": "prescribe_medication",
+                    "target": drug_info.generic_name,
+                    "drug_class": drug_info.drug_class,
+                })
+                has_prescribe_rule = True
+        if not has_prescribe_rule:
+            rules.append({
+                "type": "required_action",
+                "action": "prescribe_medication",
+                "target": "any_appropriate_for_" + disease.replace(" ", "_"),
+            })
+
+        # ── Required safety checks before prescribing ──
+        rules.append({
+            "type": "required_before",
+            "before_action": "prescribe_medication",
+            "required_actions": ["check_allergy", "check_drug_interactions"],
+        })
+
+        # ── Required follow-up ──
+        rules.append({
+            "type": "required_action",
+            "action": "schedule_followup",
+            "target": "2-4 weeks",
+        })
+
         return {
             "rules": rules,
-            # Extracted for scoring.compute direct reference
             "diagnosis_target": [disease],
             "diagnosis_acceptable": differentials[:4],
+            "required_diagnosis_tools": disease_tools,
             "safety_rules": [r for r in rules if r["type"] == "forbidden_action"],
-            "treatment_required": [r for r in rules if r["type"] == "required_action" and r.get("action") == "PRESCRIBE"],
+            "treatment_required": [r for r in rules if r["type"] == "required_action" and r.get("action") == "prescribe_medication"],
         }
 
+    def _resolve_disease_tools(self, disease: str) -> List[str]:
+        """Resolve required diagnosis tools for a disease from tool_registry."""
+        disease_lower = disease.lower()
+        disease_tool_map = self._tool_registry.get("disease_tool_map", {})
+        symptom_tool_map = self._tool_registry.get("symptom_tool_map", {})
+
+        tools = []
+        # Direct disease match
+        for key, tool_list in disease_tool_map.items():
+            if key in disease_lower:
+                tools = list(tool_list)
+                break
+
+        # Symptom-based tools
+        symptom_names = self.symptom_gen._fallback_symptoms(disease)
+        for sym_key, tool_list in symptom_tool_map.items():
+            if any(sym_key in s.lower() for s in symptom_names):
+                for t in tool_list:
+                    if t not in tools:
+                        tools.append(t)
+
+        return tools
+
     def _build_actions(self, scenario: ScenarioSpec, disease: str) -> Dict:
-        """Standardized action set: id + type + subtype + params + cost."""
+        """Build 3-category action set from tool_registry.json, disease-specific.
+
+        Categories: suggestion (info gathering), diagnosis (tests), treatment (meds).
+        Each tool has its params, cost, and preconditions from the registry.
+        """
         lab_panel = self.kb.get_lab_panel(disease)
+        disease_lower = disease.lower()
+
+        # Resolve disease-specific tools from tool_registry disease_tool_map
+        disease_tools = []
+        disease_tool_map = self._tool_registry.get("disease_tool_map", {})
+        for key, tools in disease_tool_map.items():
+            if key in disease_lower:
+                disease_tools = tools
+                break
+
+        # Resolve symptom-specific tools
+        symptom_tool_map = self._tool_registry.get("symptom_tool_map", {})
+        symptom_tools = set()
+        symptoms_from_profile = self.kb.get_disease_profile(disease)
+        symptom_names = []
+        if hasattr(symptoms_from_profile, 'differential_questions'):
+            symptom_names = [
+                q.replace("?", "").strip().lower()
+                for q in (symptoms_from_profile.differential_questions or [])
+                if len(q) < 40
+            ]
+        if not symptom_names:
+            symptom_names = [s.lower() for s in self.symptom_gen._fallback_symptoms(disease)]
+        for sym_key, tools in symptom_tool_map.items():
+            if any(sym_key in s for s in symptom_names):
+                symptom_tools.update(tools)
+
+        # Merge disease + symptom tools
+        all_disease_diagnosis_tools = list(dict.fromkeys(disease_tools + list(symptom_tools)))
+
+        # Get category definitions from registry
+        category_tools = self._tool_registry.get("category_tools", {})
+        tool_defs = self._tool_registry.get("tool_definitions", {})
+        ordering_constraints = self._tool_registry.get("ordering_constraints", [])
+        forbidden_sequences = self._tool_registry.get("baseline_forbidden", [])
+
+        # ── Suggestion tools ──
+        suggestion_tool_names = category_tools.get("suggestion", {}).get("tools", [])
+        suggestion_tools = {}
+        for name in suggestion_tool_names:
+            defn = tool_defs.get(name, {})
+            suggestion_tools[name] = {
+                "description": defn.get("description", name),
+                "required_args": defn.get("required_args", []),
+                "optional_args": defn.get("optional_args", []),
+            }
+
+        # ── Diagnosis tools ──
+        diag_base_names = category_tools.get("diagnosis", {}).get("tools", [])
+        diag_tools = {}
+        for name in diag_base_names:
+            defn = tool_defs.get(name, {})
+            diag_tools[name] = {
+                "description": defn.get("description", name),
+                "required_args": defn.get("required_args", []),
+                "optional_args": defn.get("optional_args", []),
+                "human_name": defn.get("human_name", name),
+            }
+
+        # Add disease-specific recommended tests
+        recommended_labs = [l["test_name"] for l in (lab_panel or [])[:5]]
+        if "order_lab_tests" in diag_tools:
+            diag_tools["order_lab_tests"]["recommended"] = recommended_labs
+
+        # ── Treatment tools ──
+        treat_tool_names = category_tools.get("treatment", {}).get("tools", [])
+        treat_tools = {}
+        for name in treat_tool_names:
+            defn = tool_defs.get(name, {})
+            treat_tools[name] = {
+                "description": defn.get("description", name),
+                "required_args": defn.get("required_args", []),
+                "optional_args": defn.get("optional_args", []),
+            }
+
+        # Add first-line meds info
+        meds = self.kb.get_medications_for_condition(disease)
+        first_line = []
+        for m in (meds or [])[:5]:
+            if isinstance(m, dict) and m.get("is_first_line", True):
+                drug_info = self.kb.get_drug_info(m["name"])
+                if drug_info:
+                    first_line.append({
+                        "name": drug_info.generic_name,
+                        "class": drug_info.drug_class,
+                        "standard_dose": drug_info.standard_doses[0] if drug_info.standard_doses else {},
+                    })
+        if first_line and "prescribe_medication" in treat_tools:
+            treat_tools["prescribe_medication"]["first_line_options"] = first_line
 
         return {
-            "ASK": {
-                "id": 0,
-                "type": "ASK",
-                "subtype": "enum[open_question,targeted_question,clarification]",
-                "params": {"topic": "enum[symptoms,history,medications,allergies,lifestyle,family_history]"},
-                "cost": 1,
-                "quality_tiers": {
-                    "open_question": "broad probe — lower info gain, safer for rapport",
-                    "targeted_question": "specific probe — higher info gain, may miss unexpected findings",
-                    "clarification": "follow-up on previous answer — resolves ambiguity",
+            "categories": {
+                "suggestion": {
+                    "description": "Information gathering and patient communication",
+                    "tools": suggestion_tools,
+                },
+                "diagnosis": {
+                    "description": "Diagnostic tests and clinical assessment",
+                    "tools": diag_tools,
+                    "disease_specific_tools": all_disease_diagnosis_tools,
+                    "recommended_labs": recommended_labs,
+                },
+                "treatment": {
+                    "description": "Treatment planning and medication management",
+                    "tools": treat_tools,
                 },
             },
-            "ORDER_LAB": {
-                "id": 1,
-                "type": "ORDER_LAB",
-                "subtype": "diagnostic",
-                "params": {"tests": "list[string]"},
-                "cost": 2,
-                "recommended": [l["test_name"] for l in lab_panel[:5]] if lab_panel else [],
-            },
-            "GET_RESULTS": {
-                "id": 2,
-                "type": "GET_RESULTS",
-                "subtype": None,
-                "params": {"order_id": "string"},
-                "cost": 0,
-                "precondition": "ORDER_LAB executed",
-            },
-            "DIAGNOSE": {
-                "id": 3,
-                "type": "DIAGNOSE",
-                "subtype": None,
-                "params": {"diagnosis": "string", "confidence": "float[0,1]"},
-                "cost": 0,
-            },
-            "CHECK_ALLERGY": {
-                "id": 4,
-                "type": "CHECK_ALLERGY",
-                "subtype": None,
-                "params": {},
-                "cost": 0,
-            },
-            "CHECK_INTERACTION": {
-                "id": 5,
-                "type": "CHECK_INTERACTION",
-                "subtype": None,
-                "params": {"drugs": "list[string]"},
-                "cost": 0,
-            },
-            "PRESCRIBE": {
-                "id": 6,
-                "type": "PRESCRIBE",
-                "subtype": "medication",
-                "params": {"drug": "string", "dose": "string", "frequency": "string"},
-                "cost": 0,
-                "precondition": "CHECK_ALLERGY executed",
-            },
-            "EDUCATE": {
-                "id": 7,
-                "type": "EDUCATE",
-                "subtype": "patient",
-                "params": {"topic": "string"},
-                "cost": 1,
-            },
-            "SCHEDULE_FOLLOWUP": {
-                "id": 8,
-                "type": "SCHEDULE_FOLLOWUP",
-                "subtype": None,
-                "params": {"weeks": "int"},
-                "cost": 0,
-            },
-            "END": {
-                "id": 9,
-                "type": "END",
-                "subtype": None,
-                "params": {},
-                "cost": 0,
-            },
+            "ordering_constraints": ordering_constraints,
+            "forbidden_sequences": forbidden_sequences,
+            "acceptable_strategies": self._tool_registry.get("acceptable_strategies", {}),
         }
 
     def _build_observations(self, scenario: ScenarioSpec, symptoms: SymptomSet, disease: str) -> Dict:
@@ -1623,10 +1850,25 @@ class MedicalTaskGenerator:
         return result
 
     def _build_scoring(self, scenario: ScenarioSpec, disease: str) -> Dict:
-        """Fully specified scoring with compute per component."""
+        """Category-based scoring from tool_registry.json evaluation specs.
+
+        3 categories: diagnosis, treatment, suggestion — each with per-metric
+        evaluation criteria from tool_registry.category_tools.
+        Safety is a cross-cutting concern extracted from ordering_constraints.
+        """
         gt = scenario.ground_truth
         meds = self.kb.get_medications_for_condition(disease)
 
+        # Get category evaluation specs from tool_registry
+        category_tools = self._tool_registry.get("category_tools", {})
+        reasoning_dims = self._tool_registry.get("reasoning_dimensions", {})
+
+        # ── Category evaluation from registry ──
+        diag_eval = category_tools.get("diagnosis", {})
+        treat_eval = category_tools.get("treatment", {})
+        suggest_eval = category_tools.get("suggestion", {})
+
+        # ── Critical failure rules ──
         critical_rules = [
             "diagnosis_score == 0",
             "prescribe_without_allergy_check",
@@ -1635,113 +1877,58 @@ class MedicalTaskGenerator:
             for c in gt.comorbidities:
                 critical_rules.append(f"prescribe_contraindicated_for_{c.name.replace(' ', '_')}")
 
-        return {
-            "components": {
+        # ── Build scoring with category metrics ──
+        scoring = {
+            "categories": {
                 "diagnosis": {
-                    "method": "set_match",
-                    "weight": 0.25,
-                    "compute": "IN(agent.diagnosis, ground_truth_validation.diagnosis_target) ? 1.0 : IN(agent.diagnosis, ground_truth_validation.diagnosis_acceptable) ? 0.5 : 0.0",
-                },
-                "safety": {
-                    "method": "rule_check",
-                    "weight": 0.20,
-                    "compute": "COUNT(rule IN ground_truth_validation.safety_rules WHERE NOT triggered) / COUNT(ground_truth_validation.safety_rules)",
-                },
-                "info": {
-                    "method": "count_ratio",
-                    "weight": 0.15,
-                    "compute": "COUNT(symptom IN revealed WHERE tier IN [volunteer,if_asked]) / COUNT(symptoms WHERE tier IN [volunteer,if_asked])",
-                    "note": "hidden symptoms excluded from denominator — only volunteer+if_asked count",
-                },
-                "treatment": {
-                    "method": "required_done",
-                    "weight": 0.10,
-                    "compute": "IF COUNT(treatment_required) == 0: return null (exclude from sum, renormalize); ELSE COUNT(done IN treatment_required) / COUNT(treatment_required)",
-                },
-                "communication": {
-                    "method": "rule_check",
-                    "weight": 0.10,
-                    "compute": "COUNT(milestone IN communication_truth WHERE achieved) / COUNT(communication_truth)",
-                },
-                "process": {
-                    "method": "gradient_information_value",
-                    "weight": 0.20,
-                    "compute": "relevance × 0.3 + gain × 0.5 - redundancy - misleading_penalty; gain = Σ(info_value × reveal_factor) / #asks; misleading_penalty = 0.2 IF confounder_revealed > true_signal_revealed",
-                },
-            },
-            "process_score": {
-                "information_value": {
-                    "description": "conditional entropy reduction: value depends on already-observed symptoms",
-                    "formula": "info_value(s, S) = H(P(H|S)) - E[H(P(H|S∪{s}))]; normalized by log₂|H|",
-                    "properties": [
-                        "globally non-discriminative symptom can become high-value after specific observations",
-                        "discriminative symptom becomes low-value once hypothesis is resolved",
-                        "forces sequential reasoning, not static ranking",
-                    ],
-                    "hypothesis_space": "correct_disease + confounders from clinical.confounders",
-                    "posterior": "P(h|S) ∝ Π P(sᵢ|h); P(sᵢ|h) from stochastic Beta-distributed likelihood table",
-                    "likelihood_model": "P(s|h) ~ Beta(α, β); α,β depend on symptom-hypothesis association (core/peripheral), severity, patient age, comorbidity count; sampled once per task",
-                },
-                "relevant_questions": {
-                    "source": "ground_truth.solution_space.minimal_information_sets.must_collect",
-                    "description": "all non-noise symptoms from volunteer+if_asked+hidden+resistant tiers",
-                },
-                "question_relevance": {
-                    "method": "relevant_ask_ratio",
-                    "compute": "COUNT(ASK WHERE symptoms_revealed INTERSECT relevant_questions > 0) / COUNT(ASK)",
-                },
-                "information_gain": {
-                    "method": "value_weighted_gain",
-                    "compute": "Σ(information_value[symptom] × reveal_quality_factor) / COUNT(ASK); reveal_quality_factor: full=1.0, partial=0.5",
-                },
-                "misleading_penalty": {
-                    "method": "confounder_dominance_check",
-                    "compute": "IF COUNT(unique confounder symptoms revealed) > COUNT(unique true signal symptoms revealed) → penalty = 0.2; ELSE penalty = 0.0",
-                },
-                "path_consistency": {
-                    "method": "exclusivity_check",
-                    "compute": "IF agent reveals symptoms from >1 minimal_information_set → inconsistency_penalty = 0.2; ELSE penalty = 0.0",
-                },
-                "redundancy_penalty": {
-                    "method": "repeated_symptom_penalty",
-                    "compute": "IF same symptom asked > 1 time with no new info: penalty += 0.1 per repetition (unbounded)",
-                },
-                "trust_decay": {
-                    "method": "irrelevant_ask_decay",
-                    "compute": "trust starts at 1.0; each ASK with no new relevant reveal: trust -= 0.05; IF trust < 0.6: noise contamination; IF trust < 0.4: info_value × 0.5 for all previously revealed",
-                },
-                "delay_penalty": {
-                    "method": "post_diagnosis_ask_cost",
-                    "compute": "IF ASK occurs after DIAGNOSE in trajectory: gain × 0.3 for those steps; IF hidden symptom revealed after DIAGNOSE: value = 0.0",
-                },
-                "severity_penalty": {
-                    "method": "temporal_state_penalty",
-                    "compute": "severity starts 'stable'; IF turn > max_turns*0.35 AND no correct treatment → 'worsening' (gain × 0.7, total -= 0.18); IF wrong treatment or turn > max_turns*0.7 without treatment → 'critical' (gain × 0.5, total -= 0.20)",
-                },
-                "trajectory_dependency": {
-                    "method": "composite_temporal_score",
-                    "sub_metrics": {
-                        "time_to_correct_path": {
-                            "weight": 0.35,
-                            "compute": "optimal_turn = len(optimal_path.must_collect); IF commit_turn <= optimal_turn + 1: 1.0; IF <= optimal_turn + 3: 0.7; ELSE: max(0, 1.0 - 0.2*(delay-3)); IF no commitment: 0.0",
-                        },
-                        "branch_switch_count": {
-                            "weight": 0.35,
-                            "compute": "1.0 - 0.1 × path switches after commitment; floor at 0.0",
-                        },
-                        "unnecessary_actions_ratio": {
-                            "weight": 0.30,
-                            "compute": "1.0 - (duplicate non-ASK actions / total non-ASK actions); necessary = first ORDER_LAB, GET_RESULTS, DIAGNOSE, CHECK_ALLERGY, PRESCRIBE; all subsequent duplicates are unnecessary",
-                        },
+                    "description": "Diagnostic accuracy, completeness, and reasoning quality",
+                    "metrics": diag_eval.get("evaluation_metrics", ["accuracy", "completeness", "reasoning_logic", "evidence_support"]),
+                    "weights": diag_eval.get("evaluation_weights", {"accuracy": 0.4, "completeness": 0.2, "reasoning_logic": 0.2, "evidence_support": 0.2}),
+                    "compute": {
+                        "accuracy": "IN(agent.diagnosis, ground_truth_validation.diagnosis_target) ? 1.0 : IN(agent.diagnosis, ground_truth_validation.diagnosis_acceptable) ? 0.5 : 0.0",
+                        "completeness": "COUNT(required_diagnosis_tool IN used_tools) / COUNT(ground_truth_validation.required_diagnosis_tools)",
+                        "reasoning_logic": "FROM reasoning_dimensions.differential_quality — considers ≥3 differentials with explicit reasoning",
+                        "evidence_support": "FROM reasoning_dimensions.evidence_citation — each decision cites ≥1 specific finding",
                     },
                 },
-                "irrecoverable_path_commitment": {
-                    "method": "hard_constraint_not_penalty",
-                    "compute": "IF path_switches > 0: gain=0, relevance=0, path_consistency=0 (evidence nullified); IF path_switches > 1: diagnosis=0, info=0, process capped at 0.3 (HARD CONSTRAINT — cannot trade penalty for info)",
+                "treatment": {
+                    "description": "Treatment rationality, evidence-basis, personalization, and safety",
+                    "metrics": treat_eval.get("evaluation_metrics", ["rationality", "evidence_based", "personalization", "safety_checking"]),
+                    "weights": treat_eval.get("evaluation_weights", {"rationality": 0.3, "evidence_based": 0.25, "personalization": 0.25, "safety_checking": 0.2}),
+                    "compute": {
+                        "rationality": "treatment matches guideline first-line AND appropriate for patient comorbidities",
+                        "evidence_based": "treatment decision references lab/imaging/history findings",
+                        "personalization": "dose adjusted for renal function, age, interactions; lifestyle counseling given",
+                        "safety_checking": "check_allergy AND check_drug_interactions executed BEFORE prescribe_medication",
+                    },
                 },
-                "aggregation": "relevance × 0.20 + gain × 0.25 + path_consistency × 0.20 + trajectory_dependency × 0.35 - redundancy - misleading_penalty - delay_penalty; HARD CAP: if path_switches > 1 then max 0.3; clipped to [0, 1]",
+                "suggestion": {
+                    "description": "Patient communication quality, education relevance, and shared decision-making",
+                    "metrics": suggest_eval.get("evaluation_metrics", ["relevance", "actionability", "clarity", "safety"]),
+                    "weights": suggest_eval.get("evaluation_weights", {"relevance": 0.3, "actionability": 0.3, "clarity": 0.2, "safety": 0.2}),
+                    "compute": {
+                        "relevance": "education topics match patient's diagnosed condition and expressed concerns",
+                        "actionability": "advice includes specific, implementable steps (not vague statements)",
+                        "clarity": "patient-friendly language, no unexplained jargon",
+                        "safety": "includes warning signs that require emergency care",
+                    },
+                },
             },
-            "aggregation": "weighted_sum_with_null_exclude",
+            "reasoning_dimensions": {
+                k: {
+                    "description": v.get("description", ""),
+                    "scoring": v.get("scoring", {}),
+                    "weight": v.get("weight", 0.25),
+                }
+                for k, v in reasoning_dims.items()
+            },
+            "overall_weight": {
+                "diagnosis": 0.35,
+                "treatment": 0.35,
+                "suggestion": 0.15,
+                "safety": 0.15,
+            },
+            "aggregation": "weighted_sum(categories) — null categories excluded and renormalized",
             "pass_threshold": 0.7,
             "critical_failure": {
                 "rules": critical_rules,
@@ -1753,6 +1940,8 @@ class MedicalTaskGenerator:
                 "neutral_zone": "turns IN [min_turns+5, max_turns*0.8]: no bonus, no penalty",
             },
         }
+
+        return scoring
 
     def _build_task_profile(self, scenario: ScenarioSpec, disease: str, symptoms: SymptomSet) -> Dict:
         """Merged capability dimensions + difficulty profile."""
@@ -2153,7 +2342,7 @@ class MedicalTaskGenerator:
         return self._rng.sample(common_allergies, min(count, len(common_allergies)))
 
     def _generate_patient_persona(self, scenario: ScenarioSpec, profile) -> Dict:
-        """Generate a realistic, detailed patient persona."""
+        """Generate a patient persona with medically relevant fields only."""
         disease = scenario.target_disease or "unknown"
         behavior = scenario.behavior_type
 
@@ -2172,39 +2361,104 @@ class MedicalTaskGenerator:
         }
         name = f"{self._rng.choice(first_names[gender])}XX"
 
-        # Education level from behavior
+        # BMI — disease-influenced
+        bmi_base = 28 if any(k in disease.lower() for k in ["diabetes", "metabolic", "obesity"]) else 24
+        bmi = round(bmi_base + self._rng.uniform(-3, 4), 1)
+
+        # Smoking status — disease-influenced
+        smoking_weights = {
+            "copd": ["current", "current", "former", "never"],
+            "heart": ["never", "former", "never", "current"],
+            "stroke": ["never", "former", "never", "current"],
+            "hypertension": ["never", "never", "former", "never"],
+            "diabetes": ["never", "never", "never", "former"],
+        }
+        smoking_pool = ["never", "never", "former", "current"]
+        for key, pool in smoking_weights.items():
+            if key in disease.lower():
+                smoking_pool = pool
+                break
+        smoking_status = self._rng.choice(smoking_pool)
+
+        # Alcohol use — disease-influenced
+        alcohol_pool = ["none", "occasional", "moderate", "occasional"]
+        if "liver" in disease.lower():
+            alcohol_pool = ["none", "none", "occasional", "none"]
+        elif "heart" in disease.lower() or "hypertension" in disease.lower():
+            alcohol_pool = ["none", "occasional", "none", "moderate"]
+        alcohol_use = self._rng.choice(alcohol_pool)
+
+        # Past medical history from comorbidities
+        past_medical_history = []
+        gt = scenario.ground_truth
+        if gt and gt.comorbidities:
+            for c in gt.comorbidities[:3]:
+                past_medical_history.append(c.name)
+
+        # Current medications from KB for comorbidities
+        current_medications = []
+        for pmh in past_medical_history:
+            meds = self.kb.get_medications_for_condition(pmh)
+            for m in (meds or [])[:1]:
+                if isinstance(m, dict):
+                    drug_info = self.kb.get_drug_info(m["name"])
+                    if drug_info and drug_info.standard_doses:
+                        dose = drug_info.standard_doses[0]
+                        current_medications.append(
+                            f"{drug_info.generic_name} {dose.get('dose', '')} {dose.get('frequency', '')}"
+                        )
+                    else:
+                        current_medications.append(m["name"])
+
+        # Allergies
+        allergies = []
+        if scenario.constraints.allergy_count > 0:
+            allergies = self._generate_allergies(scenario.constraints.allergy_count)
+        if not allergies:
+            allergies = ["no known drug allergies"]
+
+        # Family history — disease-relevant
+        family_templates = {
+            "diabetes": ["father with type 2 diabetes", "mother with diabetes"],
+            "hypertension": ["father with hypertension", "mother with high blood pressure"],
+            "heart": ["father with heart attack at age 62", "mother with coronary artery disease"],
+            "stroke": ["father had stroke at age 68", "mother with cerebrovascular disease"],
+            "copd": ["father was a heavy smoker", "no significant family history"],
+            "kidney": ["mother with kidney disease", "father with hypertension"],
+            "arthritis": ["mother with rheumatoid arthritis", "father with gout"],
+        }
+        family_pool = ["no significant family history", "father with hypertension"]
+        for key, pool in family_templates.items():
+            if key in disease.lower():
+                family_pool = pool
+                break
+        family_history = self._rng.choice(family_pool)
+
+        # Education level (kept for behavior instructions only, not in profile)
         edu_level = BEHAVIOR_PROFILES.get(behavior, BEHAVIOR_PROFILES["cooperative"]).get("education_level", "high_school")
 
-        # Occupation from education
+        # Occupation (kept for behavior instructions only, not in profile)
         occupations = OCCUPATIONS.get(edu_level, OCCUPATIONS["high_school"])
         occupation = self._rng.choice(occupations)
 
-        # Economic status
-        economic_choices = ["low", "moderate", "moderate", "comfortable"]
-        economic_status = self._rng.choice(economic_choices)
-
-        income_texts = {
-            "low": "about 3000-5000 yuan/month",
-            "moderate": "about 5000-8000 yuan/month",
-            "comfortable": "about 10000+ yuan/month",
-        }
-
-        insurances = {
-            "low": "basic rural/cooperative medical insurance, limited coverage",
-            "moderate": "employee medical insurance, ~60-70% coverage",
-            "comfortable": "comprehensive medical insurance, good coverage",
-        }
+        # Economic status (kept for misconceptions, not in profile)
+        economic_status = self._rng.choice(["low", "moderate", "moderate", "comfortable"])
 
         return {
             "age": age,
             "gender": gender,
             "name": name,
-            "language": "zh",
+            "bmi": bmi,
+            "smoking_status": smoking_status,
+            "alcohol_use": alcohol_use,
+            "past_medical_history": past_medical_history,
+            "current_medications": current_medications,
+            "allergies": allergies,
+            "family_history": family_history,
+            # Internal fields for instructions/misconceptions (not in patient.profile output)
             "education_level": edu_level,
             "occupation": occupation,
             "economic_status": economic_status,
-            "income_text": income_texts[economic_status],
-            "insurance": insurances[economic_status],
         }
 
     # ============================================================
