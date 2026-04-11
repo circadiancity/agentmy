@@ -487,28 +487,55 @@ class BenchEvaluator:
     # ============================================================
 
     def _get_information_value(self, symptom_lower: str) -> float:
-        """Derive information value from symptom tier (no external knowledge).
+        """Derive information value from discriminative power (not tier).
 
-        hidden/resistant → 1.0 (critical)
-        if_asked → 0.6 (supportive)
-        volunteer → 0.3 (weak_signal)
-        misleading/noise → 0.0 (noise)
+        Value = how specific this symptom is to the correct disease
+        vs. how much it overlaps with confounders.
+
+        - Unique to correct disease (not in confounders) → high value
+        - Shared with confounders → low value (doesn't help distinguish)
+        - Misleading/noise → 0.0
         """
         symptoms = self.patient["symptoms"]
 
-        for s in symptoms.get("hidden", []):
-            if s.lower() == symptom_lower:
-                return 1.0
-        for s in symptoms.get("resistant", []):
-            if s.lower() == symptom_lower:
-                return 1.0
-        for s in symptoms.get("if_asked", []):
-            if s.lower() == symptom_lower:
-                return 0.6
-        for s in symptoms.get("volunteer", []):
-            if s.lower() == symptom_lower:
-                return 0.3
-        return 0.0  # misleading or noise
+        # Check if symptom exists in any tier
+        is_real = False
+        for tier in ("volunteer", "if_asked", "hidden", "resistant"):
+            if any(s.lower() == symptom_lower for s in symptoms.get(tier, [])):
+                is_real = True
+                break
+        if not is_real:
+            return 0.0  # misleading or noise
+
+        # Compute discriminative value: how much does this symptom
+        # distinguish the correct disease from confounders?
+        confounder_overlap = self._count_confounder_overlap(symptom_lower)
+
+        # No confounders or no overlap → maximum discriminative value
+        if confounder_overlap == 0:
+            return 1.0
+
+        # Overlaps with confounders → reduced value
+        # 1 confounder overlap → 0.5, 2+ → 0.2
+        if confounder_overlap == 1:
+            return 0.5
+        return 0.2
+
+    def _count_confounder_overlap(self, symptom_lower: str) -> int:
+        """Count how many confounders share this symptom."""
+        confounders = self.task.get("clinical", {}).get("confounders", [])
+        if not confounders:
+            return 0
+        overlap_count = 0
+        for conf in confounders:
+            if not isinstance(conf, dict):
+                continue
+            for overlap_sym in conf.get("overlapping_symptoms", []):
+                if (overlap_sym.lower() in symptom_lower
+                        or symptom_lower in overlap_sym.lower()):
+                    overlap_count += 1
+                    break
+        return overlap_count
 
     def _weighted_sum(self, scores: Dict[str, Optional[float]]) -> float:
         """Weighted sum excluding None components, renormalizing."""

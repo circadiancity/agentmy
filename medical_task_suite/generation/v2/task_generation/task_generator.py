@@ -734,7 +734,7 @@ class MedicalTaskGenerator:
                 "partial_reveal_is_degraded — reveal_quality='partial' gives incomplete symptom info (missing severity/temporal); scores at 0.5 weight for info and 0.5 × information_value for gain",
                 "consecutive_miss_resets_on_prerequisite_match — any successful prerequisite match resets miss counter to 0",
                 "confounder_priority_is_turn_gated — CONFOUNDER_DOMINANCE only applies when turn <= 2; after turn 2, normal rules apply",
-                "information_value_is_tier_derived — hidden/resistant=1.0(critical), if_asked=0.6(supportive), volunteer=0.3(weak_signal), misleading/noise=0.0(noise); deterministic from patient.symptoms tiers only",
+                "information_value_is_discriminative — value derived from confounder overlap: unique to disease=1.0, shared with 1 confounder=0.5, shared with 2+ confounders=0.2, misleading/noise=0.0; independent of symptom tier",
                 "misleading_penalty_is_count_based — IF confounder_unique_revealed > true_signal_unique_revealed THEN penalty=0.2; no randomness",
                 "trust_decays_on_irrelevant_ask — each ASK that reveals no new relevant symptom: trust -= 0.05; IF trust < 0.6: revealed symptoms include noise; IF trust < 0.4: previously revealed symptoms get confidence=degraded (info_value × 0.5)",
                 "diagnosis_locks_exploration — after DIAGNOSE: hidden symptoms permanently locked; subsequent ASK gain × 0.3; alternative solution paths disabled",
@@ -1066,16 +1066,14 @@ class MedicalTaskGenerator:
             },
             "process_score": {
                 "information_value": {
-                    "description": "gradient value derived from symptom tier (no external knowledge)",
+                    "description": "discriminative value: how specific symptom is to correct disease vs confounders",
                     "mapping": {
-                        "hidden": 1.0,
-                        "resistant": 1.0,
-                        "if_asked": 0.6,
-                        "volunteer": 0.3,
-                        "misleading": 0.0,
-                        "noise": 0.0,
+                        "unique_to_disease": 1.0,
+                        "shared_with_1_confounder": 0.5,
+                        "shared_with_2+_confounders": 0.2,
+                        "misleading_or_noise": 0.0,
                     },
-                    "labels": {"1.0": "critical", "0.6": "supportive", "0.3": "weak_signal", "0.0": "noise"},
+                    "labels": {"1.0": "discriminative", "0.5": "partially_discriminative", "0.2": "non_discriminative", "0.0": "noise"},
                 },
                 "relevant_questions": {
                     "source": "ground_truth.solution_space.minimal_information_sets.must_collect",
@@ -1783,18 +1781,42 @@ class MedicalTaskGenerator:
                     if a_unique and b_unique:
                         break
 
+        # Compute path optimality from discriminative power (not tier).
+        # The path whose symptoms have LESS overlap with confounders
+        # (more specific to the correct disease) is optimal.
+        confounder_syms = set()
+        for conf in self._build_confounder_details(scenario, disease, symptoms):
+            if isinstance(conf, dict):
+                for s in conf.get("overlapping_symptoms", []):
+                    confounder_syms.add(s.lower())
+
+        def path_discriminative_power(symptoms_list):
+            if not symptoms_list:
+                return 0.0
+            non_overlap = sum(
+                1 for s in symptoms_list
+                if not any(cs in s.lower() or s.lower() in cs for cs in confounder_syms)
+            )
+            return non_overlap / len(symptoms_list)
+
+        a_power = path_discriminative_power(path_a_collect)
+        b_power = path_discriminative_power(path_b_collect)
+
+        # If equal, path A wins (fewer turns needed — efficiency tiebreaker)
+        a_is_optimal = a_power >= b_power
+
         minimal_sets = [
             {
                 "must_collect": path_a_collect,
                 "must_order": path_a_tests,
                 "must_match": disease,
-                "is_optimal": True,
+                "is_optimal": a_is_optimal,
             },
             {
                 "must_collect": path_b_collect,
                 "must_order": path_b_tests,
                 "must_match": disease,
-                "is_optimal": False,
+                "is_optimal": not a_is_optimal,
             },
         ]
 
@@ -1814,14 +1836,14 @@ class MedicalTaskGenerator:
                     "description": "Classic presentation — volunteer + if_asked symptoms",
                     "must_collect": path_a_collect,
                     "steps": ["ASK volunteer symptoms", "ASK if_asked symptoms", "ORDER_LAB key tests", "DIAGNOSE correctly", "CHECK_ALLERGY + PRESCRIBE", "END"],
-                    "is_optimal": True,
+                    "is_optimal": a_is_optimal,
                 },
                 {
                     "path_id": "path_b_atypical",
                     "description": "Atypical presentation — hidden + resistant symptoms",
                     "must_collect": path_b_collect,
                     "steps": ["ASK prerequisite for hidden symptoms", "ASK hidden symptoms (critical)", "ORDER_LAB key tests", "DIAGNOSE correctly", "CHECK_ALLERGY + PRESCRIBE", "END"],
-                    "is_optimal": False,
+                    "is_optimal": not a_is_optimal,
                 },
             ],
             "acceptable_variants": [
