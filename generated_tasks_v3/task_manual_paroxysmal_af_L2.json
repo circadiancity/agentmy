@@ -1,0 +1,397 @@
+{
+  "task_type": "diagnostic_uncertainty",
+  "difficulty": "L2",
+
+  "patient": {
+    "profile": {
+      "age": 52,
+      "gender": "female",
+      "occupation": "elementary school teacher",
+      "bmi": 28,
+      "past_medical_history": [
+        "hypertension (diagnosed 4 years ago, on lisinopril 10 mg daily)",
+        "GERD (on omeprazole 20 mg daily)"
+      ],
+      "family_history": "father had ischemic stroke at age 68, mother has hypothyroidism",
+      "social_history": "drinks 1-2 glasses of wine most evenings, coffee 2-3 cups per day, does not smoke",
+      "medications": ["lisinopril 10 mg daily", "omeprazole 20 mg daily"],
+      "allergies": ["no known drug allergies"]
+    },
+
+    "chief_complaint": "Recurrent episodes of rapid heartbeat and lightheadedness for the past 3 months, told it was anxiety at urgent care but symptoms are getting worse",
+
+    "history_of_present_illness": "Three months ago, the patient began experiencing sudden-onset episodes of forceful, rapid heartbeat lasting 10-30 minutes. Episodes occur 2-3 times per week and have increased in frequency. During episodes she feels lightheaded, has mild central chest pressure, and mild shortness of breath. Episodes sometimes happen at rest, sometimes after meals, and occasionally wake her from sleep. She visited urgent care 2 weeks ago where she was told she had anxiety and was prescribed sertraline 50 mg, which she has not started because she does not believe anxiety explains her symptoms. She is particularly worried because her father had a stroke.",
+
+    "symptoms": {
+      "spontaneous": [
+        "forceful rapid heartbeat lasting 10-30 minutes",
+        "lightheadedness during episodes",
+        "mild central chest pressure during episodes",
+        "mild shortness of breath during episodes",
+        "episodes increasing in frequency over 3 months",
+        "frustrated that prior clinician attributed symptoms to anxiety"
+      ],
+      "if_asked": {
+        "about_episodes": [
+          "pulse feels irregular and fast during episodes, she estimates over 150 beats per minute",
+          "episodes start and stop abruptly",
+          "sometimes triggered by cold drinks or after heavy meals",
+          "occasionally happens during sleep, waking her up with pounding heart",
+          "she has had near-syncope during the most severe episodes but never fully lost consciousness",
+          "between episodes she feels completely normal"
+        ],
+        "about_associated_symptoms": [
+          "no focal weakness, numbness, speech difficulty, or visual changes",
+          "no fever, weight loss, or night sweats",
+          "no heat intolerance, tremor at rest, or excessive sweating outside episodes",
+          "no swelling in legs",
+          "no history of fainting or seizures",
+          "occasional GERD symptoms well-controlled on omeprazole, not temporally related to episodes"
+        ],
+        "about_lifestyle": [
+          "drinks 1-2 glasses of wine most evenings (sometimes more on weekends)",
+          "2-3 cups of coffee per day",
+          "walks 20 minutes daily, no vigorous exercise",
+          "moderate stress from teaching but denies being an anxious person",
+          "has not started the sertraline prescribed at urgent care"
+        ],
+        "about_family": [
+          "father had ischemic stroke at 68, recovered with mild residual weakness",
+          "mother has hypothyroidism on levothyroxine",
+          "no known family history of sudden cardiac death or arrhythmia"
+        ]
+      }
+    },
+
+    "behavior": {
+      "communication_style": "articulate and specific about her symptoms, mildly frustrated with prior evaluation, proactive about her health",
+      "reliability": "reliable historian, accurate symptom description, compliant with current medications"
+    }
+  },
+
+  "clinical_data": {
+    "vitals": {
+      "blood_pressure": "136/84 mmHg",
+      "heart_rate": "76 bpm, regular",
+      "respiratory_rate": "16/min",
+      "temperature": "36.7 C",
+      "oxygen_saturation": "99% on room air"
+    },
+
+    "physical_exam": {
+      "general": "well-appearing, no acute distress, comfortable between episodes",
+      "cardiac": "regular rate and rhythm, normal S1/S2, no murmurs, gallops, or rubs. No heaves or lifts.",
+      "lungs": "clear to auscultation bilaterally, no crackles or wheezing",
+      "abdomen": "soft, non-tender, no hepatomegaly",
+      "extremities": "no peripheral edema, no calf tenderness, normal pulses bilaterally",
+      "neck": "no jugular venous distension, no carotid bruits, thyroid non-tender, no nodules"
+    },
+
+    "initial_ecg": {
+      "rhythm": "normal sinus rhythm",
+      "rate": "76 bpm",
+      "pr_interval": "0.16 s",
+      "qrs_duration": "0.08 s",
+      "qt_corrected": "420 ms",
+      "st_segments": "no ST-T wave abnormalities",
+      "note": "No evidence of pre-excitation (WPW), QT prolongation, or structural heart disease. Between episodes, ECG is normal."
+    },
+
+    "labs_pending_orders": {
+      "cbc": {
+        "wbc": "6.8 x10^9/L (ref: 4.0-11.0)",
+        "hemoglobin": "13.2 g/dL (ref: 12.0-16.0)",
+        "platelets": "248 x10^9/L (ref: 150-400)"
+      },
+      "basic_metabolic_panel": {
+        "sodium": "139 mEq/L (ref: 136-145)",
+        "potassium": "4.1 mEq/L (ref: 3.5-5.0)",
+        "creatinine": "0.82 mg/dL (ref: 0.6-1.2)",
+        "eGFR": ">90 mL/min/1.73m2",
+        "glucose": "104 mg/dL (ref: 70-100, borderline elevated)",
+        "bun": "14 mg/dL (ref: 7-20)"
+      },
+      "thyroid_function": {
+        "tsh": "1.8 mIU/L (ref: 0.4-4.0, normal)",
+        "free_t4": "1.1 ng/dL (ref: 0.8-1.8, normal)"
+      },
+      "cardiac_biomarkers": {
+        "high_sensitivity_troponin": "8 ng/L (ref: <14, negative)"
+      },
+      "nt_probnp": {
+        "result": "52 pg/mL (ref: <125 for age <75, normal)",
+        "note": "excludes significant cardiac dysfunction"
+      }
+    },
+
+    "imaging": {
+      "echocardiogram": {
+        "status": "not yet performed — must be ordered",
+        "expected_findings_if_performed": {
+          "left_ventricular_ef": "58%, normal systolic function",
+          "left_atrial_diameter": "38 mm (upper limit of normal, borderline)",
+          "valvular": "trivial mitral regurgitation, no significant valvular disease",
+          "right_ventricle": "normal size and function",
+          "pericardium": "no effusion",
+          "note": "No structural contraindication to flecainide or propafenone"
+        }
+      },
+      "ambulatory_rhythm_monitor": {
+        "status": "not yet performed — key diagnostic test",
+        "options": {
+          "24h_holter": "may capture episode given 2-3 episodes/week, but limited monitoring window",
+          "14_day_patch_monitor": "recommended — higher yield given paroxysmal nature"
+        },
+        "expected_finding_if_episode_captured": {
+          "rhythm_during_episode": "atrial fibrillation with rapid ventricular response",
+          "ventricular_rate_during_episode": "142-168 bpm",
+          "duration": "18 minutes (self-terminating)",
+          "note": "Confirms paroxysmal atrial fibrillation"
+        }
+      }
+    }
+  },
+
+  "ground_truth": {
+    "primary_diagnosis": "paroxysmal atrial fibrillation (AF)",
+    "clinical_reasoning": "Recurrent self-terminating episodes of irregular rapid heartbeat with lightheadedness and chest discomfort in a middle-aged woman with hypertension. The irregular pulse during episodes, abrupt onset/offset, and nocturnal occurrence are characteristic of paroxysmal AF. The diagnosis was initially missed because she presented in sinus rhythm at urgent care and symptoms were attributed to anxiety — a common pitfall, particularly in women.",
+
+    "differential_diagnoses": [
+      {
+        "diagnosis": "paroxysmal atrial fibrillation",
+        "supporting_evidence": [
+          "sudden-onset, self-terminating episodes of rapid irregular heartbeat",
+          "nocturnal episodes",
+          "triggers by vagal stimuli (cold drinks, post-prandial)",
+          "hypertension as risk factor",
+          "near-syncope during fast ventricular rates",
+          "age and sex demographic"
+        ],
+        "diagnostic_requirement": "rhythm documentation during episode (Holter or event monitor showing AF)"
+      },
+      {
+        "diagnosis": "anxiety/panic disorder",
+        "supporting_evidence": [
+          "episodic nature with physical symptoms",
+          "chest discomfort and dyspnea",
+          "prior diagnosis at urgent care",
+          "occupational stress"
+        ],
+        "discriminating_against": [
+          "episodes occur during sleep (atypical for panic)",
+          "abrupt onset and offset (panic builds gradually)",
+          "patient describes irregular pulse (panic typically causes regular sinus tachycardia)",
+          "no situational trigger pattern",
+          "thyroid function normal"
+        ],
+        "clinical_note": "This was the urgent care misdiagnosis. While anxiety can coexist, the clinical features point to an arrhythmia."
+      },
+      {
+        "diagnosis": "AV nodal reentrant tachycardia (AVNRT) or other SVT",
+        "supporting_evidence": [
+          "sudden-onset, self-terminating palpitations",
+          "lightheadedness and chest discomfort during episodes",
+          "age of onset consistent"
+        ],
+        "discriminating_against": [
+          "patient describes irregular pulse (AVNRT is typically regular)",
+          "no response to vagal maneuvers reported (AVNRT often terminates with Valsalva)",
+          "no pre-excitation on baseline ECG (rules out WPW)"
+        ],
+        "clinical_note": "Reasonable alternative but less likely given irregular pulse description"
+      },
+      {
+        "diagnosis": "hyperthyroidism",
+        "supporting_evidence": [
+          "palpitations and tachycardia",
+          "mother has thyroid disease (family history)",
+          "borderline elevated glucose could suggest thyrotoxicosis"
+        ],
+        "discriminating_against": [
+          "TSH and free T4 both normal",
+          "no weight loss, tremor at rest, heat intolerance, or diarrhea",
+          "no thyroid enlargement or tenderness on exam"
+        ],
+        "clinical_note": "Easily excluded by thyroid function tests, which should be ordered as part of AF workup per guidelines"
+      }
+    ],
+
+    "required_evidence": [
+      {
+        "evidence_type": "rhythm documentation",
+        "test": "ambulatory ECG monitoring (14-day patch monitor preferred, or 24h Holter)",
+        "finding": "episode showing atrial fibrillation with rapid ventricular response",
+        "guideline": "ESC 2020 AF Guidelines: rhythm documentation is required for AF diagnosis",
+        "critical": true
+      },
+      {
+        "evidence_type": "structural assessment",
+        "test": "transthoracic echocardiogram",
+        "finding": "LV function, LA size, valvular status",
+        "guideline": "ESC/AHA AF Guidelines: echo recommended for all newly diagnosed AF",
+        "clinical_reason": "Required before considering flecainide/propafenone (class IC antiarrhythmics contraindicated with structural heart disease)"
+      },
+      {
+        "evidence_type": "thyroid exclusion",
+        "test": "TSH with reflex free T4",
+        "finding": "normal (excludes thyrotoxic AF)",
+        "guideline": "Standard AF workup per ESC/AHA guidelines"
+      },
+      {
+        "evidence_type": "renal function",
+        "test": "basic metabolic panel",
+        "finding": "creatinine and eGFR (needed for DOAC dosing)",
+        "guideline": "Required before initiating anticoagulation"
+      }
+    ],
+
+    "key_discriminators": [
+      "irregular pulse during episodes distinguishes AF from regular SVT (AVNRT) and sinus tachycardia (anxiety)",
+      "nocturnal episodes waking from sleep are characteristic of AF and atypical for panic disorder",
+      "abrupt onset and offset pattern distinguishes arrhythmia from anxiety (which typically has gradual buildup)",
+      "vagal triggers (cold drinks, post-prandial) suggest vagally-mediated AF (a recognized phenotype)",
+      "rhythm documentation during episode is the definitive diagnostic test — clinical suspicion alone is insufficient"
+    ]
+  },
+
+  "management": {
+    "initial_steps": [
+      {
+        "step": "Order ambulatory rhythm monitoring",
+        "rationale": "Rhythm documentation is required to confirm AF diagnosis. 14-day patch monitor has higher yield than 24h Holter for paroxysmal AF.",
+        "priority": "essential"
+      },
+      {
+        "step": "Order transthoracic echocardiogram",
+        "rationale": "Assess LV function, LA size, and valves. Required for antiarrhythmic drug selection and stroke risk stratification.",
+        "priority": "essential"
+      },
+      {
+        "step": "Reassure patient that her symptoms warrant investigation",
+        "rationale": "Patient is frustrated with prior dismissive evaluation. Acknowledging her concern builds trust and is clinically appropriate — her symptoms are concerning for arrhythmia.",
+        "priority": "important"
+      }
+    ],
+
+    "definitive_treatment": [
+      {
+        "step": "Anticoagulation for stroke prevention",
+        "treatment": "apixaban 5 mg twice daily (or rivaroxaban 20 mg daily with evening meal)",
+        "rationale": "CHA2DS2-VASc score = 2 (female sex: 1, hypertension: 1). Score >=2 in women warrants oral anticoagulation per ESC 2020 and AHA/ACC/HRS 2014 guidelines. DOAC preferred over warfarin per guidelines.",
+        "condition": "Confirmed AF on rhythm monitoring. eGFR >30 (renal function adequate for DOAC).",
+        "safety_note": "Assess bleeding risk (HAS-BLED). Educate on bleeding signs. Avoid concomitant NSAIDs."
+      },
+      {
+        "step": "Rate vs rhythm control decision",
+        "option_rhythm_control": {
+          "rationale": "Patient is relatively young (52), highly symptomatic, and has recent-onset paroxysmal AF. Rhythm control is reasonable and may be preferred per EARLY-AF and EAST-AFNET 4 trial evidence.",
+          "agents": "flecainide 100-150 mg twice daily IF echo shows no structural heart disease (normal EF, no significant CAD, no valvular disease). Alternative: amiodarone if structural disease present.",
+          "safety_requirement": "Echocardiogram MUST confirm no structural heart disease before initiating flecainide (class IC antiarrhythmics can cause life-threatening arrhythmia in the setting of CAD or LV dysfunction)."
+        },
+        "option_rate_control": {
+          "rationale": "Acceptable alternative, especially if rhythm control fails or is not preferred by patient.",
+          "agents": "beta-blocker (bisoprolol 2.5-5 mg daily) or rate-limiting calcium channel blocker (diltiazem extended-release). Note: she is already on ACE-I for hypertension, beta-blocker would be additive."
+        }
+      },
+      {
+        "step": "Lifestyle modifications",
+        "modifications": [
+          "reduce alcohol to <=1 drink per day or abstain (alcohol is a known AF trigger, especially binge drinking — her 1-2 glasses most evenings with more on weekends is a modifiable risk factor)",
+          "moderate caffeine intake is acceptable (current 2-3 cups/day is reasonable, no evidence strict caffeine avoidance helps)",
+          "maintain regular physical activity",
+          "weight management (BMI 28, obesity is an independent AF risk factor)"
+        ]
+      },
+      {
+        "step": "Hypertension optimization",
+        "rationale": "Uncontrolled hypertension promotes AF. Current BP 136/84 could be optimized to <130/80 per ACC/AHA guidelines. May need lisinopril dose increase or addition of beta-blocker (dual benefit for rate control)."
+      }
+    ],
+
+    "safety_considerations": [
+      {
+        "issue": "Do NOT prescribe flecainide or propafenone without echocardiogram",
+        "reason": "Class IC antiarrhythmics are contraindicated in structural heart disease (CAST trial). Can precipitate life-threatening ventricular arrhythmias.",
+        "severity": "critical"
+      },
+      {
+        "issue": "Do NOT attribute symptoms to anxiety without completing arrhythmia workup",
+        "reason": "Missed AF diagnosis leaves patient at risk for stroke. Women are more likely to have AF attributed to anxiety (documented gender bias in cardiac diagnosis).",
+        "severity": "critical"
+      },
+      {
+        "issue": "Do NOT start anticoagulation without confirming renal function and assessing bleeding risk",
+        "reason": "DOAC dosing requires renal function. Severe renal impairment (CrCl <30) requires dose adjustment or avoidance of certain DOACs.",
+        "severity": "major"
+      },
+      {
+        "issue": "Do NOT prescribe sertraline (or any SSRI) as the sole intervention without first completing cardiac evaluation",
+        "reason": "The urgent care prescription of sertraline without ECG monitoring was premature and inappropriate. SSRI may mask ongoing arrhythmia symptoms without addressing the underlying cause.",
+        "severity": "major"
+      },
+      {
+        "issue": "Assess for obstructive sleep apnea if clinically suspected",
+        "reason": "OSA is a modifiable risk factor for AF. Nocturnal episodes and BMI 28 raise suspicion, though not definitive.",
+        "severity": "moderate"
+      }
+    ]
+  },
+
+  "evaluation_criteria": {
+    "diagnosis": {
+      "full_credit": "Identifies paroxysmal atrial fibrillation as the primary diagnosis with rhythm documentation (ambulatory monitor). Recognizes that urgent care 'anxiety' diagnosis was premature and potentially harmful.",
+      "partial_credit": "Identifies arrhythmia as likely but does not specify AF, or correctly identifies need for rhythm monitoring without committing to AF diagnosis.",
+      "no_credit": "Agrees with anxiety diagnosis without further workup, or fails to order rhythm monitoring."
+    },
+
+    "test_ordering": {
+      "essential_tests": [
+        "ambulatory ECG monitoring (Holter or patch monitor) — diagnostic",
+        "echocardiogram — structural assessment before treatment",
+        "TSH — exclude thyrotoxic AF (standard workup)",
+        "basic metabolic panel — renal function for DOAC dosing",
+        "baseline ECG (already done, but appropriate to verify)"
+      ],
+      "appropriate_but_not_required": [
+        "CBC (rule out anemia contributing to symptoms)",
+        "NT-proBNP (exclude heart failure, though low pre-test probability)",
+        "hs-troponin (appropriate to exclude ACS given chest pain, though presentation is subacute/episodic)"
+      ],
+      "inappropriate_tests": [
+        "CT coronary angiogram (no evidence of ischemic symptoms, episodic pattern suggests arrhythmia)",
+        "exercise stress test (not indicated for episodic palpitations without exertional correlation)",
+        "cardiac MRI (not indicated at this stage, echo is sufficient for structural assessment)"
+      ]
+    },
+
+    "treatment": {
+      "correct_approach": [
+        "Initiate DOAC (apixaban or rivaroxaban) after confirming AF — stroke prevention is the highest priority",
+        "Rhythm or rate control based on shared decision-making, with echo-guided antiarrhythmic selection",
+        "Optimize blood pressure control",
+        "Counsel on alcohol reduction as modifiable AF trigger"
+      ],
+      "safety_failures": [
+        "Prescribing class IC antiarrhythmic (flecainide) without echocardiogram",
+        "Starting anticoagulation without checking renal function",
+        "Prescribing only sertraline without completing arrhythmia workup",
+        "Prescribing rate control medication that interacts with current ACE-I without monitoring (e.g., verapamil + ACE-I can cause hypotension)"
+      ]
+    },
+
+    "safety": {
+      "critical_actions": [
+        "Recognize that episodic palpitations with irregular pulse and near-syncope warrant arrhythmia investigation, not anxiety treatment",
+        "Order echocardiogram before any class IC antiarrhythmic",
+        "Check renal function before prescribing DOAC",
+        "Calculate CHA2DS2-VASc score and recommend anticoagulation for score >=2"
+      ],
+      "patient_communication": [
+        "Acknowledge patient's frustration with prior evaluation — validates her concern",
+        "Explain why rhythm monitoring is needed (symptoms suggest arrhythmia, not anxiety)",
+        "Discuss stroke risk and rationale for anticoagulation once AF confirmed",
+        "Address lifestyle factors without being judgmental"
+      ]
+    }
+  }
+}
