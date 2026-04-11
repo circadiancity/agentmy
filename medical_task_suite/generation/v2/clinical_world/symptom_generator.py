@@ -19,10 +19,19 @@ from .patient_language import PatientLanguageLayer
 
 # v2.7: Try expanded pools first, fall back to original
 try:
-    from .expanded_symptom_pools import EXPANDED_NOISE_SYMPTOM_POOL, EXPANDED_MISLEADING_SYMPTOM_MAP
+    from .expanded_symptom_pools import (
+        EXPANDED_NOISE_SYMPTOM_POOL, EXPANDED_MISLEADING_SYMPTOM_MAP,
+        ATYPICAL_SYMPTOMS, SYMPTOM_VARIANTS, STRUCTURAL_UNCERTAINTY_CONFIG,
+    )
     _NOISE_POOL = EXPANDED_NOISE_SYMPTOM_POOL
     _MISLEADING_MAP = EXPANDED_MISLEADING_SYMPTOM_MAP
+    _ATYPICAL = ATYPICAL_SYMPTOMS
+    _VARIANTS = SYMPTOM_VARIANTS
+    _STRUCT_CFG = STRUCTURAL_UNCERTAINTY_CONFIG
 except ImportError:
+    _ATYPICAL = {}
+    _VARIANTS = {}
+    _STRUCT_CFG = {}
     # Original pools (fallback)
     _NOISE_POOL = [
         "mild headache", "occasional dizziness", "minor skin rash",
@@ -107,6 +116,12 @@ class SymptomGenerator:
         real_symptoms = self._get_real_symptoms(disease)
         if not real_symptoms:
             real_symptoms = ["fatigue", "general discomfort"]
+
+        # 1b. STRUCTURAL UNCERTAINTY: randomly modify canonical symptom set
+        #     Same disease produces different symptom sets across tasks.
+        real_symptoms = self._apply_structural_uncertainty(
+            real_symptoms, disease, scenario.difficulty
+        )
 
         # 2. Merge comorbidity symptoms
         gt = scenario.ground_truth
@@ -218,6 +233,16 @@ class SymptomGenerator:
             misleading=misleading,
         )
 
+    # Disease-name terms that should not appear as symptoms
+    _DISEASE_NAME_TERMS = {
+        "kidney disease", "heart disease", "lung disease", "liver disease",
+        "thyroid disease", "blood disease", "skin disease", "bone disease",
+        "bowel disease", "vascular disease", "autoimmune disease",
+        "inflammatory disease", "degenerative disease", "metabolic disease",
+        "connective tissue disease", "valvular disease",
+        "lupus", "arthritis", "diabetes", "hypertension",
+    }
+
     def _get_real_symptoms(self, disease: str) -> List[str]:
         """Get real symptoms for a disease from clinical KB."""
         profile = self.kb.get_disease_profile(disease)
@@ -225,15 +250,23 @@ class SymptomGenerator:
 
         # Try differential_questions for symptom-like content
         if hasattr(profile, 'differential_questions'):
-            symptoms = [
+            raw = [
                 q.replace("?", "").strip()
                 for q in (profile.differential_questions or [])
                 if len(q) < 40
             ]
+            # Filter out disease-name phrases
+            for s in raw:
+                s_lower = s.lower().strip()
+                if s_lower in self._DISEASE_NAME_TERMS:
+                    continue
+                # Also skip if it matches a known disease abbreviation
+                if len(s_lower) <= 4 and s_lower.isupper():
+                    continue
+                symptoms.append(s)
 
-        # Try aliases
-        if not symptoms and hasattr(profile, 'aliases'):
-            symptoms = profile.aliases or []
+        # Do NOT use aliases as symptoms — they are disease names, not symptoms.
+        # Skip straight to fallback.
 
         # Fallback to disease-specific common symptoms
         if not symptoms:
@@ -303,3 +336,71 @@ class SymptomGenerator:
         n = max(1, int(config.misleading_fraction * 3))
         random.shuffle(candidates)
         return candidates[:n]
+
+    def _apply_structural_uncertainty(
+        self,
+        symptoms: List[str],
+        disease: str,
+        difficulty: str,
+    ) -> List[str]:
+        """Apply structural uncertainty: drop, perturb, and inject atypical symptoms.
+
+        Three transformations applied per-task (seed-controlled):
+        1. DROP: randomly remove some canonical symptoms
+        2. PERTURB: replace some canonical symptom descriptions with variants
+        3. INJECT: add atypical/rare symptoms not in the canonical list
+
+        This makes the same disease produce different symptom sets across tasks,
+        preventing agents from memorizing disease-symptom mappings.
+        """
+        if not symptoms or not _STRUCT_CFG:
+            return symptoms
+
+        cfg = _STRUCT_CFG.get(difficulty, _STRUCT_CFG.get("L2", {}))
+        result = list(symptoms)
+
+        # ── 1. DROP canonical symptoms ──
+        drop_low, drop_high = cfg.get("canonical_drop_rate", (0.0, 0.15))
+        drop_rate = random.uniform(drop_low, drop_high)
+        # Always keep at least 2 symptoms (floor)
+        min_keep = 2
+        if len(result) > min_keep:
+            n_to_drop = max(0, int(len(result) * drop_rate))
+            if n_to_drop > 0 and len(result) - n_to_drop >= min_keep:
+                # Drop from the END (less canonical symptoms tend to be later)
+                result = result[:len(result) - n_to_drop]
+
+        # ── 2. PERTURB symptom descriptions ──
+        variant_rate = cfg.get("variant_replace_rate", 0.1)
+        perturbed = []
+        for s in result:
+            s_lower = s.lower().strip()
+            replaced = False
+            for canonical, variants in _VARIANTS.items():
+                if canonical in s_lower and random.random() < variant_rate:
+                    perturbed.append(random.choice(variants))
+                    replaced = True
+                    break
+            if not replaced:
+                perturbed.append(s)
+        result = perturbed
+
+        # ── 3. INJECT atypical/rare symptoms ──
+        inj_low, inj_high = cfg.get("atypical_inject_rate", (0.0, 0.2))
+        inject_prob = random.uniform(inj_low, inj_high)
+        max_atypical = cfg.get("max_atypical_added", 1)
+
+        atypical_pool = _ATYPICAL.get(disease.lower(), [])
+        if atypical_pool and random.random() < inject_prob:
+            # Pick 1..max_atypical symptoms from the atypical pool
+            n_inject = random.randint(1, max_atypical)
+            random.shuffle(atypical_pool)
+            injected = atypical_pool[:n_inject]
+            # Add to result (avoid exact duplicates)
+            existing_lower = {s.lower() for s in result}
+            for s in injected:
+                if s.lower() not in existing_lower:
+                    result.append(s)
+                    existing_lower.add(s.lower())
+
+        return result

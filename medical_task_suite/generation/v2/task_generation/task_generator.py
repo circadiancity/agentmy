@@ -317,6 +317,10 @@ class MedicalTaskGenerator:
 
         # Step 5: Build task
         task = self._build_task(scenario, symptoms, profile, persona, seed=seed)
+
+        # Step 6: Post-generation difficulty calibration
+        task = self._calibrate_task(task, difficulty, seed)
+
         return task
 
     def generate_batch(
@@ -403,8 +407,425 @@ class MedicalTaskGenerator:
         return task
 
     # ============================================================
-    # Lean Core Builders
+    # Post-Generation Difficulty Calibration
     # ============================================================
+
+    # Difficulty bands: [low, high)
+    # Tuned to match the achievable range of the calibration formula.
+    # L3: 0.50+ captures tasks with ≥2 confounders, high entropy, atypical symptoms.
+    DIFFICULTY_BANDS = {
+        "L1": (0.00, 0.25),
+        "L2": (0.25, 0.50),
+        "L3": (0.50, 1.01),
+    }
+
+    # Weights for calibrated difficulty score components
+    CALIBRATION_WEIGHTS = {
+        "confounder_count":    0.30,  # Strongest lever: directly controllable
+        "drop_rate":           0.10,
+        "atypical_count":      0.10,
+        "symptom_overlap":     0.20,  # Discriminative ambiguity
+        "initial_entropy":     0.30,  # Hypothesis space complexity
+    }
+
+    def _compute_calibrated_difficulty(self, task: Dict[str, Any]) -> Dict[str, Any]:
+        """Compute effective difficulty score from structural features.
+
+        Score = weighted sum of 5 normalized components:
+          1. confounder_count:  how many confounders are present
+          2. drop_rate:         fraction of canonical symptoms dropped
+          3. atypical_count:    number of atypical symptoms injected
+          4. symptom_overlap:   avg overlap between hypothesis symptom sets
+          5. initial_entropy:   entropy of the prior over hypotheses
+
+        Returns dict with raw components, raw score, and normalized score in [0,1].
+        """
+        W = self.CALIBRATION_WEIGHTS
+
+        # 1. Confounder count (normalized to [0,1] by dividing by 3)
+        confounders = task.get("clinical", {}).get("confounders", [])
+        n_confounders = len(confounders)
+        confounder_raw = min(n_confounders, 3) / 3.0
+
+        # 2. Drop rate: fraction of original canonical symptoms missing
+        #    Compare real_symptoms count vs a baseline for this disease
+        disease = task["clinical"]["diagnosis"]["primary"]
+        baseline_syms = self.symptom_gen._fallback_symptoms(disease)
+        current_real = task["patient"]["symptoms"]
+        current_total = (
+            len(current_real.get("volunteer", []))
+            + len(current_real.get("if_asked", []))
+            + len(current_real.get("hidden", []))
+            + len(current_real.get("resistant", []))
+        )
+        if baseline_syms and len(baseline_syms) > 0:
+            drop_rate = max(0.0, 1.0 - current_total / max(len(baseline_syms), 1))
+        else:
+            drop_rate = 0.0
+        drop_raw = min(1.0, drop_rate)
+
+        # 3. Atypical count: count symptoms NOT in canonical fallback list
+        canonical_lower = {s.lower() for s in baseline_syms}
+        all_current = []
+        for tier in ("volunteer", "if_asked", "hidden", "resistant"):
+            all_current.extend(current_real.get(tier, []))
+        atypical = [s for s in all_current if s.lower() not in canonical_lower]
+        n_atypical = len(atypical)
+        atypical_raw = min(n_atypical, 3) / 3.0
+
+        # 4. Symptom overlap between hypotheses
+        #    For each pair of hypotheses, compute Jaccard overlap of symptom sets
+        overlap_raw = self._compute_hypothesis_overlap(task)
+
+        # 5. Initial entropy: H(P(H)) where P(H) is uniform prior
+        hypotheses = self._extract_hypothesis_names(task)
+        n_hyp = len(hypotheses)
+        if n_hyp <= 1:
+            entropy_raw = 0.0
+        else:
+            initial_entropy = math.log2(n_hyp)
+            max_entropy = math.log2(10)  # Normalize: 10 hypotheses = max
+            entropy_raw = min(1.0, initial_entropy / max_entropy)
+
+        # Weighted sum
+        raw_score = (
+            W["confounder_count"] * confounder_raw
+            + W["drop_rate"] * drop_raw
+            + W["atypical_count"] * atypical_raw
+            + W["symptom_overlap"] * overlap_raw
+            + W["initial_entropy"] * entropy_raw
+        )
+
+        # Clamp to [0, 1]
+        normalized = max(0.0, min(1.0, raw_score))
+
+        return {
+            "components": {
+                "confounder_count": round(confounder_raw, 4),
+                "drop_rate": round(drop_raw, 4),
+                "atypical_count": round(atypical_raw, 4),
+                "symptom_overlap": round(overlap_raw, 4),
+                "initial_entropy": round(entropy_raw, 4),
+            },
+            "raw_score": round(raw_score, 4),
+            "normalized_score": round(normalized, 4),
+            "weights": W,
+        }
+
+    def _compute_hypothesis_overlap(self, task: Dict[str, Any]) -> float:
+        """Compute average pairwise Jaccard similarity between hypothesis symptom sets.
+
+        Higher overlap = harder to discriminate = higher difficulty.
+        Returns value in [0, 1].
+        """
+        # Build hypothesis symptom sets (patient-friendly, lowercase)
+        hypotheses = {}
+        disease = task["clinical"]["diagnosis"]["primary"]
+
+        # Primary disease symptoms
+        primary_syms = set()
+        for tier in ("volunteer", "if_asked", "hidden", "resistant"):
+            for s in task["patient"]["symptoms"].get(tier, []):
+                primary_syms.add(s.lower())
+        hypotheses[disease] = primary_syms
+
+        # Confounder symptoms
+        for conf in task.get("clinical", {}).get("confounders", []):
+            if not isinstance(conf, dict):
+                continue
+            name = conf.get("name", "")
+            if not name:
+                continue
+            conf_syms = set()
+            for s in conf.get("full_symptoms", conf.get("overlapping_symptoms", [])):
+                conf_syms.add(s.lower())
+            hypotheses[name] = conf_syms
+
+        # Compute pairwise Jaccard
+        hyp_names = list(hypotheses.keys())
+        if len(hyp_names) <= 1:
+            return 0.0
+
+        overlaps = []
+        for i in range(len(hyp_names)):
+            for j in range(i + 1, len(hyp_names)):
+                set_a = hypotheses[hyp_names[i]]
+                set_b = hypotheses[hyp_names[j]]
+                if not set_a and not set_b:
+                    overlaps.append(1.0)
+                elif not set_a or not set_b:
+                    overlaps.append(0.0)
+                else:
+                    intersection = len(set_a & set_b)
+                    union = len(set_a | set_b)
+                    overlaps.append(intersection / union if union > 0 else 0.0)
+
+        return sum(overlaps) / len(overlaps) if overlaps else 0.0
+
+    def _extract_hypothesis_names(self, task: Dict[str, Any]) -> List[str]:
+        """Extract all hypothesis names from task (primary + confounders)."""
+        names = [task["clinical"]["diagnosis"]["primary"]]
+        for conf in task.get("clinical", {}).get("confounders", []):
+            if isinstance(conf, dict) and conf.get("name"):
+                names.append(conf["name"])
+        return list(dict.fromkeys(names))  # deduplicate preserving order
+
+    def _calibrate_task(
+        self,
+        task: Dict[str, Any],
+        target_difficulty: str,
+        seed: Optional[int],
+        max_rounds: int = 3,
+    ) -> Dict[str, Any]:
+        """Post-generation difficulty calibration.
+
+        Iterative: compute → check → adjust → recheck (up to max_rounds).
+
+        Bands:
+            L1: [0.00, 0.33)
+            L2: [0.33, 0.66)
+            L3: [0.66, 1.00]
+        """
+        all_adjustments = []
+
+        for round_i in range(max_rounds):
+            calibration = self._compute_calibrated_difficulty(task)
+            score = calibration["normalized_score"]
+            band_low, band_high = self.DIFFICULTY_BANDS[target_difficulty]
+
+            # Check if in band
+            in_band = band_low <= score < band_high
+            if target_difficulty == "L3" and score >= band_high:
+                in_band = False
+            if target_difficulty == "L3" and score == 1.0:
+                in_band = True
+
+            if in_band:
+                task["task_profile"]["calibrated_difficulty"] = {
+                    **calibration,
+                    "target_band": target_difficulty,
+                    "in_band": True,
+                    "adjustments": all_adjustments,
+                    "calibration_rounds": round_i,
+                }
+                return task
+
+            # Out of band — try to adjust
+            task, adjustments = self._adjust_task_difficulty(
+                task, target_difficulty, score, calibration
+            )
+            all_adjustments.extend(adjustments)
+
+            # If no adjustments were made, stop (can't fix it)
+            if not adjustments:
+                break
+
+        # Final calibration after all rounds
+        calibration = self._compute_calibrated_difficulty(task)
+        score = calibration["normalized_score"]
+        band_low, band_high = self.DIFFICULTY_BANDS[target_difficulty]
+        in_band = band_low <= score < band_high
+        if target_difficulty == "L3" and score >= 1.0:
+            in_band = True
+
+        task["task_profile"]["calibrated_difficulty"] = {
+            **calibration,
+            "target_band": target_difficulty,
+            "in_band": in_band,
+            "adjustments": all_adjustments,
+            "calibration_rounds": max_rounds,
+        }
+
+        return task
+
+    def _adjust_task_difficulty(
+        self,
+        task: Dict[str, Any],
+        target_difficulty: str,
+        current_score: float,
+        calibration: Dict[str, Any],
+    ) -> Tuple[Dict[str, Any], List[str]]:
+        """Adjust task difficulty to bring score into target band.
+
+        Strategy:
+        - Score too LOW (task too easy): increase difficulty
+          → Add confounders from expanded pool (biggest lever: 70% weight)
+          → Move volunteer symptoms to hidden
+          → Add noise / misleading symptoms
+        - Score too HIGH (task too hard): decrease difficulty
+          → Remove confounders (biggest lever)
+          → Move hidden symptoms to volunteer
+          → Remove noise and misleading symptoms
+        """
+        band_low, band_high = self.DIFFICULTY_BANDS[target_difficulty]
+        adjustments = []
+        comps = calibration["components"]
+
+        too_easy = current_score < band_low
+        too_hard = current_score >= band_high
+        disease = task["clinical"]["diagnosis"]["primary"]
+        rng = random.Random(hash(task["id"]) + 12345)
+
+        if too_easy:
+            # ── Make harder ──
+            # Strategy 1: ADD confounders (drives confounder_count, overlap, entropy)
+            confounders = task.get("clinical", {}).get("confounders", [])
+            n_confounders = len(confounders)
+            target_confounders = {"L1": 0, "L2": 1, "L3": 2}.get(target_difficulty, 1)
+
+            if n_confounders < target_confounders:
+                new_confs = self._get_calibration_confounders(
+                    disease, task, n_to_add=target_confounders - n_confounders, rng=rng
+                )
+                for conf_name, conf_syms in new_confs:
+                    confounders.append({
+                        "name": conf_name,
+                        "overlapping_symptoms": conf_syms[:3],
+                        "full_symptoms": conf_syms,
+                        "mimics": f"{conf_name} presents with overlapping symptoms that closely resemble {disease}",
+                    })
+                    # Add confounder symptoms to misleading tier
+                    task["patient"]["symptoms"]["misleading"].extend(conf_syms[:2])
+                    # Add a volunteer symptom from confounder
+                    if conf_syms:
+                        task["patient"]["symptoms"]["volunteer"].insert(0, conf_syms[0])
+                    adjustments.append(f"added confounder '{conf_name}'")
+
+                task["clinical"]["confounders"] = confounders
+
+            # Strategy 2: Move volunteer symptoms to hidden
+            volunteer = task["patient"]["symptoms"]["volunteer"]
+            # Keep first 1-2 volunteer symptoms (confounder ones), move rest
+            max_volunteer = {"L1": 3, "L2": 2, "L3": 1}.get(target_difficulty, 2)
+            while len(volunteer) > max_volunteer:
+                moved = volunteer.pop()
+                task["patient"]["symptoms"]["hidden"].append(moved)
+                adjustments.append(f"moved '{moved}' from volunteer→hidden")
+
+            # Strategy 3: Add noise symptoms
+            noise = task["patient"]["symptoms"].get("noise", [])
+            target_noise = {"L1": 0, "L2": 1, "L3": 2}.get(target_difficulty, 1)
+            if len(noise) < target_noise:
+                try:
+                    from ..clinical_world.expanded_symptom_pools import EXPANDED_NOISE_SYMPTOM_POOL
+                    noise_pool = list(EXPANDED_NOISE_SYMPTOM_POOL)
+                except ImportError:
+                    noise_pool = ["mild headache", "slight nausea", "dry mouth"]
+                rng.shuffle(noise_pool)
+                existing_lower = {s.lower() for s in noise}
+                for ns in noise_pool:
+                    if len(noise) >= target_noise:
+                        break
+                    if ns.lower() not in existing_lower:
+                        noise.append(ns)
+                        existing_lower.add(ns.lower())
+                        adjustments.append(f"added noise '{ns}'")
+                task["patient"]["symptoms"]["noise"] = noise
+
+        elif too_hard:
+            # ── Make easier ──
+            # Strategy 1: REMOVE confounders (biggest lever)
+            confounders = task.get("clinical", {}).get("confounders", [])
+            target_confounders = {"L1": 0, "L2": 1, "L3": 2}.get(target_difficulty, 1)
+            while len(confounders) > target_confounders:
+                removed = confounders.pop()
+                r_name = removed.get("name", "?") if isinstance(removed, dict) else "?"
+                adjustments.append(f"removed confounder '{r_name}'")
+            task["clinical"]["confounders"] = confounders
+
+            # If no confounders, also remove misleading symptoms
+            if not confounders:
+                task["patient"]["symptoms"]["misleading"] = []
+                adjustments.append("cleared misleading symptoms (no confounders)")
+
+            # Strategy 2: Move hidden symptoms to volunteer
+            hidden = task["patient"]["symptoms"]["hidden"]
+            max_hidden = {"L1": 1, "L2": 2, "L3": 3}.get(target_difficulty, 2)
+            while len(hidden) > max_hidden and hidden:
+                moved = hidden.pop(0)
+                task["patient"]["symptoms"]["volunteer"].append(moved)
+                adjustments.append(f"moved '{moved}' from hidden→volunteer")
+
+            # Strategy 3: Remove noise
+            if target_difficulty == "L1":
+                task["patient"]["symptoms"]["noise"] = []
+                adjustments.append("cleared noise symptoms")
+
+        return task, adjustments
+
+    def _get_calibration_confounders(
+        self, disease: str, task: Dict[str, Any], n_to_add: int, rng: random.Random
+    ) -> List[Tuple[str, List[str]]]:
+        """Get confounder diseases + symptoms for calibration adjustment.
+
+        Uses expanded confounder map. Falls back to symptom-overlap heuristic
+        for diseases not in the map. Returns list of (name, symptom_list) tuples.
+        """
+        existing_names = {
+            c.get("name", "") if isinstance(c, dict) else str(c)
+            for c in task.get("clinical", {}).get("confounders", [])
+        }
+        existing_names.add(disease.lower())
+
+        # Get pool from expanded map
+        pool = []
+        try:
+            from ..clinical_world.expanded_symptom_pools import EXPANDED_CONFOUNDER_MAP
+            pool = EXPANDED_CONFOUNDER_MAP.get(disease.lower(), [])
+        except ImportError:
+            pass
+        if not pool:
+            pool = self.scenario_gen.CONFOUNDER_MAP.get(disease.lower(), [])
+
+        # Generic fallback: diseases that share common symptoms
+        if not pool:
+            # Build pool from diseases that share ≥2 symptoms with primary
+            primary_syms = self.symptom_gen._get_real_symptoms(disease)
+            primary_lower = {s.lower() for s in primary_syms}
+            _GENERIC_CONFOUNDERS = [
+                "anxiety disorder", "hyperthyroidism", "heart failure",
+                "chronic kidney disease", "anemia", "depression",
+                "gerd", "pneumonia",
+            ]
+            for candidate in _GENERIC_CONFOUNDERS:
+                cand_syms = self.symptom_gen._get_real_symptoms(candidate)
+                cand_lower = {s.lower() for s in cand_syms}
+                overlap = len(primary_lower & cand_lower)
+                if overlap >= 1 and candidate.lower() not in existing_names:
+                    pool.append(candidate)
+
+        # Filter out existing and comorbidities
+        comorbidities = task.get("clinical", {}).get("comorbidities", [])
+        comorb_lower = {c.lower() for c in comorbidities}
+        available = [c for c in pool if c.lower() not in existing_names and c.lower() not in comorb_lower]
+
+        if not available:
+            return []
+
+        rng.shuffle(available)
+        result = []
+        for conf_name in available[:n_to_add]:
+            conf_syms = self.symptom_gen._get_real_symptoms(conf_name)
+            if not conf_syms:
+                conf_syms = self.symptom_gen._fallback_symptoms(conf_name)
+            result.append((conf_name, conf_syms))
+
+        return result
+
+    def _update_solution_paths(
+        self, task: Dict[str, Any], symptom: str, new_tier: str
+    ) -> None:
+        """Update solution_space minimal_information_sets when a symptom is moved."""
+        ss = task.get("ground_truth", {}).get("solution_space", {})
+        minimal_sets = ss.get("derived_from", {}).get("minimal_information_sets", [])
+        if not minimal_sets or isinstance(minimal_sets, dict):
+            return
+
+        for path in minimal_sets:
+            must_collect = path.get("must_collect", [])
+            # If the moved symptom was in this path, keep it (path doesn't care about tier)
+            # But update the minimal_paths steps description if needed
+            pass  # Path references are by symptom name, not tier — no update needed
 
     def _build_task_config(self, scenario: ScenarioSpec, disease: str, seed: int) -> Dict:
         return {
@@ -1098,6 +1519,9 @@ class MedicalTaskGenerator:
             "copd", "htn", "hld", "ckd", "cad", "chf", "gerd", "t2dm", "t1dm",
             "chd", "ihd", "dm", "esrd", "bph", "oa", "ra", "sle", "ms", "als",
             "adhd", "ptsd", "tb", "hiv", "ap", "gid", "gad",
+            "kidney disease", "heart disease", "lung disease", "liver disease",
+            "thyroid disease", "blood disease", "skin disease", "bone disease",
+            "bowel disease", "vascular disease", "autoimmune disease",
         }
         _DISEASE_WORDS = {"heart", "disease", "syndrome", "disorder", "atherosclerotic",
                           "ischemic", "coronary", "nephrolithiasis", "cholelithiasis"}
@@ -1306,6 +1730,8 @@ class MedicalTaskGenerator:
                 "adversarial_behavior": behavior in ("concealing", "refusing"),
                 "misleading_symptoms": len(symptoms.misleading) > 0,
             },
+            # Populated post-generation by _calibrate_task
+            "calibrated_difficulty": None,
         }
 
     def _build_baseline(self, scenario: ScenarioSpec, disease: str) -> Dict:

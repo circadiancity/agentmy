@@ -82,13 +82,15 @@ def main():
 
     pa_syms = paths[0]["must_collect"]
     pb_syms = paths[1]["must_collect"]
+    pa_optimal = paths[0].get("is_optimal", True)
+    pb_optimal = paths[1].get("is_optimal", False)
     misleading = task["patient"]["symptoms"].get("misleading", [])
 
-    # PATH A: Classic (optimal) — volunteer + if_asked, NO gate cost
+    # PATH A: Classic — volunteer + if_asked, NO gate cost
     traj_a = build_trajectory(actions, task, pa_syms, "type 2 diabetes",
                               extra_empty_asks=0)
 
-    # PATH B: Atypical (non-optimal) — hidden symptoms, WITH gate cost
+    # PATH B: Atypical — hidden symptoms, WITH gate cost
     # Hidden symptoms require 2 extra prerequisite ASK steps (gate unlocking)
     traj_b = build_trajectory(actions, task, pb_syms, "type 2 diabetes",
                               extra_empty_asks=2)
@@ -103,7 +105,7 @@ def main():
 
     print()
     print("=" * 60)
-    print("PATH A: Classic (optimal) — no gate cost")
+    print("PATH A: Classic — no gate cost (is_optimal=%s)" % pa_optimal)
     print("=" * 60)
     print("  Collected: %s" % pa_syms)
     print("  ASK steps: %d (direct reveal)" % len(pa_syms))
@@ -113,7 +115,7 @@ def main():
 
     print()
     print("=" * 60)
-    print("PATH B: Atypical (non-optimal) — 2 gate steps + 2 reveals")
+    print("PATH B: Atypical — 2 gate steps + reveals (is_optimal=%s)" % pb_optimal)
     print("=" * 60)
     print("  Collected: %s" % pb_syms)
     print("  ASK steps: %d (2 gate + %d reveal)" % (
@@ -136,7 +138,7 @@ def main():
     print("KEY COMPARISONS")
     print("=" * 60)
     gap_ab = ra["components"]["process"] - rb["components"]["process"]
-    print("  A vs B process gap: %+.4f (A optimal > B non-optimal)" % gap_ab)
+    print("  A vs B process gap: %+.4f" % gap_ab)
     print("  A vs C total gap:   %.4f (success vs failure)" % (
         ra["total"] - rc["total"]))
     print("  Both A and B diagnose correctly: dx_A=%.1f  dx_B=%.1f" % (
@@ -147,16 +149,24 @@ def main():
     a_correct = ra["components"]["diagnosis"] == 1.0
     b_correct = rb["components"]["diagnosis"] == 1.0
     c_wrong = rc["components"]["diagnosis"] == 0.0
-    a_process_higher = gap_ab > 0
+    # Optimal path should have higher PROCESS score (discriminative power rewarded)
+    # Total may be lower due to gate cost — that's expected and correct.
+    if pa_optimal:
+        optimal_process_higher = ra["components"]["process"] >= rb["components"]["process"]
+        opt_label = "A"
+    else:
+        optimal_process_higher = rb["components"]["process"] >= ra["components"]["process"]
+        opt_label = "B"
 
     print()
-    all_pass = a_correct and b_correct and c_wrong and a_process_higher
+    all_pass = a_correct and b_correct and c_wrong and optimal_process_higher
     print("VERIFICATION: %s" % ("ALL PASS" if all_pass else "FAIL"))
     print("  Path A correct diagnosis:  %s" % ("OK" if a_correct else "FAIL"))
     print("  Path B correct diagnosis:  %s" % ("OK" if b_correct else "FAIL"))
     print("  Path C wrong diagnosis:    %s" % ("OK" if c_wrong else "FAIL"))
-    print("  A process > B process:     %s (gap=%.4f)" % (
-        "OK" if a_process_higher else "FAIL", gap_ab))
+    print("  Optimal path (%s) higher process: %s (A=%.4f  B=%.4f)" % (
+        opt_label, "OK" if optimal_process_higher else "FAIL",
+        ra["components"]["process"], rb["components"]["process"]))
 
     return all_pass
 

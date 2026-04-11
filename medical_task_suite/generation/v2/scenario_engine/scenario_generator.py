@@ -443,7 +443,13 @@ class ScenarioGenerator:
         self, disease: str, disease_profile, difficulty: str
     ) -> ClinicalGroundTruth:
         """
-        Build the multi-condition ground truth.
+        Build the multi-condition ground truth with STRUCTURAL UNCERTAINTY.
+
+        v2.9: Variable hypothesis space.
+        - Confounders sampled from expanded pool (not fixed per disease)
+        - Variable confounder count (0-3, sampled per task)
+        - Occasionally includes rare/unusual confounders
+        - Hypothesis space differs across tasks for same disease
 
         Real patients have: primary disease + comorbidities + confounders.
         The agent must reason across ALL of these, not just "guess one disease".
@@ -474,18 +480,32 @@ class ScenarioGenerator:
                     contribution=random.uniform(profile["contribution_threshold"], 0.6),
                 ))
 
-        # 3. Confounder diseases (mimic primary, create diagnostic ambiguity)
-        confounder_pool = self.CONFOUNDER_MAP.get(disease.lower(), [])
-        n_confounders = profile["n_confounders"]
+        # 3. Confounder diseases with STRUCTURAL UNCERTAINTY
+        #    Use expanded pool when available, fall back to original map.
+        #    Sample confounder count from a range (not fixed per difficulty).
+        confounder_pool = self._get_expanded_confounder_pool(disease)
+
+        # Variable confounder count:
+        #   L1: 0-1 (sometimes no confounder)
+        #   L2: 0-2 (usually 1, sometimes 0 or 2)
+        #   L3: 1-3 (at least 1, up to 3)
+        confounder_count_ranges = {
+            "L1": (0, 1),
+            "L2": (0, 2),
+            "L3": (1, 3),
+        }
+        n_range = confounder_count_ranges.get(difficulty, (0, 2))
+        n_confounders = random.randint(*n_range)
         confounders = []
 
         if confounder_pool and n_confounders > 0:
             n = min(n_confounders, len(confounder_pool))
-            for c in random.sample(confounder_pool, n):
+            sampled = random.sample(confounder_pool, n)
+            for c in sampled:
                 confounders.append(ConditionInfo(
                     name=c,
                     role="confounder",
-                    contribution=0.2,
+                    contribution=random.uniform(0.1, 0.3),
                 ))
 
         return ClinicalGroundTruth(
@@ -493,3 +513,30 @@ class ScenarioGenerator:
             comorbidities=comorbidities,
             confounders=confounders,
         )
+
+    def _get_expanded_confounder_pool(self, disease: str) -> List[str]:
+        """Get expanded confounder pool for a disease.
+
+        Uses EXPANDED_CONFOUNDER_MAP from expanded_symptom_pools when available,
+        falls back to the original CONFOUNDER_MAP.
+
+        Deduplicates against comorbidity pool to avoid overlap.
+        """
+        # Try expanded pool first
+        pool = []
+        try:
+            from ..clinical_world.expanded_symptom_pools import EXPANDED_CONFOUNDER_MAP
+            pool = EXPANDED_CONFOUNDER_MAP.get(disease.lower(), [])
+        except ImportError:
+            pass
+
+        # Fallback to original map
+        if not pool:
+            pool = self.CONFOUNDER_MAP.get(disease.lower(), [])
+
+        # Remove diseases that are also comorbidities (avoid overlap)
+        comorbidity_pool = self.COMORBIDITY_MAP.get(disease.lower(), [])
+        comorbidity_lower = {c.lower() for c in comorbidity_pool}
+        pool = [c for c in pool if c.lower() not in comorbidity_lower]
+
+        return pool
