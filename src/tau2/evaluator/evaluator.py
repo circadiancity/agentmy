@@ -36,9 +36,13 @@ def evaluate_simulation(
     """
     Evaluate the simulation based on the evaluation type.
     """
+    # For CLINICAL_PROCESS, evaluate even if max_steps was hit — the agent
+    # may have completed the clinical workflow before running out of turns.
     if simulation.termination_reason not in {
         TerminationReason.AGENT_STOP,
         TerminationReason.USER_STOP,
+    } and evaluation_type not in {
+        EvaluationType.CLINICAL_PROCESS,
     }:
         return RewardInfo(
             reward=0.0,

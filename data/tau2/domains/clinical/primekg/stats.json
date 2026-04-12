@@ -3,11 +3,11 @@
   "train_tasks": 16,
   "test_tasks": 4,
   "difficulty_distribution": {
-    "L1": 7,
-    "L3": 4,
-    "L2": 7,
-    "L0": 2
+    "L3": 7,
+    "L1": 4,
+    "L0": 1,
+    "L2": 8
   },
-  "seed": 1014,
+  "seed": 1749,
   "model": "azure/gpt-5.2"
 }
