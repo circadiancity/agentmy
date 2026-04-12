@@ -291,8 +291,8 @@ def main():
                         help="Number of tasks to run (default: all)")
     parser.add_argument("--max-concurrency", type=int, default=3,
                         help="Max parallel simulations (default: 3)")
-    parser.add_argument("--max-steps", type=int, default=30,
-                        help="Max conversation steps per task (default: 30)")
+    parser.add_argument("--max-steps", type=int, default=50,
+                        help="Max conversation steps per task (default: 50)")
     parser.add_argument("--agent-llm", type=str, default="azure/gpt-5.2",
                         help="Agent LLM model (default: azure/gpt-5.2)")
     parser.add_argument("--user-llm", type=str, default="azure/gpt-5.2",

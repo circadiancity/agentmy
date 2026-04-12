@@ -51,7 +51,7 @@ DIFFICULTY_PRESETS = {
         "num_comorbidities": 0,
         "max_turns": 10,
         "min_turns": 2,
-        "reward_basis": ["ACTION"],
+        "reward_basis": ["CLINICAL_PROCESS"],
     },
     "L1": {
         "label": "moderate",
@@ -61,7 +61,7 @@ DIFFICULTY_PRESETS = {
         "num_comorbidities": 0,
         "max_turns": 20,
         "min_turns": 3,
-        "reward_basis": ["ACTION", "COMMUNICATE"],
+        "reward_basis": ["CLINICAL_PROCESS"],
     },
     "L2": {
         "label": "complex",
@@ -71,7 +71,7 @@ DIFFICULTY_PRESETS = {
         "num_comorbidities": 1,
         "max_turns": 25,
         "min_turns": 5,
-        "reward_basis": ["ACTION", "COMMUNICATE"],
+        "reward_basis": ["CLINICAL_PROCESS"],
     },
     "L3": {
         "label": "expert",
@@ -82,7 +82,7 @@ DIFFICULTY_PRESETS = {
         "num_comorbidities": 2,
         "max_turns": 30,
         "min_turns": 7,
-        "reward_basis": ["ACTION", "COMMUNICATE"],
+        "reward_basis": ["CLINICAL_PROCESS"],
     },
 }
 
@@ -234,12 +234,31 @@ Generate ground truth and evaluation criteria for a clinical task.
 ## Requirements
 Generate the correct diagnosis, treatment plan, safety checks, and communication milestones.
 
+IMPORTANT for communication_truth: Keep this VERY simple.
+- Include only 1-2 milestones total (not 4).
+- Each milestone should have only 1-2 "must_include" items — the disease name and \
+maybe one key medical term.
+- Items must be SHORT (1-3 words): disease name, drug class, or key concept.
+- Examples: "sleep apnea", "hypertension", "genetic testing", "insulin".
+- Do NOT use full sentences. A competent agent will naturally say these words.
+- FEWER phrases are better — only include what ANY good agent would definitely say.
+- The FIRST must_include item MUST be the primary disease name alone (e.g. "diabetes"), \
+not a list of technical terms or differential diagnoses.
+
+IMPORTANT for correct_diagnosis:
+- "primary" MUST be the clean disease name only — e.g. "asthma", "hypertension", \
+"type 2 diabetes".
+- Do NOT add qualifiers like "suspected", "confirmed", "in the setting of ...", \
+"secondary to ...", or parenthetical notes.
+- Do NOT concatenate multiple conditions — just the single primary disease name.
+- "acceptable_alternatives" should also be short clean disease names.
+
 Return JSON:
 {{
   "correct_diagnosis": {{
-    "primary": "<disease name>",
+    "primary": "<clean disease name only — no qualifiers, no parenthetical notes>",
     "confidence_threshold": <float 0-1>,
-    "acceptable_alternatives": ["<string>", ...],
+    "acceptable_alternatives": ["<short clean disease name>", ...],
     "required_evidence": ["<string>", ...]
   }},
   "expected_lab_results": {{
@@ -260,7 +279,7 @@ Return JSON:
   "communication_truth": [
     {{
       "milestone": "<explain_diagnosis|explain_treatment|address_concerns|educate_lifestyle>",
-      "must_include": ["<key concept>", ...]
+      "must_include": ["<short 2-5 word concept phrase>", ...]
     }}
   ]
 }}"""
@@ -295,8 +314,25 @@ Generate evaluation criteria for a clinical agent benchmark task.
 - Difficulty: {difficulty}
 - Required safety checks: {safety_checks}
 - Communication milestones: {communication_milestones}
-- Available actions: ASK, ORDER_LAB, GET_RESULTS, DIAGNOSE, CHECK_ALLERGY, \
-CHECK_INTERACTION, PRESCRIBE, EDUCATE, SCHEDULE_FOLLOWUP, END
+
+## WRITE Tools (the ONLY tools allowed in tool_call_sequence)
+These are the exact method names — use them verbatim:
+- record_diagnosis — agent records a diagnosis
+- prescribe_medication — agent prescribes treatment
+- refer_to_specialist — agent refers patient to a specialist
+- record_differential — agent records differential diagnoses
+- create_follow_up_plan — agent creates a follow-up plan
+
+## IMPORTANT RULES for tool_call_sequence
+- ONLY use the five WRITE tool names listed above. No other tool names are valid.
+- Do NOT include any READ tools (get_patient_info, order_lab_test, check_allergy, \
+check_drug_interaction, get_lab_results, lookup_guidelines, etc.). Agents call \
+READ tools on their own and must not be penalized for varying READ strategies.
+- For L0/L1 (diagnosis tasks): ONLY record_diagnosis (1 tool)
+- For L2 (treatment tasks): record_diagnosis + prescribe_medication (2 tools)
+- For L3 (complex/referral tasks): record_diagnosis + prescribe_medication + \
+refer_to_specialist (3 tools)
+- A good agent should be able to pass by completing the OUTCOME actions only.
 
 ## Requirements
 Define the expected tool call sequence, NL assertions for quality, and solution paths.
@@ -305,9 +341,9 @@ Return JSON:
 {{
   "tool_call_sequence": [
     {{
-      "tool": "<action_name>",
+      "tool": "<exact_WRITE_tool_name>",
       "required_args": {{}},
-      "description": "<why this step>"
+      "description": "<why this outcome matters>"
     }}
   ],
   "nl_assertions": [
@@ -706,16 +742,11 @@ class ClinicalTaskEnricher:
             },
             "ground_truth": ground_truth,
             "actions": {
-                "ASK": {"id": 0, "type": "ASK", "subtype": "enum[open_question,targeted_question,clarification]", "cost": 1},
-                "ORDER_LAB": {"id": 1, "type": "ORDER_LAB", "subtype": "diagnostic", "cost": 2},
-                "GET_RESULTS": {"id": 2, "type": "GET_RESULTS", "cost": 0},
-                "DIAGNOSE": {"id": 3, "type": "DIAGNOSE", "cost": 0},
-                "CHECK_ALLERGY": {"id": 4, "type": "CHECK_ALLERGY", "cost": 0},
-                "CHECK_INTERACTION": {"id": 5, "type": "CHECK_INTERACTION", "cost": 0},
-                "PRESCRIBE": {"id": 6, "type": "PRESCRIBE", "subtype": "medication", "cost": 0},
-                "EDUCATE": {"id": 7, "type": "EDUCATE", "subtype": "patient", "cost": 1},
-                "SCHEDULE_FOLLOWUP": {"id": 8, "type": "SCHEDULE_FOLLOWUP", "cost": 0},
-                "END": {"id": 9, "type": "END", "cost": 0},
+                "record_diagnosis": {"id": 0, "type": "WRITE", "subtype": "diagnosis", "cost": 0},
+                "prescribe_medication": {"id": 1, "type": "WRITE", "subtype": "medication", "cost": 0},
+                "refer_to_specialist": {"id": 2, "type": "WRITE", "subtype": "referral", "cost": 0},
+                "record_differential": {"id": 3, "type": "WRITE", "subtype": "differential", "cost": 0},
+                "create_follow_up_plan": {"id": 4, "type": "WRITE", "subtype": "follow_up", "cost": 0},
                 "tool_call_sequence": eval_criteria.get("tool_call_sequence", []),
             },
             "ground_truth_validation": {

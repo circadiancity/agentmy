@@ -237,6 +237,7 @@ class RewardType(str, Enum):
     ACTION = "ACTION"
     COMMUNICATE = "COMMUNICATE"
     CLINICAL = "CLINICAL"  # Medical/clinical evaluation for healthcare domains
+    CLINICAL_PROCESS = "CLINICAL_PROCESS"  # Rule-based clinical process evaluation
 
 
 class EvaluationCriteria(BaseModel):

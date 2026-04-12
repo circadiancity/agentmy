@@ -10,7 +10,7 @@ OUTPUT_DIR="$PROJECT_ROOT/data/tau2/domains/clinical/primekg"
 BATCH_DIR="$OUTPUT_DIR/batches"
 ACCUMULATOR="$OUTPUT_DIR/all_generated_tasks.json"
 LOG_FILE="$OUTPUT_DIR/generation_log.txt"
-TOTAL_TASKS=2000
+TOTAL_TASKS=40000
 BATCH_SIZE=20
 MAX_CONCURRENCY=5
 

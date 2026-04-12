@@ -266,11 +266,8 @@ def convert_v3_to_tau2_task(v3_task: dict):
                 f"Agent must perform {sc['check']} before {sc['before']}"
             )
 
-    # Communicate info
-    communicate_info = []
-    for comm in ground_truth.get("communication_truth", []):
-        for item in comm.get("must_include", []):
-            communicate_info.append(item)
+    # Communicate info — just the primary disease name
+    communicate_info = [diagnosis]
 
     # Map reward basis strings to RewardType
     reward_map = {
@@ -278,6 +275,7 @@ def convert_v3_to_tau2_task(v3_task: dict):
         "COMMUNICATE": RewardType.COMMUNICATE,
         "NL_ASSERTION": RewardType.NL_ASSERTION,
         "CLINICAL": RewardType.CLINICAL,
+        "CLINICAL_PROCESS": RewardType.CLINICAL_PROCESS,
         "DB": RewardType.DB,
     }
     reward_basis = [

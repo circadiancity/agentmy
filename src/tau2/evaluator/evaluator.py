@@ -7,6 +7,7 @@ from tau2.evaluator.evaluator_communicate import CommunicateEvaluator
 from tau2.evaluator.evaluator_env import EnvironmentEvaluator
 from tau2.evaluator.evaluator_nl_assertions import NLAssertionsEvaluator
 from tau2.evaluator.evaluator_clinical import ClinicalEvaluator
+from tau2.evaluator.evaluator_clinical_process import ClinicalProcessEvaluator
 from tau2.evaluator.metrics.clinical_scoring import apply_clinical_gate
 from tau2.registry import registry
 
@@ -21,6 +22,7 @@ class EvaluationType(str, Enum):
     CLINICAL = "clinical"  # 医疗/临床评估
     ALL_WITH_CLINICAL = "all_with_clinical"  # 包含医疗评估的综合评估
     ALL_WITH_CLINICAL_GATE = "all_with_clinical_gate"  # 临床评估使用门控阈值
+    CLINICAL_PROCESS = "clinical_process"  # Rule-based clinical process evaluation
 
 
 def evaluate_simulation(
@@ -64,6 +66,11 @@ def evaluate_simulation(
             task=task,
             full_trajectory=simulation.messages,
             model=clinical_model,
+        )
+    elif evaluation_type == EvaluationType.CLINICAL_PROCESS:
+        reward_info = ClinicalProcessEvaluator.calculate_reward(
+            task=task,
+            full_trajectory=simulation.messages,
         )
     elif evaluation_type == EvaluationType.NL_ASSERTIONS:
         reward_info = NLAssertionsEvaluator.calculate_reward(
@@ -128,6 +135,7 @@ def evaluate_simulation(
         nl_bases = {RewardType.NL_ASSERTION}
         comm_bases = {RewardType.COMMUNICATE}
         clinical_bases = {RewardType.CLINICAL}
+        clinical_process_bases = {RewardType.CLINICAL_PROCESS}
         task_reward_basis = set(task.evaluation_criteria.reward_basis)
 
         reward_breakdown = {}
@@ -168,6 +176,14 @@ def evaluate_simulation(
                 if clinical_reward_info.reward_breakdown is not None:
                     reward_breakdown.update(clinical_reward_info.reward_breakdown)
                 reward *= clinical_reward_info.reward
+        if task_reward_basis & clinical_process_bases:
+            clinical_process_reward_info = ClinicalProcessEvaluator.calculate_reward(
+                task=task,
+                full_trajectory=simulation.messages,
+            )
+            if clinical_process_reward_info.reward_breakdown is not None:
+                reward_breakdown.update(clinical_process_reward_info.reward_breakdown)
+            reward *= clinical_process_reward_info.reward
 
         reward_info = RewardInfo(
             reward=reward,
