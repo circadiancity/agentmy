@@ -1,0 +1,197 @@
+{
+  "patients": {
+    "P001": {
+      "patient_id": "P001",
+      "name": "John Smith",
+      "age": 58,
+      "gender": "M",
+      "chief_complaint": "Elevated blood pressure readings",
+      "symptoms": ["headache", "dizziness"],
+      "vitals": {
+        "blood_pressure": "158/92",
+        "heart_rate": "82",
+        "temperature": "37.0",
+        "respiratory_rate": "16",
+        "oxygen_saturation": "98%"
+      },
+      "lab_results": {
+        "BMP": {
+          "test_name": "BMP",
+          "value": "Normal",
+          "unit": "mmol/L",
+          "reference_range": "All normal",
+          "abnormal": false
+        }
+      },
+      "past_medical_history": ["hyperlipidemia"],
+      "current_medications": [
+        {
+          "drug_name": "atorvastatin",
+          "dose": "40mg",
+          "frequency": "once daily",
+          "indication": "hyperlipidemia"
+        }
+      ],
+      "allergies": [],
+      "orders": [],
+      "referrals": []
+    },
+    "P002": {
+      "patient_id": "P002",
+      "name": "Sarah Johnson",
+      "age": 42,
+      "gender": "F",
+      "chief_complaint": "Persistent cough for 2 weeks",
+      "symptoms": ["cough", "fever", "chest pain", "dyspnea"],
+      "vitals": {
+        "blood_pressure": "118/74",
+        "heart_rate": "92",
+        "temperature": "38.2",
+        "respiratory_rate": "20",
+        "oxygen_saturation": "94%"
+      },
+      "lab_results": {
+        "CBC": {
+          "test_name": "CBC",
+          "value": "WBC elevated",
+          "unit": "cells/μL",
+          "reference_range": "4,500-11,000",
+          "abnormal": true
+        }
+      },
+      "past_medical_history": ["asthma"],
+      "current_medications": [
+        {
+          "drug_name": "albuterol",
+          "dose": "2 puffs",
+          "frequency": "as needed",
+          "indication": "asthma"
+        }
+      ],
+      "allergies": ["penicillin"],
+      "orders": [],
+      "referrals": []
+    },
+    "P003": {
+      "patient_id": "P003",
+      "name": "Robert Williams",
+      "age": 67,
+      "gender": "M",
+      "chief_complaint": "Irregular heartbeat and shortness of breath",
+      "symptoms": ["palpitations", "dyspnea", "dizziness", "fatigue"],
+      "vitals": {
+        "blood_pressure": "142/88",
+        "heart_rate": "98",
+        "temperature": "36.8",
+        "respiratory_rate": "18",
+        "oxygen_saturation": "96%"
+      },
+      "lab_results": {
+        "BNP": {
+          "test_name": "BNP",
+          "value": "285",
+          "unit": "pg/mL",
+          "reference_range": "<100",
+          "abnormal": true
+        },
+        "Troponin": {
+          "test_name": "Troponin",
+          "value": "Normal",
+          "unit": "ng/mL",
+          "reference_range": "<0.04",
+          "abnormal": false
+        }
+      },
+      "past_medical_history": ["hypertension", "coronary artery disease"],
+      "current_medications": [
+        {
+          "drug_name": "metoprolol",
+          "dose": "50mg",
+          "frequency": "twice daily",
+          "indication": "hypertension and CAD"
+        },
+        {
+          "drug_name": "lisinopril",
+          "dose": "10mg",
+          "frequency": "once daily",
+          "indication": "hypertension"
+        },
+        {
+          "drug_name": "atorvastatin",
+          "dose": "80mg",
+          "frequency": "once daily",
+          "indication": "CAD"
+        }
+      ],
+      "allergies": [],
+      "orders": [],
+      "referrals": []
+    },
+    "P004": {
+      "patient_id": "P004",
+      "name": "Emily Brown",
+      "age": 31,
+      "gender": "F",
+      "chief_complaint": "Severe headache with sensitivity to light",
+      "symptoms": ["severe headache", "photophobia", "nausea", "visual changes"],
+      "vitals": {
+        "blood_pressure": "128/82",
+        "heart_rate": "96",
+        "temperature": "37.1",
+        "respiratory_rate": "16",
+        "oxygen_saturation": "99%"
+      },
+      "lab_results": {},
+      "past_medical_history": ["migraine"],
+      "current_medications": [
+        {
+          "drug_name": "sumatriptan",
+          "dose": "50mg",
+          "frequency": "as needed",
+          "indication": "migraine"
+        }
+      ],
+      "allergies": [],
+      "orders": [],
+      "referrals": []
+    },
+    "P005": {
+      "patient_id": "P005",
+      "name": "Michael Davis",
+      "age": 52,
+      "gender": "M",
+      "chief_complaint": "Increased thirst and urination",
+      "symptoms": ["polydipsia", "polyuria", "fatigue", "blurred vision"],
+      "vitals": {
+        "blood_pressure": "135/85",
+        "heart_rate": "78",
+        "temperature": "37.0",
+        "respiratory_rate": "15",
+        "oxygen_saturation": "98%"
+      },
+      "lab_results": {
+        "Fasting_glucose": {
+          "test_name": "Fasting_glucose",
+          "value": "185",
+          "unit": "mg/dL",
+          "reference_range": "<100",
+          "abnormal": true
+        },
+        "HbA1c": {
+          "test_name": "HbA1c",
+          "value": "9.2",
+          "unit": "%",
+          "reference_range": "<5.7",
+          "abnormal": true
+        }
+      },
+      "past_medical_history": ["obesity"],
+      "current_medications": [],
+      "allergies": ["sulfonamides"],
+      "orders": [],
+      "referrals": []
+    }
+  },
+  "drugs": {},
+  "diseases": {}
+}

@@ -79,3 +79,5 @@ improvement_statistics_v2.json
 /data/simulations
 # 中文目录
 医学数据标注/
+config/
+data/tau2/domains/clinical/primekg/*log*

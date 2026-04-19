@@ -91,6 +91,14 @@ from tau2.domains.clinical.primekg.environment import get_tasks as primekg_get_t
 from tau2.domains.clinical.primekg.environment import (
     get_tasks_split as primekg_get_tasks_split,
 )
+# Clinical Benchmark domain
+from tau2.domains.clinical.benchmark.environment import (
+    get_environment as clinical_benchmark_get_environment,
+)
+from tau2.domains.clinical.benchmark.environment import get_tasks as clinical_benchmark_get_tasks
+from tau2.domains.clinical.benchmark.environment import (
+    get_tasks_split as clinical_benchmark_get_tasks_split,
+)
 from tau2.environment.environment import Environment
 from tau2.user.base import BaseUser
 from tau2.user.user_simulator import DummyUser, UserSimulator
@@ -346,6 +354,14 @@ try:
         primekg_get_tasks,
         "primekg",
         get_task_splits=primekg_get_tasks_split,
+    )
+
+    # Clinical Benchmark domain
+    registry.register_domain(clinical_benchmark_get_environment, "clinical_benchmark")
+    registry.register_tasks(
+        clinical_benchmark_get_tasks,
+        "clinical_benchmark",
+        get_task_splits=clinical_benchmark_get_tasks_split,
     )
 
     logger.debug(

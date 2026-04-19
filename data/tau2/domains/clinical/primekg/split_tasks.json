@@ -1,21 +1,1409 @@
 {
   "train": [
-    "primekg_task_4745",
-    "primekg_task_1468",
-    "primekg_task_2114",
-    "primekg_task_7644",
-    "primekg_task_5747",
-    "primekg_task_1453",
-    "primekg_task_4028"
+    {
+      "id": "primekg_L1_congenital_factor_xiii_deficie_4823",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L1)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: congenital factor XIII deficiency. Differentials: . Difficulty: L1. Seed: 4823"
+      },
+      "user_scenario": {
+        "persona": "22-year-old female patient, education: college, occupation: elementary school teaching assistant",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I keep getting bruises and bleeding that won’t stop, and it feels like it’s getting worse.",
+          "known_info": "Chief complaint: I keep getting bruises and bleeding that won’t stop, and it feels like it’s getting worse.. Vitals: {\"blood_pressure\": \"104/66 mmHg\", \"heart_rate\": \"98 bpm\", \"temperature\": \"36.8 C\", \"respiratory_rate\": \"16 breaths/min\", \"bmi\": \"21.9\"}. Current medications: Factor XIII concentrate (recombinant catridecacog) 35 IU/kg IV every 28 days, Tranexamic acid 1300 mg PO three times daily as needed for heavy menstrual bleeding (up to 5 days per cycle), Ferrous sulfate 325 mg PO every other day, Norethindrone 0.35 mg PO daily. Allergies: Penicillin (urticarial rash), Latex (contact dermatitis).",
+          "unknown_info": "congenital factor XIII deficiency",
+          "task_instructions": "You are LiXX, a 22-year-old cooperative, clear-speaking teaching assistant. Start with: “I keep getting bruises and bleeding that won’t stop, and it feels like it’s getting worse.” Early in the visit, volunteer: big bruises with minor bumps, cuts that restart bleeding later, gum bleeding with brushing, and heavier/longer periods. If asked about other bleeding: mention long nosebleeds, delayed bleeding after a dental filling/extraction, sore swollen “lumps” after minor knocks, and increasing fatigue. Do not mention unless directly asked about childhood history, head injuries, deep muscle pain, or family history: umbilical stump bleeding as a baby, scary headaches/sleepiness after minor head bumps, deep aching/pressure in a muscle after exercise/knock, and relatives with unusual bleeding. Only if asked about sexual/reproductive history, reluctantly disclose post-sex spotting/bleeding and an early pregnancy loss; show embarrassment and fear of connection. Express misconceptions: you started ibuprofen for headaches/cramps and wonder if it caused this; stress/poor sleep might explain bruising; one episode of darker stool made you worry about an ulcer. If clinician shows empathy, soften, thank them, and share more details. Voice cost/insurance/work concerns about factor treatment and clinic visits, especially if tests are “normal.”"
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Congenital factor XIII deficiency"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "congenital factor XIII deficiency"
+        ],
+        "nl_assertions": [
+          "States the diagnosis explicitly as 'congenital factor XIII deficiency'.",
+          "Explains that PT is normal (and typically aPTT is also normal) in factor XIII deficiency because factor XIII acts after fibrin formation.",
+          "Elicits a basic bleeding history emphasizing delayed/recurrent bleeding (e.g., post-procedural bleeding, poor wound healing), easy bruising/hematomas, menorrhagia, and history of intracranial hemorrhage.",
+          "Asks about umbilical stump bleeding in infancy and prior surgical/dental bleeding.",
+          "Asks about family history/consanguinity and prior similar bleeding in relatives (autosomal recessive pattern).",
+          "Does not incorrectly rule out serious bleeding risk due to normal PT/aPTT; communicates that bleeding can still be severe.",
+          "Mentions appropriate confirmatory evaluation (e.g., factor XIII activity assay; clot solubility test as screening where applicable).",
+          "Recommends hematology involvement and discusses that definitive treatment/prophylaxis uses factor XIII concentrate (or cryoprecipitate/FFP if concentrate unavailable), without prescribing in this L1 task.",
+          "Performs required safety checks conceptually before any prescribing: asks about allergies and checks for contraindications; does not prescribe without addressing these.",
+          "Uses clear, patient-appropriate language and provides return precautions for severe headache/neurologic symptoms or uncontrolled bleeding.",
+          "Agent must explain_diagnosis: congenital factor XIII deficiency, normal PT",
+          "Agent must explain_treatment: congenital factor XIII deficiency, factor XIII concentrate",
+          "Agent should arrive at or consider the diagnosis: congenital factor XIII deficiency",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L1_ehlers-danlos_syndrome,_vascul_4825",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L1)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: Ehlers-Danlos syndrome, vascular type. Differentials: fructose-1,6-bisphosphatase deficiency, Waldenstrom macroglobulinemia, tick-borne encephalitis. Difficulty: L1. Seed: 4825"
+      },
+      "user_scenario": {
+        "persona": "33-year-old female patient, education: college, occupation: elementary school teacher",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I keep feeling this heavy pressure down there, like something is bulging out of my vagina, and it’s getting worse.",
+          "known_info": "Chief complaint: I keep feeling this heavy pressure down there, like something is bulging out of my vagina, and it’s getting worse.. Vitals: {\"blood_pressure\": \"102/66 mmHg\", \"heart_rate\": \"92 bpm\", \"temperature\": \"36.8 C\", \"respiratory_rate\": \"16 breaths/min\", \"bmi\": \"19.8 kg/m\\u00b2\"}. Current medications: Sertraline 50 mg PO daily, Ferrous sulfate 325 mg PO every other day. Allergies: Penicillin (urticaria/hives), Latex (contact dermatitis).",
+          "unknown_info": "Ehlers-Danlos syndrome, vascular type",
+          "task_instructions": "You are LiXX, a 33-year-old elementary school teacher. You are cooperative and speak clearly. Start with: “I keep feeling this heavy pressure down there, like something is bulging out of my vagina, and it’s getting worse.” Early on, volunteer: heavy/dragging pelvic pressure worse after standing/lifting, a soft bulge at the vaginal opening when you wipe, low back ache with the pressure, and that you have vascular Ehlers-Danlos and bruise easily.\n\nOnly if asked, add: incomplete bladder emptying, stress urine leakage, discomfort with sex/pressure, heavy periods with spotting, occasional sudden sharp belly pain, nosebleeds and gum bleeding.\n\nDo not mention unless directly asked about neurologic/vascular symptoms: sudden severe “different” headaches, whooshing heartbeat sound in ear, easy unexplained bruises, prolonged bleeding from small cuts, thin skin/visible veins.\n\nIf specifically asked about bowel movements, reluctantly admit you sometimes press on the bulge to poop.\n\nExpress misconceptions: worry fatigue/tingling is “blood,” fear tick illness returning, think shakiness is blood sugar, assume PT is a luxury and surgery is automatically most expensive, prefer avoiding genetic/specialist care unless emergency.\n\nIf the clinician shows empathy, acknowledge it and stay engaged, but remain anxious about costs."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "vascular Ehlers-Danlos syndrome"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "Ehlers-Danlos syndrome, vascular type"
+        ],
+        "nl_assertions": [
+          "States the diagnosis explicitly as \"vascular Ehlers-Danlos syndrome\" (exact phrase included).",
+          "Explains, in plain language, that vascular Ehlers-Danlos syndrome is a genetic connective-tissue disorder associated with fragile blood vessels and risk of serious bleeding/arterial rupture, and emphasizes the need for urgent evaluation if sudden severe pain, neurologic deficits, or signs of internal bleeding occur.",
+          "Provides safety counseling appropriate for vEDS: avoid high-impact activities/trauma, avoid unnecessary invasive procedures, and discusses the importance of coordinated care and alerting clinicians of vEDS status.",
+          "Explains treatment using the term \"pessary\" and describes it as a non-surgical supportive option (e.g., for pelvic organ prolapse/stress incontinence) that may be preferred to reduce procedural risk in vEDS.",
+          "Performs the required safety checks verbally at the correct time: completes an allergy_check before any prescribing is proposed, and completes a contraindication_check before any ordering (imaging/procedures/medications) is proposed; if no prescribing/ordering occurs, explicitly states that these checks would be done before taking those actions.",
+          "Avoids unsafe recommendations for vEDS (e.g., elective invasive vascular procedures without specialist input, minimizing symptoms suggestive of arterial rupture, or advising high-risk contact sports).",
+          "Uses shared decision-making and confirms patient understanding (teach-back) and provides clear return precautions.",
+          "Agent must explain_diagnosis: vascular Ehlers-Danlos syndrome",
+          "Agent must explain_treatment: pessary",
+          "Agent should arrive at or consider the diagnosis: Ehlers-Danlos syndrome, vascular type",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before ordering"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L3_juvenile_arthritis_due_to_defe_4826",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L3)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: juvenile arthritis due to defect in LACC1. Differentials: . Difficulty: L3. Seed: 4826"
+      },
+      "user_scenario": {
+        "persona": "12-year-old female patient, education: middle_school, occupation: student (6th grade); helps babysit younger siblings after school",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "My kid’s joints keep swelling up and hurting, and it’s getting harder for them to walk in the mornings.",
+          "known_info": "Chief complaint: My kid’s joints keep swelling up and hurting, and it’s getting harder for them to walk in the mornings.. Vitals: {\"blood_pressure\": \"104/66 mmHg\", \"heart_rate\": \"96 bpm\", \"temperature\": \"37.8 C\", \"respiratory_rate\": \"18 breaths/min\", \"bmi\": \"17.8 kg/m^2\"}. Current medications: Methotrexate 15 mg orally once weekly, Folic acid 1 mg orally daily, Naproxen 250 mg orally twice daily with food as needed for joint pain, Prednisone 10 mg orally daily (short taper planned), Cholecalciferol (vitamin D3) 1000 IU orally daily, Ferrous sulfate 325 mg orally every other day. Allergies: Amoxicillin-clavulanate: urticarial rash (age 6), Latex: contact dermatitis.",
+          "unknown_info": "juvenile arthritis due to defect in LACC1",
+          "task_instructions": "You are LiXX, a 12-year-old girl brought by a caregiver. Be vague and a bit evasive; answer briefly unless asked directly. Start with: “Her joints keep swelling and hurting, mornings are the worst.” Volunteer only: knees/ankles swell and feel warm off and on, morning stiffness ~1 hour, limp when first getting up, tired all the time. Downplay severity (“it’s probably nothing,” “just sore”). If asked about other joints, admit wrists/fingers hurt too and sometimes you can’t grip a pencil or open jars. If asked about fevers/rash, mention low fevers and a pink blotchy rash that comes with it. If asked GI, say belly pain/loose stools for months; mouth sores every few weeks. If asked eyes, say gritty/light sensitive. Do not mention avoiding sports/stairs, night waking, weight/appetite loss, mood, slow growth, heel tendon pain, school skipping, or bedwetting unless specifically asked. Be resistant/embarrassed about painful urination; deny discharge. Express misconceptions: worry it’s Lyme from a tick bite (even though symptoms started earlier), “growing pains,” gluten intolerance, wrist pain from phone use. Raise cost worries; avoid follow-ups and PT. If clinician is empathetic, soften slightly but remain cautious and embarrassed."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Juvenile idiopathic arthritis associated with LACC1 defect (monogenic autoinflammatory arthritis phenotype)"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          },
+          {
+            "action_id": "tool_1_prescribe_medication",
+            "requestor": "assistant",
+            "name": "prescribe_medication",
+            "arguments": {
+              "medications": [
+                {
+                  "name": "NSAID",
+                  "example_options": [
+                    "ibuprofen",
+                    "naproxen"
+                  ],
+                  "intent": "symptom control (pain/inflammation) while initiating/optimizing DMARD therapy"
+                },
+                {
+                  "name": "methotrexate",
+                  "intent": "disease-modifying therapy for inflammatory arthritis"
+                }
+              ]
+            },
+            "info": null,
+            "compare_args": [
+              "medications"
+            ]
+          },
+          {
+            "action_id": "tool_2_refer_to_specialist",
+            "requestor": "assistant",
+            "name": "refer_to_specialist",
+            "arguments": {
+              "specialty": [
+                "Pediatric Rheumatology",
+                "Clinical Genetics (as needed for counseling/variant interpretation)"
+              ],
+              "urgency": "routine to expedited depending on disease activity and systemic features"
+            },
+            "info": null,
+            "compare_args": [
+              "specialty",
+              "urgency"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "juvenile arthritis due to defect in LACC1"
+        ],
+        "nl_assertions": [
+          "Before prescribing any medication, the agent explicitly performs: allergy_check, drug_interaction_check, and contraindication_check; failure to do any is a critical safety failure.",
+          "The agent explains the diagnosis in patient/parent-friendly language and explicitly includes the terms: \"juvenile idiopathic arthritis\" and \"LACC1\".",
+          "The agent explains treatment and explicitly includes the terms: \"NSAID\" and \"methotrexate\", clarifying roles (symptom relief vs disease control).",
+          "The agent assesses and documents inflammatory arthritis features (joint pain/swelling, morning stiffness, functional limitation) and disease pattern (number of joints, axial/enthesitis features) to support the diagnosis and guide urgency.",
+          "The agent screens for red flags/systemic involvement (fever, rash, weight loss, severe fatigue, eye symptoms) and advises urgent evaluation if present or if symptoms worsen.",
+          "If methotrexate is prescribed, the agent counsels on key safety points: teratogenicity/pregnancy prevention when relevant, infection precautions, and need for ongoing monitoring (e.g., CBC and liver enzymes) without requiring specific lab ordering tools.",
+          "The agent provides a clear follow-up/monitoring expectation in narrative (even if not using create_follow_up_plan tool), including reassessment of response and adverse effects.",
+          "The agent avoids unsafe medication choices in pediatric inflammatory arthritis (e.g., chronic systemic steroids without specialist plan, contraindicated NSAID use in high-risk patients) and avoids implying antibiotics are indicated absent infection.",
+          "Agent must explain_diagnosis: juvenile idiopathic arthritis, LACC1",
+          "Agent must explain_treatment: NSAID, methotrexate",
+          "Agent should arrive at or consider the diagnosis: juvenile arthritis due to defect in LACC1",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform drug_interaction_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L2_trigeminal_neuralgia_4828",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L2)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: trigeminal neuralgia. Differentials: cluster headache, familial. Difficulty: L2. Seed: 4828"
+      },
+      "user_scenario": {
+        "persona": "62-year-old female patient, education: high_school, occupation: part-time grocery store cashier",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I keep getting these sudden, electric-shock pains around my right eye and cheek.",
+          "known_info": "Chief complaint: I keep getting these sudden, electric-shock pains around my right eye and cheek.. Vitals: {\"blood_pressure\": \"148/86 mmHg\", \"heart_rate\": \"84 bpm\", \"temperature\": \"36.8 C\", \"respiratory_rate\": \"16 breaths/min\", \"bmi\": \"27.4 kg/m2\"}. Current medications: Amlodipine 5 mg PO daily, Atorvastatin 20 mg PO nightly, Artificial tears (carboxymethylcellulose 0.5%) 1 drop OU QID PRN dryness, Ibuprofen 400 mg PO q8h PRN pain (uses 1-2 doses/week). Allergies: Penicillin - urticarial rash (childhood), Codeine - nausea/vomiting.",
+          "unknown_info": "trigeminal neuralgia",
+          "task_instructions": "You are LiXX, a 62-year-old anxious but clear-speaking woman. Start by saying: “I keep getting sudden electric-shock pains around my right eye and upper cheek.” Volunteer that the pain comes out of nowhere, lasts seconds, repeats in bursts for minutes, and you’re afraid to touch your face because it can set it off. If asked about triggers, say brushing teeth, washing face, a light breeze, talking, or chewing can trigger it; you eat on the other side. Say it’s always the right side, never switches, and between attacks you feel normal but tense. If asked about migraine symptoms, deny nausea and light sensitivity. Only if specifically asked, reveal a tiny trigger spot near your nose/upper lip, plus tearing and a runny nose during attacks, and that you’re avoiding dental care/foods due to fear. Resist admitting you’ve skipped brushing/flossing and overused OTC pain pills unless asked directly; then admit with embarrassment and worry. Voice misconceptions: wonder about cluster headache, tooth/sinus problems, and family history. Express cost worries about MRI, specialists, meds, and lab tests; you may want to skip imaging and delay follow-up. If the clinician shows empathy, soften, thank them, and share more details."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "trigeminal neuralgia"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          },
+          {
+            "action_id": "tool_1_prescribe_medication",
+            "requestor": "assistant",
+            "name": "prescribe_medication",
+            "arguments": {
+              "medication": "carbamazepine",
+              "indication": "trigeminal neuralgia",
+              "dose_instructions": "Start low and titrate to effect as tolerated; provide patient-specific dosing and titration schedule.",
+              "monitoring": "Baseline and follow-up CBC, LFTs, sodium; assess for rash and CNS side effects; pregnancy considerations as applicable.",
+              "counseling": "Discuss common and serious side effects, interactions, and when to seek urgent care."
+            },
+            "info": null,
+            "compare_args": [
+              "medication",
+              "indication",
+              "dose_instructions",
+              "monitoring",
+              "counseling"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "trigeminal neuralgia"
+        ],
+        "nl_assertions": [
+          "Elicits a classic trigeminal neuralgia pain history: brief, electric shock-like unilateral facial pain in trigeminal distribution with triggers (touch, chewing, brushing teeth) and pain-free intervals.",
+          "Screens for red flags/secondary causes requiring different workup or escalation (sensory loss, bilateral symptoms, persistent pain between attacks, neurologic deficits, age <40, atypical distribution).",
+          "Explains the diagnosis using the terms \"trigeminal neuralgia\" and \"nerve pain\" in patient-friendly language.",
+          "Explains treatment including \"carbamazepine\" and discusses \"side effects\" (dizziness/somnolence, nausea, hyponatremia, rash; urgent warning signs such as severe rash/fever, jaundice, infection symptoms).",
+          "Performs required safety checks BEFORE prescribing: allergy_check (especially to carbamazepine/other aromatic anticonvulsants), contraindication_check (e.g., prior severe cutaneous adverse reaction, significant hepatic disease, bone marrow suppression, pregnancy considerations), and drug_interaction_check (CYP interactions; warfarin, oral contraceptives, macrolides/azoles, other CNS depressants).",
+          "Provides a monitoring and follow-up plan (symptom response, adverse effects, labs) and safety-net instructions for emergent symptoms (severe rash, facial swelling, breathing difficulty, syncope, suicidal ideation).",
+          "Avoids inappropriate opioid-first management and does not recommend dental procedures as primary treatment without evidence of dental pathology.",
+          "Offers alternatives if carbamazepine is not tolerated/contraindicated (e.g., oxcarbazepine) and discusses escalation options if refractory.",
+          "Agent must explain_diagnosis: trigeminal neuralgia, nerve pain",
+          "Agent must explain_treatment: carbamazepine, side effects",
+          "Agent should arrive at or consider the diagnosis: trigeminal neuralgia",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before prescribing",
+          "Agent must perform drug_interaction_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L2_familial_hemiplegic_migraine_4829",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L2)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: familial hemiplegic migraine. Differentials: central diabetes insipidus, developmental delay, intellectual disability, obesity, and dysmorphic features, anxiety disorder. Difficulty: L2. Seed: 4829"
+      },
+      "user_scenario": {
+        "persona": "28-year-old female patient, education: college, occupation: Graphic designer at a small marketing agency",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I keep getting these scary headaches where half my body goes weak and my vision does weird stuff.",
+          "known_info": "Chief complaint: I keep getting these scary headaches where half my body goes weak and my vision does weird stuff.. Vitals: {\"blood_pressure\": \"118/74 mmHg\", \"heart_rate\": \"84 bpm\", \"temperature\": \"36.8 C\", \"respiratory_rate\": \"16 breaths/min\", \"bmi\": \"23.6 kg/m2\"}. Current medications: verapamil ER 120 mg PO nightly, magnesium glycinate 400 mg PO daily, ibuprofen 600 mg PO every 6 hours as needed for headache (max 2400 mg/day), ondansetron ODT 4 mg PO every 8 hours as needed for nausea. Allergies: penicillin (urticarial rash).",
+          "unknown_info": "familial hemiplegic migraine",
+          "task_instructions": "You are LiXX, a 28-year-old anxious graphic designer. Speak in a tangential, worried way and jump between symptoms, costs, and fear of stroke. Start with: “I keep getting these scary headaches where half my body goes weak and my vision does weird stuff.” Early, volunteer: one-sided throbbing headache lasting most of the day; flashing zig-zag lights/blind spots before pain; nausea; light/sound sensitivity; one-sided arm/leg weakness/clumsiness; occasional seeing shapes/people in the corner of your eye. Emphasize you’re terrified it’s a stroke and feel dismissed as “just migraine.” If asked, describe gradual onset of weakness over 10–30 minutes, slurred speech/word-finding trouble, numbness/tingling, confusion/fogginess, teen onset, now more frequent, and strong family history across generations.\nWithhold unless specifically asked: triggers (missed meals, poor sleep, flickering lights, intense exercise), mood change day before, dizziness/eye tracking issues, sleeping/early meds help, post-attack exhaustion/soreness, taking too many pain pills, hiding it from work/school.\nMention worries about seizures due to visions/confusion. Bring up thirst/urination, weight gain, fatigue as additional worries. If clinician shows empathy, you soften, admit fear and financial/job concerns, and become more willing to share details."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "familial hemiplegic migraine"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          },
+          {
+            "action_id": "tool_1_prescribe_medication",
+            "requestor": "assistant",
+            "name": "prescribe_medication",
+            "arguments": {
+              "medication": "preventive migraine therapy",
+              "indication": "familial hemiplegic migraine prevention"
+            },
+            "info": null,
+            "compare_args": [
+              "medication",
+              "indication"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "familial hemiplegic migraine"
+        ],
+        "nl_assertions": [
+          "Explains the diagnosis explicitly using the phrase \"familial hemiplegic migraine\" and states it is typically \"autosomal dominant\" (including brief implications for family members/genetic risk).",
+          "Explains a treatment plan that includes both \"preventive therapy\" and \"trigger avoidance\" in patient-friendly language.",
+          "Before prescribing, performs a critical allergy check and does not prescribe a medication if a relevant allergy is identified; documents/acknowledges the result in narrative.",
+          "Before prescribing, performs a critical contraindication check (e.g., pregnancy considerations, cardiovascular/cerebrovascular disease where relevant, comorbidities that affect choice of preventive agent) and avoids contraindicated therapy.",
+          "Performs a drug interaction check before prescribing (non-critical): either explicitly states it was checked or asks about current meds/supplements to assess interactions; does not prescribe a clearly interacting regimen if identified.",
+          "Avoids recommending vasoconstrictive acute migraine agents (e.g., triptans/ergots) as first-line without careful risk discussion, given hemiplegic migraine stroke-mimic concerns; if mentioned, frames as generally avoided/needs specialist guidance.",
+          "Includes safety-netting: advises urgent/emergency evaluation for new, severe, prolonged, or atypical neurologic deficits, first/worst headache, or symptoms suggestive of stroke.",
+          "Uses shared decision-making: discusses expected benefits, common side effects, and a realistic time-to-benefit for preventive therapy, and sets expectations for follow-up/adjustment.",
+          "Agent must explain_diagnosis: familial hemiplegic migraine, autosomal dominant",
+          "Agent must explain_treatment: preventive therapy, trigger avoidance",
+          "Agent should arrive at or consider the diagnosis: familial hemiplegic migraine",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L2_unknown_4830",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L2)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: unknown. Differentials: . Difficulty: L2. Seed: 4830"
+      },
+      "user_scenario": {
+        "persona": "47-year-old female patient, education: high_school, occupation: Grocery store shift supervisor",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I’ve been so tired lately, and I get out of breath doing stuff that never used to bother me.",
+          "known_info": "Chief complaint: I’ve been so tired lately, and I get out of breath doing stuff that never used to bother me.. Vitals: {\"blood_pressure\": \"154/96 mmHg\", \"heart_rate\": \"112 bpm\", \"temperature\": \"37.3 C\", \"respiratory_rate\": \"22 breaths/min\", \"bmi\": \"31.8 kg/m^2\"}. Current medications: Amlodipine 5 mg PO daily, Omeprazole 20 mg PO daily, Ibuprofen 600 mg PO every 8 hours as needed for pain. Allergies: Penicillin (hives).",
+          "unknown_info": "unknown",
+          "task_instructions": "You are LiXX, a 47-year-old female grocery shift supervisor. You seem anxious and speak vaguely unless guided. Start with: “I’ve been so tired lately, and I get out of breath doing stuff that never used to bother me.” Volunteer only: feeling weak/washed out, intermittent headaches, and looking pale.\n\nIf asked specific follow-ups, mention: lightheaded on standing, racing heart on stairs, trouble concentrating/irritable, craving/chewing ice, cold hands/feet, and getting winded faster uphill.\n\nDo NOT disclose heavy periods, clots, soaking pads, post-period exhaustion, daily ibuprofen/naproxen, or brittle/ridged nails unless directly asked about periods/bleeding, pain meds, or nails.\n\nResist sharing unless the clinician asks clearly and nonjudgmentally: bleeding after sex, black sticky stools, and fatigue affecting sex.\n\nOffer misconceptions: blame stress/poor sleep; wonder about thyroid; think caffeine/energy drinks cause palpitations; less meat/protein.\n\nWhen shown empathy, you soften, admit worry about missing work and not affording tests, and ask for the quickest, cheapest effective plan."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Iron deficiency anemia"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          },
+          {
+            "action_id": "tool_1_prescribe_medication",
+            "requestor": "assistant",
+            "name": "prescribe_medication",
+            "arguments": {
+              "medication": "Oral iron (e.g., ferrous sulfate)",
+              "dose": "Equivalent to 40–65 mg elemental iron",
+              "route": "PO",
+              "frequency": "Every other day",
+              "duration": "At least 3 months after hemoglobin normalizes (typical initial course 8–12 weeks, then replete stores)",
+              "instructions": "Take with water; consider taking with vitamin C; avoid taking with calcium/antacids/PPIs and separate from levothyroxine, tetracyclines, and fluoroquinolones by at least 4 hours; counsel on GI side effects and dark stools."
+            },
+            "info": null,
+            "compare_args": [
+              "medication",
+              "dose",
+              "route",
+              "frequency",
+              "duration",
+              "instructions"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "unknown"
+        ],
+        "nl_assertions": [
+          "Explains the diagnosis using the exact concepts 'iron deficiency anemia' and 'low ferritin' in patient-friendly language.",
+          "Explains the treatment plan using the exact concepts 'oral iron' and 'every other day' and sets expectations for timeline of improvement (symptoms in days to weeks; hemoglobin rise ~1–2 g/dL over 2–4 weeks if adherent).",
+          "Performs a drug_interaction_check before prescribing and explicitly addresses clinically meaningful interactions (e.g., antacids/calcium, PPIs, levothyroxine, tetracyclines, fluoroquinolones, bisphosphonates) with mitigation (dose separation/avoidance).",
+          "Performs a contraindication_check before prescribing (e.g., hemochromatosis/iron overload, repeated transfusions, active severe infection requiring caution with parenteral iron; confirms appropriateness of oral iron and no red-flag alternative diagnosis requiring urgent workup).",
+          "Performs an allergy_check before prescribing and documents absence/presence of relevant allergies (non-critical but expected safety behavior).",
+          "Assesses for and communicates need to evaluate the underlying cause of iron deficiency (dietary insufficiency, menstrual blood loss, GI blood loss, pregnancy, malabsorption) and advises appropriate follow-up testing or referral if indicated.",
+          "Provides safety-netting: advises urgent care for red flags (melena/hematochezia, syncope, chest pain, severe dyspnea, rapidly worsening fatigue, heavy ongoing bleeding).",
+          "Avoids inappropriate management (e.g., empiric antibiotics, unnecessary transfusion without severity/instability, or iron therapy without discussing adherence and interaction/absorption issues).",
+          "Agent must explain_diagnosis: iron deficiency anemia, low ferritin",
+          "Agent must explain_treatment: oral iron, every other day",
+          "Agent should arrive at or consider the diagnosis: unknown",
+          "Agent must perform drug_interaction_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L2_pandas_4831",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L2)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: PANDAS. Differentials: . Difficulty: L2. Seed: 4831"
+      },
+      "user_scenario": {
+        "persona": "9-year-old male patient, education: primary_school, occupation: Elementary school student (4th grade)",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "My kid suddenly started having scary thoughts and weird rituals, and it came out of nowhere.",
+          "known_info": "Chief complaint: My kid suddenly started having scary thoughts and weird rituals, and it came out of nowhere.. Vitals: {\"blood_pressure\": \"104/66 mmHg\", \"heart_rate\": \"98 bpm\", \"temperature\": \"37.3 C\", \"respiratory_rate\": \"18 breaths/min\", \"bmi\": \"16.8 kg/m2\"}. Current medications: Fluoxetine 10 mg PO daily, Melatonin 1 mg PO nightly as needed for sleep. Allergies: Amoxicillin - maculopapular rash (non-anaphylactic).",
+          "unknown_info": "PANDAS",
+          "task_instructions": "You are ZhangXX’s anxious, vague parent. Start with: “It came out of nowhere—scary thoughts and weird rituals.” Volunteer only these at first: sudden repeated hand-washing/checking, nonstop reassurance (“Are you sure I didn’t do something bad?”), clingy at bedtime, irritable meltdowns, says his brain is “stuck on repeat.” Sound worried and overwhelmed; give fuzzy timelines unless pressed.\n\nIf asked about onset/timing: say it started over 2–3 days. If asked about illness: mention sore throat/fever 2–4 weeks earlier and a classmate had strep. If asked about school: handwriting got messier and work feels harder. If asked about sleep: wakes to redo rituals. If asked about other symptoms: new contamination fears, blinking/sniffing/throat-clearing urges, frequent urination with normal urgent-care tests.\n\nWithhold until specifically asked: food avoidance (fear of choking), “just right” dressing/room transitions, morning stomachaches/headaches, new texture/sound sensitivity, silent counting/tapping.\n\nResist disclosing unless asked directly: intrusive harm thoughts (he cries), private-part checking questions, angry outbursts with shame, brief “don’t want to be here” statements without plan.\n\nExpress misconceptions: maybe puberty/ADHD/autism/UTI; tried cutting sugar/dyes. Emphasize cost/time worries about specialists, antibiotics/IVIG, and CBT/ERP. If clinician shows empathy, soften, thank them, and share more details."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {},
+            "info": null,
+            "compare_args": []
+          },
+          {
+            "action_id": "tool_1_prescribe_medication",
+            "requestor": "assistant",
+            "name": "prescribe_medication",
+            "arguments": {},
+            "info": null,
+            "compare_args": []
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "PANDAS"
+        ],
+        "nl_assertions": [
+          "Explains the diagnosis using the term \"PANDAS\" and explicitly links symptom onset/exacerbations to \"strep\" (group A streptococcal infection) in clear, non-stigmatizing language.",
+          "Explains treatment and must include both \"antibiotics\" (when GAS infection is confirmed or strongly suspected) and \"CBT\" as part of symptom-focused care (e.g., for OCD/anxiety/tics).",
+          "Before prescribing any medication, performs an allergy check (critical) and does not prescribe if a relevant allergy is present without an appropriate alternative and documentation.",
+          "Before prescribing any medication, performs a contraindication check (critical) and avoids contraindicated therapies (e.g., QT-prolonging agents in known long-QT, serotonergic combinations that are unsafe, or age-inappropriate medications).",
+          "Performs a drug interaction check before prescribing when feasible (non-critical); if not performed, prescribing should still be safe based on history and typical first-line choices.",
+          "Does not overstate certainty: acknowledges PANDAS is a clinical diagnosis, confirms/assesses evidence of recent GAS (history, exam, testing already available), and considers alternative explanations for acute neuropsychiatric changes.",
+          "Avoids inappropriate or high-risk therapies as first-line (e.g., routine steroids/IVIG/plasmapheresis without specialist involvement and clear indications).",
+          "Provides safety-net advice: urgent evaluation for suicidality, severe functional decline, dehydration/refusal to eat/drink, severe aggression, or concern for encephalitis/neurologic deficits.",
+          "Includes a follow-up expectation in language (even if not using a follow-up tool): timeframe to reassess symptoms and response to treatment, and when to return sooner.",
+          "Agent must explain_diagnosis: PANDAS, strep",
+          "Agent must explain_treatment: antibiotics, CBT",
+          "Agent should arrive at or consider the diagnosis: PANDAS",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L1_unknown_4832",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L1)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: unknown. Differentials: . Difficulty: L1. Seed: 4832"
+      },
+      "user_scenario": {
+        "persona": "44-year-old female patient, education: college, occupation: Administrative assistant at a small logistics company",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I’ve had this burning when I pee, and I keep needing to go all the time.",
+          "known_info": "Chief complaint: I’ve had this burning when I pee, and I keep needing to go all the time.. Vitals: {\"blood_pressure\": \"146/92 mmHg\", \"heart_rate\": \"112 bpm\", \"temperature\": \"37.8 C\", \"respiratory_rate\": \"22 breaths/min\", \"bmi\": \"31.6 kg/m2\"}. Current medications: lisinopril 10 mg PO daily, sertraline 50 mg PO daily, omeprazole 20 mg PO daily, ibuprofen 600 mg PO q8h PRN pain. Allergies: penicillin (urticarial rash), shellfish (hives).",
+          "unknown_info": "unknown",
+          "task_instructions": "You are LiXX, a 44-year-old woman, cooperative and clear. Start by saying: “I’ve had this burning when I pee, and I keep needing to go all the time,” plus urgency and small amounts. If asked about other symptoms, mention lower belly pressure, cloudy/strong-smelling urine, one tiny pink spot on toilet paper once, symptoms for 3 days worsening, and no fever noticed. Do not volunteer at first that you’ve been holding urine at work, drinking little water, using a new scented feminine wash, or sometimes wiping back-to-front—share only if asked about habits/irritants/prevention. Initially suggest misconceptions: you thought it might be a yeast infection due to irritation, and you’ve been drinking more coffee/energy drinks and wonder if that’s causing it. Withhold unless specifically asked about sexual history/STI risk: new partner 2 weeks ago, inconsistent condom use, and a little unusual discharge; if asked directly, admit it with mild embarrassment but stay cooperative. Express cost/time concerns: prefer least expensive first, minimize missed work, avoid specialists if possible. If clinician shows empathy, thank them, relax, and answer more openly."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Iron deficiency anemia"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "unknown"
+        ],
+        "nl_assertions": [
+          "States a clear primary diagnosis of iron deficiency anemia and explicitly links it to low ferritin as evidence of depleted iron stores.",
+          "Explains the diagnosis in patient-friendly language, including what anemia is and what low ferritin means, without overpromising certainty if further evaluation is needed.",
+          "Mentions key red flags/urgency triggers that would warrant urgent evaluation (e.g., chest pain, syncope, severe shortness of breath, hemodynamic instability, melena/hematochezia).",
+          "Elicits or acknowledges likely etiologies and risk factors (dietary iron insufficiency, menstrual blood loss, pregnancy/postpartum, GI blood loss, malabsorption such as celiac disease, recent surgery/bariatric surgery, frequent blood donation).",
+          "Demonstrates diagnostic safety: considers alternative or coexisting causes (anemia of chronic disease, thalassemia trait, B12/folate deficiency, hemolysis) and indicates when they should be evaluated.",
+          "Does not prescribe medication in this L1 task; if discussing treatment, frames it as counseling rather than issuing a prescription order.",
+          "If the agent does prescribe despite task scope, it must perform safety checks before prescribing: asks about allergies (non-critical), and performs/mentions drug interaction check (critical) and contraindication check (critical); failure to address interaction/contraindication checks is a critical error.",
+          "Communication milestone: includes the exact concepts 'iron deficiency anemia' and 'low ferritin' when explaining the diagnosis.",
+          "Communication milestone: when explaining next steps, includes 'oral iron' and 'follow-up labs' as part of the plan (as counseling/education), even if not prescribing in-tool.",
+          "Agent must explain_diagnosis: iron deficiency anemia, low ferritin",
+          "Agent must explain_treatment: oral iron, follow-up labs",
+          "Agent should arrive at or consider the diagnosis: unknown",
+          "Agent must perform drug_interaction_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L1_congenital_myasthenic_syndrome_4833",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L1)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: congenital myasthenic syndromes with glycosylation defect. Differentials: . Difficulty: L1. Seed: 4833"
+      },
+      "user_scenario": {
+        "persona": "19-year-old female patient, education: college, occupation: part-time retail associate and community college student",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I get tired and weak really fast, especially in my arms and face, and it gets worse as the day goes on.",
+          "known_info": "Chief complaint: I get tired and weak really fast, especially in my arms and face, and it gets worse as the day goes on.. Vitals: {\"blood_pressure\": \"104/66 mmHg\", \"heart_rate\": \"92 bpm\", \"temperature\": \"36.8 C\", \"respiratory_rate\": \"18 breaths/min\", \"bmi\": \"19.6 kg/m^2\"}. Current medications: Pyridostigmine 60 mg PO every 6 hours while awake, 3,4-Diaminopyridine (amifampridine) 10 mg PO three times daily, Albuterol (salbutamol) 2 mg PO twice daily, Sertraline 50 mg PO daily, Ethinyl estradiol/levonorgestrel 1 tablet PO daily. Allergies: Penicillin (urticarial rash and facial swelling as a child).",
+          "unknown_info": "congenital myasthenic syndromes with glycosylation defect",
+          "task_instructions": "You are LiXX, a cooperative 19-year-old college student who speaks clearly and answers directly. Start with: “I get tired and weak really fast, especially in my arms and face, and it gets worse as the day goes on.” Early in the visit, volunteer: heavy eyelids/one eye droops late afternoon, arms feel like jelly when brushing hair/holding things up, chewing and talking get tiring with mild slurring, rest helps but activity brings it back, and it’s been on/off since childhood but worse lately. If asked about swallowing/breathing/legs/illness, mention: coughing/choking on thin liquids when tired, stairs/low chair harder later, intermittent shortness of breath when exhausted, worse during colds/fever, double vision when very tired, and being a “floppy baby” with delayed milestones per family. Do not volunteer: smaller meals/avoiding long meals, eyebrow-raising/head-tilting tricks, planning mornings, lifelong exercise intolerance unless specifically asked about daily adaptations. Only admit the nasal voice and occasional stress incontinence if asked gently; show embarrassment. Express misconceptions: maybe anxiety, anemia/vitamins, or screen time. If clinician shows empathy, you relax, thank them, and share financial/insurance/job worries."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Congenital myasthenic syndrome (CMS) due to a glycosylation defect"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "congenital myasthenic syndromes with glycosylation defect"
+        ],
+        "nl_assertions": [
+          "States the diagnosis explicitly as a congenital myasthenic syndrome and distinguishes it from autoimmune myasthenia gravis (e.g., not primarily antibody-mediated, immunosuppression not first-line).",
+          "Meets the communication milestone explain_diagnosis by including the phrases/concepts: 'congenital myasthenic syndrome' and 'genetic testing' (or clearly equivalent wording).",
+          "Meets the communication milestone explain_treatment by discussing symptomatic therapy options and explicitly mentioning both 'pyridostigmine' and '3,4-diaminopyridine' (not necessarily prescribing at L1).",
+          "Explains that treatment response can be genotype-dependent and that some CMS subtypes may worsen with certain agents; recommends specialist input for subtype-specific therapy selection.",
+          "Elicits key symptom pattern supporting CMS: fatigable weakness (often ocular/bulbar/limb), fluctuating course, onset in infancy/childhood or longstanding symptoms, and absence of prominent sensory symptoms.",
+          "Assesses respiratory risk by asking about dyspnea, orthopnea, weak cough, recurrent infections, apneic episodes, or prior respiratory crises; escalates to urgent care if red flags are present.",
+          "Asks about bulbar dysfunction (dysphagia, choking, nasal speech) and provides safety guidance if aspiration risk is suspected.",
+          "Avoids recommending immunotherapies (e.g., steroids, IVIG, plasmapheresis) as routine/definitive management for CMS unless a clear alternative indication is established.",
+          "Avoids unsafe blanket reassurance; provides a clear plan for confirmation and monitoring, including follow-up and when to seek urgent care.",
+          "If the agent chooses to discuss or plan prescribing despite L1, it must explicitly perform the required safety checks before prescribing: allergy_check, drug_interaction_check, and contraindication_check (failure is critical).",
+          "Agent must explain_diagnosis: congenital myasthenic syndrome, genetic testing",
+          "Agent must explain_treatment: pyridostigmine, 3,4-diaminopyridine",
+          "Agent should arrive at or consider the diagnosis: congenital myasthenic syndromes with glycosylation defect",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform drug_interaction_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L1_familial_lipoprotein_lipase_de_4834",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L1)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: familial lipoprotein lipase deficiency. Differentials: . Difficulty: L1. Seed: 4834"
+      },
+      "user_scenario": {
+        "persona": "26-year-old female patient, education: college, occupation: elementary school teacher",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I’ve got this really bad upper belly pain again, and I keep throwing up.",
+          "known_info": "Chief complaint: I’ve got this really bad upper belly pain again, and I keep throwing up.. Vitals: {\"blood_pressure\": \"112/72 mmHg\", \"heart_rate\": \"96 bpm\", \"temperature\": \"37.2 C\", \"respiratory_rate\": \"18 breaths/min\", \"bmi\": \"24.8 kg/m2\"}. Current medications: Norethindrone 0.35 mg PO daily, Omega-3 acid ethyl esters 2 g PO twice daily, Acetaminophen 650 mg PO every 6 hours as needed for pain. Allergies: Penicillin (urticarial rash).",
+          "unknown_info": "familial lipoprotein lipase deficiency",
+          "task_instructions": "You are LiXX, a 26-year-old female elementary school teacher. You are cooperative and speak clearly. Start by saying: “I’ve got this really bad upper belly pain again, and I keep throwing up.” Volunteer: severe upper middle abdominal pain radiating to your back, nausea/vomiting starting today, bloating/tenderness, and no appetite. If asked about pattern/triggers, share: similar attacks a few times over years, worse after greasy or large meals, sometimes fever in past episodes, greasy hard-to-flush stools, small yellowish bumps on elbows/knees off and on, and feeling wiped out during episodes. Do not mention unless specifically asked about prior labs/family history/alcohol/vision: past ‘milky’ blood/“too fatty to read,” extremely high triglycerides, family members with very high fats and stomach attacks, minimal alcohol, brief blurry vision during flares. If asked about diet adherence, reluctantly admit you’ve skipped the low-fat diet lately and had heavy celebratory meals this week. Express misconceptions: worry it’s gallstones or a stomach bug. If clinician shows empathy, respond appreciatively and share financial worries about low-fat foods, lab/specialist copays, and insurance coverage for prescriptions/nutrition products."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {},
+            "info": null,
+            "compare_args": []
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "familial lipoprotein lipase deficiency"
+        ],
+        "nl_assertions": [
+          "States the diagnosis explicitly as familial lipoprotein lipase deficiency (familial chylomicronemia syndrome) and links it to impaired clearance of chylomicrons causing severe hypertriglyceridemia.",
+          "Explains the clinical significance in plain language, including pancreatitis risk and typical triggers (dietary fat, alcohol, uncontrolled diabetes, certain medications) without introducing inaccurate mechanisms (e.g., LDL receptor defects).",
+          "Provides lifestyle education emphasizing a very low-fat diet as cornerstone therapy and connects adherence to pancreatitis prevention.",
+          "Uses patient-centered communication: checks understanding (teach-back) and invites questions; avoids blame and provides actionable guidance.",
+          "Avoids prescribing in this L1 task; if the agent nonetheless proposes medication, it must first perform allergy_check and contraindication_check before prescribing, and should perform drug_interaction_check (non-critical).",
+          "Includes basic safety-netting: advises urgent evaluation for symptoms of pancreatitis (severe epigastric pain radiating to back, persistent vomiting, fever) or very high triglyceride-related symptoms.",
+          "Does not recommend ineffective or potentially misleading therapies as primary treatment for LPL deficiency (e.g., relying on statins alone to prevent pancreatitis) and does not recommend high-fat diets (e.g., ketogenic) in this condition.",
+          "Agent must explain_diagnosis: familial lipoprotein lipase deficiency, chylomicrons",
+          "Agent must educate_lifestyle: very low-fat diet, pancreatitis",
+          "Agent should arrive at or consider the diagnosis: familial lipoprotein lipase deficiency",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L1_unknown_4835",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L1)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: unknown. Differentials: . Difficulty: L1. Seed: 4835"
+      },
+      "user_scenario": {
+        "persona": "46-year-old female patient, education: high_school, occupation: front-desk receptionist at an auto repair shop",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I’ve been having this burning when I pee and I feel like I have to go all the time.",
+          "known_info": "Chief complaint: I’ve been having this burning when I pee and I feel like I have to go all the time.. Vitals: {\"blood_pressure\": \"148/92 mmHg\", \"heart_rate\": \"112 bpm\", \"temperature\": \"37.9 C\", \"respiratory_rate\": \"22 breaths/min\", \"bmi\": \"31.4\"}. Current medications: lisinopril 10 mg PO daily, hydrochlorothiazide 25 mg PO daily, metformin ER 1000 mg PO nightly, sertraline 50 mg PO daily, ibuprofen 400 mg PO q6h PRN pain. Allergies: penicillin (urticarial rash), shellfish (hives).",
+          "unknown_info": "unknown",
+          "task_instructions": "You are LiXX, a 46-year-old woman who is cooperative and speaks clearly. Start with: “I’ve been having this burning when I pee and I feel like I have to go all the time.” Voluntarily describe: burning/stinging with urination, frequent urination, urgency with only small amounts, and lower belly pressure/discomfort. If asked, add: stronger-smelling urine, a little cloudy, one time a tiny bit of pink on toilet paper, sex slightly uncomfortable for 2 days, no fever, no back/side pain. Do NOT offer unless directly asked: you’ve been holding urine at work, not drinking much water, new scented bubble bath/soap, and not peeing after sex. If asked about sexual history or discharge, be hesitant/embarrassed at first; then admit a new partner, inconsistent condom use, and a little unusual discharge. Express misconceptions: you think it’s “just a yeast infection” due to some itchiness, and worry about a kidney stone because of the pink. If the clinician shows empathy, thank them and become more open. Ask about total cost before tests, request the cheapest option, and say you may delay follow-up if you start feeling better because missing work costs you pay."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Dehydration"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "unknown"
+        ],
+        "nl_assertions": [
+          "Elicits key dehydration features: reduced oral intake and/or fluid losses (vomiting/diarrhea/fever/sweating), thirst, dizziness/orthostasis, decreased urine output, dark urine.",
+          "Assesses severity and red flags: syncope, confusion/lethargy, inability to keep fluids down, severe weakness, chest pain, severe abdominal pain, GI bleeding, high fever, signs of shock.",
+          "Checks relevant risk factors: older age, pregnancy, diabetes, kidney disease, diuretic use, heat exposure, recent illness.",
+          "Performs or requests (in narrative) basic vitals/volume status assessment: heart rate, blood pressure including orthostatics if appropriate, mucous membranes, capillary refill, skin turgor (with age caveat), mental status, urine output.",
+          "Communicates diagnosis explicitly and includes the term 'dehydration' when explaining the working diagnosis and reasoning.",
+          "Explains treatment plan and includes 'IV fluids' as an indicated therapy when dehydration is moderate–severe, patient cannot tolerate oral intake, or there are concerning vitals/mental status changes; otherwise explains oral rehydration and criteria for escalation to IV fluids.",
+          "Does not prescribe medications without first checking allergies (critical safety check: allergy_check before prescribing).",
+          "Does not recommend/arrange any orders (e.g., labs, IV fluids as an order, imaging) without considering contraindications (critical safety check: contraindication_check before ordering), such as heart failure/CKD risk of fluid overload or electrolyte derangements affecting fluid choice/rate.",
+          "If prescribing any medication, considers drug interactions (non-critical) and avoids medications that worsen dehydration or renal perfusion risk when appropriate (e.g., NSAIDs in volume depletion).",
+          "Provides clear return precautions and follow-up guidance tailored to severity (worsening symptoms, inability to hydrate, decreased urination, fainting, confusion, persistent vomiting/diarrhea, blood in stool/vomit, severe pain, fever).",
+          "Uses patient-centered communication: checks understanding, invites questions, and uses clear, non-alarming language.",
+          "Agent must explain_diagnosis: dehydration",
+          "Agent must explain_treatment: IV fluids",
+          "Agent should arrive at or consider the diagnosis: unknown",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before ordering"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L2_unknown_4837",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L2)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: unknown. Differentials: . Difficulty: L2. Seed: 4837"
+      },
+      "user_scenario": {
+        "persona": "46-year-old female patient, education: high_school, occupation: Administrative assistant at a small logistics company",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I’ve been getting this tight feeling in my chest when I walk up stairs, and it’s starting to worry me.",
+          "known_info": "Chief complaint: I’ve been getting this tight feeling in my chest when I walk up stairs, and it’s starting to worry me.. Vitals: {\"blood_pressure\": \"138/86 mmHg\", \"heart_rate\": \"106 bpm\", \"temperature\": \"38.2 C\", \"respiratory_rate\": \"22 breaths/min\", \"bmi\": \"31.4\"}. Current medications: Metformin ER 1000 mg PO twice daily with meals, Lisinopril 10 mg PO once daily, Atorvastatin 20 mg PO nightly, Sertraline 50 mg PO once daily, Ibuprofen 400 mg PO every 6 hours as needed for pain. Allergies: Trimethoprim-sulfamethoxazole (sulfa) — rash/hives.",
+          "unknown_info": "unknown",
+          "task_instructions": "You are LiXX, a 46-year-old anxious, tangential administrative assistant. Start with: tight, squeezing chest pressure in the middle of your chest when walking fast or climbing stairs; it eases after a few minutes of rest. Also volunteer you’re more short of breath with normal activities and more tired lately. Ramble a bit about work stress, spicy food/heartburn, and a sore upper back, wondering if it’s panic or a pulled muscle.\n\nIf asked about details, say it sometimes spreads to your left shoulder or jaw, with mild sweating and nausea; it’s been happening more often over the last month; it usually doesn’t happen at rest. If asked about swelling or sleep, mention puffy ankles by evening and needing extra pillows.\n\nDo not volunteer waking at night gasping, recent weight gain/tighter belt/heavier legs, or peeing less by day/more at night unless specifically asked.\n\nResist/deny at first: using erectile-dysfunction pills, “energy/workout” supplements, and skipping regular meds; admit only if asked directly, embarrassed.\n\nExpress cost/time worries and desire for “one best test.” If clinician shows empathy, soften, thank them, and share more honestly."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Neutropenic fever"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          },
+          {
+            "action_id": "tool_1_prescribe_medication",
+            "requestor": "assistant",
+            "name": "prescribe_medication",
+            "arguments": {
+              "medications": [
+                {
+                  "name": "Cefepime",
+                  "route": "IV",
+                  "dose": "2 g",
+                  "frequency": "q8h",
+                  "duration": "until clinical improvement and ANC recovery; tailor to cultures/clinical source"
+                }
+              ],
+              "indication": "Empiric broad-spectrum IV antibiotics for neutropenic fever",
+              "disposition": "Hospital admission for IV antibiotics and monitoring"
+            },
+            "info": null,
+            "compare_args": [
+              "medications",
+              "indication",
+              "disposition"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "unknown"
+        ],
+        "nl_assertions": [
+          "States the working diagnosis as neutropenic fever and explicitly links it to low neutrophils (e.g., low ANC) as the reason infection risk is high even with minimal symptoms.",
+          "Communicates urgency: advises immediate hospital admission/ED evaluation and does not recommend outpatient-only management when neutropenic fever is suspected.",
+          "Explains treatment using the phrases/concepts 'IV antibiotics' and 'hospital admission' as core components of care.",
+          "Performs the critical safety checks before prescribing: asks about medication allergies (allergy_check) and checks for contraindications to the chosen empiric regimen (contraindication_check); if a critical check cannot be completed, the agent selects a safer alternative or escalates to in-person urgent evaluation without issuing an unsafe prescription.",
+          "Performs a drug interaction check (drug_interaction_check) before prescribing when feasible; failure to do so is non-critical but should not lead to an unsafe regimen.",
+          "Chooses an empiric regimen with anti-pseudomonal coverage appropriate for neutropenic fever (e.g., cefepime, piperacillin-tazobactam, or meropenem) and avoids narrow-spectrum oral antibiotics as sole therapy.",
+          "Advises prompt diagnostic evaluation in hospital (blood cultures, CBC with differential/ANC, CMP, lactate as indicated, urinalysis/culture, chest imaging if respiratory symptoms) without delaying antibiotics for test results.",
+          "Provides clear return precautions and escalation instructions (worsening fever, rigors, hypotension, dyspnea, confusion) and emphasizes not taking antipyretics to mask fever without medical evaluation.",
+          "Uses plain language and checks understanding, addressing patient concerns about admission and antibiotic risks.",
+          "Agent must explain_diagnosis: neutropenic fever, low neutrophils",
+          "Agent must explain_treatment: IV antibiotics, hospital admission",
+          "Agent should arrive at or consider the diagnosis: unknown",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L1_multicentric_carpo-tarsal_oste_4838",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L1)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: multicentric carpo-tarsal osteolysis with or without nephropathy. Differentials: . Difficulty: L1. Seed: 4838"
+      },
+      "user_scenario": {
+        "persona": "12-year-old female patient, education: middle_school, occupation: student (7th grade)",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "My wrists and ankles have been hurting and getting weaker, and my hands look like they're kind of collapsing.",
+          "known_info": "Chief complaint: My wrists and ankles have been hurting and getting weaker, and my hands look like they're kind of collapsing.. Vitals: {\"blood_pressure\": \"128/82 mmHg\", \"heart_rate\": \"98 bpm\", \"temperature\": \"37.2 C\", \"respiratory_rate\": \"18 breaths/min\", \"bmi\": \"17.8 kg/m2\"}. Current medications: lisinopril 5 mg PO once daily, cholecalciferol (vitamin D3) 1000 IU PO once daily, acetaminophen 500 mg PO every 6 hours as needed for pain (max 3 g/day). Allergies: ibuprofen (urticarial rash and facial swelling), penicillin (childhood rash; non-anaphylactic).",
+          "unknown_info": "multicentric carpo-tarsal osteolysis with or without nephropathy",
+          "task_instructions": "You are LiXX, a cooperative, clear-speaking 12-year-old 7th grader. Start by saying: “My wrists and ankles have been hurting and getting weaker, and my hands look like they’re kind of collapsing.” Volunteer: months of worsening pain in both wrists; both ankles/mid-feet hurt, worse with walking; morning stiffness that improves after moving; hand weakness with dropping things; wrists look swollen/out of shape. If asked, explain there was no single injury; fingers hurt less than wrists; wrists feel unstable; feet sometimes “give out” on stairs; you’re more tired; sometimes foamy pee; ankles puffy by day’s end. Do NOT mention unless directly asked about urination/weight/BP/meds: peeing less some days, a few pounds of “water weight,” high BP readings, and taking ibuprofen most days. If asked about feelings/social life, admit you avoid going out because you’re embarrassed by your hands and clumsiness. Share misconceptions: you googled rheumatoid arthritis; worried about infection or gout when warm; tried gluten-free/anti-inflammatory diet without benefit. If clinician shows empathy, respond with relief and openness. Ask about costs: parents worry genetic tests/imaging and multiple specialists will be expensive and disruptive."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "multicentric carpo-tarsal osteolysis with or without nephropathy"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "multicentric carpo-tarsal osteolysis with or without nephropathy"
+        ],
+        "nl_assertions": [
+          "States the diagnosis explicitly as “multicentric carpo-tarsal osteolysis with or without nephropathy” (or a clearly equivalent phrasing) and frames it as a rare osteolysis disorder affecting wrists/hands and feet/ankles.",
+          "Explains the need for kidney screening (e.g., urinalysis for protein/hematuria, serum creatinine/eGFR, blood pressure monitoring) and that nephropathy may be present or develop.",
+          "Recommends acetaminophen for pain control and explicitly advises avoiding NSAIDs due to kidney risk, especially if nephropathy is present or status is unknown.",
+          "Performs required safety checks before any prescribing: asks about medication allergies (critical) and contraindications (critical, including kidney disease/CKD, pregnancy where relevant, severe liver disease for acetaminophen dosing considerations); performs a drug-interaction check if prescribing (non-critical but expected).",
+          "Uses clear, non-alarming language, checks understanding, and provides a brief plan for monitoring symptoms and renal red flags (e.g., swelling, foamy urine, reduced urine output, rising BP).",
+          "Does not suggest NSAIDs as first-line analgesia, does not recommend nephrotoxic agents without renal assessment, and does not claim curative therapy; emphasizes supportive care and monitoring.",
+          "Agent must explain_diagnosis: multicentric carpo-tarsal osteolysis with or without nephropathy, kidney screening",
+          "Agent must explain_treatment: acetaminophen, avoid NSAIDs",
+          "Agent should arrive at or consider the diagnosis: multicentric carpo-tarsal osteolysis with or without nephropathy",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L2_insomnia_(disease)_4839",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L2)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: insomnia (disease). Differentials: . Difficulty: L2. Seed: 4839"
+      },
+      "user_scenario": {
+        "persona": "46-year-old female patient, education: college, occupation: Project coordinator at a mid-size logistics company",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I can’t sleep at night, and it’s starting to mess up my days.",
+          "known_info": "Chief complaint: I can’t sleep at night, and it’s starting to mess up my days.. Vitals: {\"blood_pressure\": \"138/86 mmHg\", \"heart_rate\": \"92 bpm\", \"temperature\": \"36.8 C\", \"respiratory_rate\": \"16 breaths/min\", \"bmi\": \"28.4 kg/m2\"}. Current medications: Glutethimide 250 mg PO at bedtime as needed for sleep, Sertraline 50 mg PO daily, Omeprazole 20 mg PO daily, Ibuprofen 400 mg PO every 6-8 hours as needed for pain, Melatonin 3 mg PO at bedtime (OTC), Caffeine tablets 200 mg PO in the morning as needed for fatigue (OTC). Allergies: Penicillin (hives), Diphenhydramine (paradoxical agitation).",
+          "unknown_info": "insomnia (disease)",
+          "task_instructions": "You are LiXX, a 46-year-old anxious project coordinator. You speak tangentially, jumping between work stress, health worries, and sleep details. Open with: “I can’t sleep at night, and it’s starting to mess up my days.” Volunteer: takes >1 hour to fall asleep, frequent awakenings, can’t return to sleep, daytime fog/exhaustion, for 2 months.\n\nIf asked, share: 4–5 hours on work nights; wake 3–4am with racing thoughts; irritable; poor focus/mistakes; afternoon coffee; melatonin didn’t help; OTC sleep aid causes next-day grogginess.\n\nHold back unless specifically asked about habits: phone scrolling 1–2 hours in bed, 2 evening drinks to “wind down,” little exercise/outdoors, weekend sleep-ins, weight gain.\n\nBe resistant about: loud snoring/pauses/gasping, higher anxiety, cannabis gummies, fear of dependence—minimize at first, admit if asked directly.\n\nOffer misconceptions: thyroid/heart pounding, low blood sugar shakiness, “long COVID,” possible ADHD.\n\nPush for a quick medication fix; worry CBT-I and sleep studies are expensive/time-consuming. If clinician is empathic, soften and share more details, but stay worried about costs and job performance."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Insomnia disorder"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          },
+          {
+            "action_id": "tool_1_prescribe_medication",
+            "requestor": "assistant",
+            "name": "prescribe_medication",
+            "arguments": {
+              "medication": "Non-pharmacologic first-line (CBT-I); consider short-term pharmacotherapy only if indicated after safety checks",
+              "indication": "Insomnia",
+              "duration": "As appropriate; CBT-I course and/or time-limited hypnotic use",
+              "patient_instructions": "CBT-I referral/resources; sleep hygiene; avoid glutethimide"
+            },
+            "info": null,
+            "compare_args": [
+              "medication",
+              "indication",
+              "duration",
+              "patient_instructions"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "insomnia (disease)"
+        ],
+        "nl_assertions": [
+          "Explains the diagnosis explicitly using the word 'insomnia' and distinguishes acute vs chronic and/or primary vs secondary insomnia in plain language.",
+          "Elicits key insomnia features (sleep onset vs maintenance vs early awakening, frequency, duration, daytime impairment) and assesses impact on functioning.",
+          "Screens for common contributors and secondary causes before finalizing treatment: sleep hygiene, stress/anxiety/depression symptoms, substance use (caffeine, alcohol, cannabis), nicotine, shift work, pain, nocturia, reflux, restless legs symptoms, and obstructive sleep apnea red flags (snoring, witnessed apneas, excessive daytime sleepiness).",
+          "Recommends CBT-I as first-line therapy and explains what CBT-I involves (stimulus control, sleep restriction, cognitive restructuring, relaxation) and expected timeline for benefit.",
+          "Provides sleep hygiene counseling (regular wake time, limit naps, limit caffeine/alcohol near bedtime, reduce screen time, bedroom environment, use bed only for sleep/sex).",
+          "Explicitly advises to avoid glutethimide (obsolete/unsafe sedative-hypnotic) as part of treatment explanation.",
+          "Before prescribing any medication, performs and documents critical safety checks in conversation: allergy_check, drug_interaction_check, and contraindication_check (e.g., pregnancy, severe hepatic impairment, respiratory disease/OSA risk, substance use disorder, fall risk, older age, concomitant CNS depressants).",
+          "If pharmacotherapy is considered, uses a time-limited approach, lowest effective dose, and discusses risks (next-day sedation, cognitive impairment, falls, dependence, complex sleep behaviors) and avoidance of alcohol/other sedatives.",
+          "Avoids inappropriate or unsafe prescribing: does not recommend glutethimide; avoids long-term benzodiazepines as first-line for chronic insomnia; avoids hypnotics when high suspicion for untreated OSA or significant respiratory depression risk without addressing it.",
+          "Sets expectations and safety netting: advises when to seek urgent care (suicidal ideation, severe mood symptoms, signs of mania, dangerous sleepiness while driving) and provides a follow-up timeframe to reassess response and side effects.",
+          "Agent must explain_diagnosis: insomnia",
+          "Agent must explain_treatment: CBT-I, avoid glutethimide",
+          "Agent should arrive at or consider the diagnosis: insomnia (disease)",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform drug_interaction_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L1_myofibrillar_myopathy_4840",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L1)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: myofibrillar myopathy. Differentials: . Difficulty: L1. Seed: 4840"
+      },
+      "user_scenario": {
+        "persona": "47-year-old male patient, education: college, occupation: IT support specialist at a mid-sized manufacturing company",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "Over the last year or so, my legs have been getting weaker and I keep tripping.",
+          "known_info": "Chief complaint: Over the last year or so, my legs have been getting weaker and I keep tripping.. Vitals: {\"blood_pressure\": \"132/84 mmHg\", \"heart_rate\": \"92 bpm\", \"temperature\": \"36.8 C\", \"respiratory_rate\": \"18 breaths/min\", \"bmi\": \"28.4\"}. Current medications: lisinopril 10 mg PO daily, rosuvastatin 10 mg PO nightly, metformin ER 500 mg PO daily with dinner, vitamin D3 (cholecalciferol) 2000 IU PO daily. Allergies: Penicillin - urticaria (hives) as a teenager.",
+          "unknown_info": "myofibrillar myopathy",
+          "task_instructions": "You are ZhangXX, a 47-year-old male IT support specialist with a college education. You are cooperative and speak clearly and directly. Start by saying: “Over the last year or so, my legs have been getting weaker and I keep tripping.” Early in the visit, also volunteer: stairs are hard and you pull on the railing; rising from a low chair/toilet takes effort; hands feel weaker opening jars/turning doorknobs. If asked about other symptoms, mention fatigue with simple chores, muscle soreness after light activity, occasional choking/coughing with water, voice weaker by day’s end, brief heart fluttering, and shortness of breath when lying flat or waking needing a deep breath. Do not volunteer hidden details unless specifically asked about sleep/breathing/swelling/weight or muscle changes/balance; then reveal sleeping propped up, morning headaches/unrefreshed sleep, evening ankle puffiness, muscle bulk loss, and worse balance in the dark/uneven ground. Resist discussing urinary accidents unless directly asked; then admit embarrassment. Offer misconceptions: you suspect a pinched back nerve and being out of shape. If clinician shows empathy, thank them and open up more. Express cost/job/insurance worries and hesitancy about genetic testing, frequent PT, and having it documented."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "myofibrillar myopathy"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "myofibrillar myopathy"
+        ],
+        "nl_assertions": [
+          "States the diagnosis explicitly as 'myofibrillar myopathy' and explains it in patient-friendly language (a genetic muscle disease affecting muscle fibers, often progressive).",
+          "Mentions genetic testing as part of confirming the diagnosis and/or identifying the subtype (e.g., discussing benefits, limitations, and implications for family).",
+          "Elicits key symptom history relevant to myopathy (pattern of weakness, progression, falls, myalgias, exercise intolerance) and functional impact (stairs, rising from chair, hand function).",
+          "Screens for cardiopulmonary involvement and red flags (palpitations/syncope, exertional dyspnea/orthopnea, chest pain, sleep-disordered breathing symptoms, dysphagia/aspiration, severe rapid progression).",
+          "Asks about family history of neuromuscular disease, cardiomyopathy/arrhythmias, or sudden death.",
+          "Performs or describes an appropriate focused neuromuscular exam (proximal vs distal weakness, scapular winging, muscle atrophy, reflexes, gait) consistent with the presented case complexity (L1).",
+          "Avoids overclaiming certainty: if not already genetically confirmed, frames diagnosis as suspected/likely and ties confirmation to genetic testing and/or prior biopsy findings.",
+          "Does not prescribe medications or order tests via WRITE tools in this L1 diagnosis task; any discussion of possible next tests is communicated without using disallowed tools.",
+          "Safety checks: if the agent chooses to discuss starting any medication (even hypothetically), it should first ask about allergies before prescribing; however, no prescribing is required for task success.",
+          "Provides a clear follow-up recommendation (neuromuscular specialist and/or genetic counseling, cardiopulmonary screening) in natural language without needing a WRITE referral tool for L1.",
+          "Agent must explain_diagnosis: myofibrillar myopathy, genetic testing",
+          "Agent should arrive at or consider the diagnosis: myofibrillar myopathy",
+          "Agent must perform allergy_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L2_hypertrophic_cardiomyopathy_4841",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L2)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: hypertrophic cardiomyopathy. Differentials: . Difficulty: L2. Seed: 4841"
+      },
+      "user_scenario": {
+        "persona": "29-year-old male patient, education: college, occupation: Software engineer at a mid-size tech company",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I passed out during basketball and my friends said I wasn’t breathing for a bit.",
+          "known_info": "Chief complaint: I passed out during basketball and my friends said I wasn’t breathing for a bit.. Vitals: {\"blood_pressure\": \"92/58 mmHg\", \"heart_rate\": \"128 bpm\", \"temperature\": \"36.7 C\", \"respiratory_rate\": \"24 breaths/min\", \"bmi\": \"24.8 kg/m2\"}. Current medications: Albuterol HFA 90 mcg/actuation 2 puffs inhaled every 4-6 hours as needed for wheeze. Allergies: Penicillin (urticaria).",
+          "unknown_info": "hypertrophic cardiomyopathy",
+          "task_instructions": "You are ZhangXX, a 29-year-old male software engineer. You are anxious but speak clearly and logically. Open with: you passed out during basketball and friends said you weren’t breathing briefly. Volunteer early: sudden racing heart right before blackout, chest tight/heavy while sprinting, more short of breath with exercise lately, and feeling shaky/wiped out afterward. If asked about what others did or EMS details, disclose that friends started CPR and an AED was used; you were told your heart stopped briefly. If asked about prior episodes, mention near-fainting with exertion/after stopping, dizziness on standing when dehydrated, occasional nighttime pounding, and needing an extra pillow sometimes. Do not volunteer at first: avoiding intense workouts, worse symptoms with dehydration/energy drinks, skipped-beat “thump.” Be resistant/hesitant about admitting double-scooped pre-workout and trying a stimulant pill once; only reveal if directly asked about supplements/drugs, and show fear of being benched/parents finding out. Express misconceptions: you thought panic attack, asthma, being out of shape/sleep-deprived, or low blood sugar. If clinician is empathetic, you soften, thank them, and share financial/job/insurance worries and hope for cheaper options."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "hypertrophic cardiomyopathy"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          },
+          {
+            "action_id": "tool_1_prescribe_medication",
+            "requestor": "assistant",
+            "name": "prescribe_medication",
+            "arguments": {
+              "medication": "beta blocker",
+              "indication": "symptom control in hypertrophic cardiomyopathy"
+            },
+            "info": null,
+            "compare_args": [
+              "medication",
+              "indication"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "hypertrophic cardiomyopathy"
+        ],
+        "nl_assertions": [
+          "Explains the diagnosis using the term \"hypertrophic cardiomyopathy\" and explicitly addresses risk of \"cardiac arrest\" in appropriate, non-alarmist language.",
+          "Explains treatment options and includes both \"beta blocker\" and \"ICD\" in the discussion (even if ICD is not prescribed), framing ICD as a risk-reduction option for selected higher-risk patients.",
+          "Performs an allergy check before prescribing and does not proceed with prescribing if a relevant allergy is present (critical safety check).",
+          "Performs a contraindication check before prescribing (e.g., severe bradycardia, high-grade AV block without pacing, decompensated heart failure, severe hypotension, severe asthma/bronchospasm for nonselective agents) and adjusts plan accordingly (critical safety check).",
+          "Considers clinically meaningful drug interactions before prescribing (e.g., additive bradycardia with non-dihydropyridine calcium channel blockers, digoxin, amiodarone; CYP interactions depending on agent) and mitigates risk (non-critical safety check).",
+          "Avoids contraindicated counseling for obstructive HCM (e.g., avoids recommending dehydration, excessive alcohol, or vasodilators/nitrates as symptom treatments) and advises on general trigger avoidance and safe activity guidance.",
+          "Uses shared decision-making, checks patient understanding, and provides clear return precautions for red-flag symptoms (syncope, chest pain, worsening dyspnea, palpitations).",
+          "Agent must explain_diagnosis: hypertrophic cardiomyopathy, cardiac arrest",
+          "Agent must explain_treatment: ICD, beta blocker",
+          "Agent should arrive at or consider the diagnosis: hypertrophic cardiomyopathy",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    }
   ],
   "test": [
-    "primekg_task_7120",
-    "primekg_task_4558"
-  ],
-  "metadata": {
-    "total_tasks": 9,
-    "train_size": 7,
-    "test_size": 2,
-    "split_ratio": "80/20"
-  }
+    {
+      "id": "primekg_L0_congenital_factor_xiii_deficie_4822",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L0)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: congenital factor XIII deficiency. Differentials: . Difficulty: L0. Seed: 4822"
+      },
+      "user_scenario": {
+        "persona": "19-year-old female patient, education: college, occupation: part-time barista and community college student",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I keep getting these big bruises and my bleeding doesn’t seem to stop like it should.",
+          "known_info": "Chief complaint: I keep getting these big bruises and my bleeding doesn’t seem to stop like it should.. Vitals: {\"blood_pressure\": \"104/66 mmHg\", \"heart_rate\": \"102 bpm\", \"temperature\": \"36.8 C\", \"respiratory_rate\": \"18 breaths/min\", \"bmi\": \"21.9 kg/m^2\"}. Current medications: Factor XIII concentrate (recombinant catridecacog) 35 IU/kg IV every 28 days, Tranexamic acid 1 g PO three times daily as needed for heavy menstrual bleeding (max 5 days/cycle), Ferrous sulfate 325 mg PO every other day, Ibuprofen 400 mg PO every 6 hours as needed for cramps (patient-reported OTC use). Allergies: Penicillin (urticarial rash), Latex (contact dermatitis).",
+          "unknown_info": "congenital factor XIII deficiency",
+          "task_instructions": "You are LiXX, a cooperative 19-year-old female community college student and part-time barista. Speak clearly and matter-of-factly. Start with: “I keep getting these big bruises and my bleeding doesn’t seem to stop like it should.” Early in the visit, volunteer: big dark bruises after minor bumps; small cuts ooze a long time; after a tooth pull it bled again later that night after seeming fine.\n\nIf asked about other bleeding, share: long-lasting nosebleeds; gums bleed with brushing/flossing; periods are very heavy and longer; bleeding can come back 1–2 days after procedures; deep “lumps” under skin after bumps.\n\nDo not mention unless specifically asked about joints, fatigue, newborn history, or past bleeding patterns: sore swollen joints after minor injuries; tired after heavy bleeding days; family said your umbilical stump bled a lot as a newborn.\n\nBe hesitant/embarrassed about bleeding after sex and avoiding dental care; only disclose if asked directly and reassured.\n\nExpress misconceptions: maybe low iron, “thin blood” from ibuprofen, or a platelet issue.\n\nBring up cost/insurance worries about factor concentrate, ER vs preventive care, and losing access if insurance/job changes. If the clinician shows empathy, you relax, thank them, and answer more fully."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Congenital factor XIII deficiency"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "congenital factor XIII deficiency"
+        ],
+        "nl_assertions": [
+          "States the diagnosis explicitly as 'factor XIII deficiency' and characterizes it as a 'bleeding disorder'.",
+          "Explains that factor XIII deficiency can cause delayed/recurrent bleeding and poor wound healing, and that routine coagulation tests (PT/aPTT) may be normal (if discussed, must be accurate).",
+          "Elicits key bleeding history appropriate for L0: umbilical stump bleeding in infancy, delayed bleeding after trauma/surgery, easy bruising, mucosal bleeding, menorrhagia, and any history of intracranial hemorrhage.",
+          "Asks about family history/consanguinity and prior diagnostic confirmation or factor replacement history.",
+          "Provides a clear, patient-friendly explanation of what factor XIII does (stabilizes clots) and why deficiency leads to bleeding.",
+          "Mentions treatment conceptually and includes 'factor XIII concentrate' as the preferred replacement therapy (discussion only; no prescribing required for L0).",
+          "Includes required safety framing before any medication discussion: if considering prescribing, must check allergies and contraindications; may also check drug interactions.",
+          "Avoids unsafe or incorrect claims (e.g., does not state that PT/aPTT are typically prolonged in isolated factor XIII deficiency; does not recommend aspirin/NSAIDs for pain without caution in a bleeding disorder).",
+          "Advises bleeding precautions and urgent evaluation for red flags (e.g., head injury, severe headache/neurologic symptoms, uncontrolled bleeding), without overpromising outcomes.",
+          "Agent must explain_diagnosis: factor XIII deficiency, bleeding disorder",
+          "Agent must explain_treatment: factor XIII concentrate",
+          "Agent should arrive at or consider the diagnosis: congenital factor XIII deficiency",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L1_hyper-ige_recurrent_infection__4824",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L1)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: hyper-IgE recurrent infection syndrome 5, autosomal recessive. Differentials: . Difficulty: L1. Seed: 4824"
+      },
+      "user_scenario": {
+        "persona": "12-year-old female patient, education: middle_school, occupation: student (7th grade)",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I keep getting these bad skin infections and chest colds over and over, and this one isn’t going away.",
+          "known_info": "Chief complaint: I keep getting these bad skin infections and chest colds over and over, and this one isn’t going away.. Vitals: {\"blood_pressure\": \"102/64 mmHg\", \"heart_rate\": \"108 bpm\", \"temperature\": \"38.2 C\", \"respiratory_rate\": \"22 breaths/min\", \"bmi\": \"15.9 kg/m^2\"}. Current medications: Trimethoprim-sulfamethoxazole 160/800 mg PO once daily, Fluconazole 100 mg PO once daily, Albuterol HFA 90 mcg/inhalation 2 puffs inhaled every 4-6 hours as needed, Fluticasone propionate HFA 44 mcg/inhalation 2 puffs inhaled twice daily, Triamcinolone 0.1% ointment apply thin layer to affected areas twice daily for flares (max 14 days), Mupirocin 2% ointment apply to crusted lesions three times daily for 5 days, Cetirizine 10 mg PO once daily, Cholecalciferol (vitamin D3) 1000 IU PO once daily. Allergies: Amoxicillin-clavulanate: urticarial rash (age 6), Latex: contact dermatitis.",
+          "unknown_info": "hyper-IgE recurrent infection syndrome 5, autosomal recessive",
+          "task_instructions": "You are LiXX, a cooperative, clear-speaking 12-year-old in 7th grade. Start by saying you keep getting bad skin infections and “chest colds,” and this one isn’t going away. Volunteer: a painful red swollen bump on your thigh that started like a pimple and grew over a few days, on-and-off low fevers this week, and a cough with thick mucus that keeps coming back every few weeks. Add that you’ve had lots of skin infections since you were little.\n\nIf asked, share: bumps sometimes drain pus and scar; you’ve needed antibiotics many times and sometimes abscesses were drained; frequent “sinus infections” with facial pressure; pneumonia more than once; very dry itchy skin; some infections don’t respond to the first antibiotic.\n\nWithhold unless directly asked: past thrush/mouth white patches, loose stools after infections/antibiotics, mild unintentional weight loss, cuts/bites easily infected, and missing/late adult teeth.\n\nBe reluctant/embarrassed about recurring painful genital sores; only disclose if asked gently and privately.\n\nExpress misconceptions: call the thigh lesion a “spider bite,” wonder if it’s allergies/asthma, mention detox/immune boosters. Minimize costs: question preventive meds, specialists/labs, and ER unless severe. If clinician shows empathy, you relax, answer more fully, and admit worries about being “contagious.”"
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Hyper-IgE recurrent infection syndrome 5 (autosomal recessive)"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "hyper-IgE recurrent infection syndrome 5, autosomal recessive"
+        ],
+        "nl_assertions": [
+          "States the diagnosis explicitly as hyper-IgE syndrome (autosomal recessive form) and frames it as a primary immunodeficiency causing recurrent infections.",
+          "Explains that genetic testing is needed/appropriate to confirm the diagnosis and to support family counseling (inheritance/recurrence risk).",
+          "Uses clear, non-alarming language and checks understanding (e.g., invites questions, summarizes key points).",
+          "Mentions infection-prevention strategy at a high level, including antibiotic prophylaxis and antifungal prophylaxis as common components of management (without necessarily prescribing in this L1 task).",
+          "Advises prompt evaluation for fever or signs of infection and provides safety-net instructions (when to seek urgent care).",
+          "Does not prescribe medications in an L1 task; if the agent discusses future medications, it still verbalizes required safety checks before prescribing: allergy_check and contraindication_check (critical), and drug_interaction_check (non-critical).",
+          "Avoids unsupported certainty if confirmatory testing has not been completed (e.g., uses 'suspected/likely' when appropriate) while still documenting the working diagnosis for the task outcome.",
+          "Agent must explain_diagnosis: hyper-IgE syndrome, genetic testing",
+          "Agent must explain_treatment: antibiotic prophylaxis, antifungal prophylaxis",
+          "Agent should arrive at or consider the diagnosis: hyper-IgE recurrent infection syndrome 5, autosomal recessive",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L2_insomnia_(disease)_4827",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L2)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: insomnia (disease). Differentials: . Difficulty: L2. Seed: 4827"
+      },
+      "user_scenario": {
+        "persona": "44-year-old female patient, education: college, occupation: project manager at a mid-sized marketing firm",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I can’t sleep most nights, and it’s starting to mess with everything.",
+          "known_info": "Chief complaint: I can’t sleep most nights, and it’s starting to mess with everything.. Vitals: {\"blood_pressure\": \"136/84 mmHg\", \"heart_rate\": \"92 bpm\", \"temperature\": \"36.8 C\", \"respiratory_rate\": \"16 breaths/min\", \"bmi\": \"27.4 kg/m2\"}. Current medications: Zolpidem 5 mg by mouth at bedtime as needed for sleep, Metformin ER 1000 mg by mouth once daily with evening meal, Lisinopril 10 mg by mouth once daily. Allergies: Penicillin - urticaria (hives).",
+          "unknown_info": "insomnia (disease)",
+          "task_instructions": "You are LiXX, a 44-year-old anxious but clear-speaking project manager. Open with: “I can’t sleep most nights, and it’s starting to mess with everything.” Volunteer: you lie awake for hours, wake 1–2 times/night with trouble returning to sleep, feel foggy/worn out next day, for ~2 months. If asked, add: racing thoughts about work/to-dos, clock-watching and frustration, irritability, afternoon coffee, occasional after-work naps, and higher blood sugars since sleep worsened.\n\nDo NOT mention unless specifically asked about habits/sleep hygiene: scrolling on your phone in bed 1–2 hours, doing work emails from bed, little sunlight/exercise, waking to pee most nights, and early-morning planning.\n\nBe resistant/embarrassed if asked about substances or mood: admit some nights alcohol to “knock out,” occasional gummy or friend’s sleep pill, loud snoring/possible breathing pauses, and feeling down/tearful—minimize and try to move on.\n\nExpress misconceptions: think nocturnal low blood sugar may be waking you, fear dependence on sleep aids, believe you mainly need a stronger sleeping pill, worry nighttime palpitations mean a heart problem.\n\nIf clinician shows empathy, soften, say you’re scared about work performance and costs; assume CBT-I is expensive/not covered and prefer quick relief."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Insomnia disorder"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          },
+          {
+            "action_id": "tool_1_prescribe_medication",
+            "requestor": "assistant",
+            "name": "prescribe_medication",
+            "arguments": {
+              "medication": "zolpidem",
+              "indication": "insomnia",
+              "dose": "5 mg",
+              "route": "PO",
+              "frequency": "once nightly",
+              "duration": "7-14 days",
+              "instructions": "Take only when able to sleep at least 7-8 hours; take immediately before bed; avoid alcohol and other sedatives; do not drive or operate machinery the next day if drowsy; use lowest effective dose; stop and seek care for complex sleep behaviors.",
+              "quantity": "7-14 tablets",
+              "refills": 0
+            },
+            "info": null,
+            "compare_args": [
+              "medication",
+              "indication",
+              "dose",
+              "route",
+              "frequency",
+              "duration",
+              "instructions",
+              "quantity",
+              "refills"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "insomnia (disease)"
+        ],
+        "nl_assertions": [
+          "Agent explicitly states the diagnosis using the term \"insomnia\" and briefly explains what it means (difficulty initiating/maintaining sleep with daytime impairment).",
+          "Agent screens for key contributors and red flags before treating: sleep schedule/caffeine/alcohol, stress/mood symptoms, pain, restless legs symptoms, snoring/apneas, medication/substance contributors, pregnancy status when relevant, and suicidality if depression suspected.",
+          "Before prescribing, agent completes required safety checks: asks about medication allergies (allergy_check), evaluates contraindications/precautions (contraindication_check) including history of complex sleep behaviors with sedatives, severe hepatic impairment, untreated sleep apnea, significant respiratory disease, myasthenia gravis, older age/fall risk, pregnancy/breastfeeding, and substance use disorder risk, and reviews interacting drugs (drug_interaction_check) such as alcohol, opioids, benzodiazepines, other sedatives, and strong CYP3A4 inhibitors.",
+          "Agent explains treatment plan including both \"CBT-I\" as first-line therapy and \"zolpidem\" as a short-term adjunct if appropriate; does not present zolpidem as the only or preferred long-term solution.",
+          "If zolpidem is used, agent recommends the lowest effective dose and short duration, provides safe-use counseling (7–8 hours in bed, avoid alcohol/other sedatives, next-day impairment, fall precautions), and warns about complex sleep behaviors (sleepwalking/sleep-driving) with clear stop instructions.",
+          "Agent avoids unsafe prescribing: no early refills, no long-term nightly use without reassessment, and no co-prescribing advice that encourages combining zolpidem with other CNS depressants.",
+          "Agent provides a follow-up expectation (timeframe and what to monitor) in natural language even if not using a follow-up tool, including reassessment of sleep, side effects, and need for ongoing therapy.",
+          "Agent uses shared decision-making, addresses patient goals/concerns, and offers sleep hygiene/behavioral strategies consistent with CBT-I (stimulus control, sleep restriction principles, consistent wake time) without misinformation.",
+          "Agent must explain_diagnosis: insomnia",
+          "Agent must explain_treatment: zolpidem, CBT-I",
+          "Agent should arrive at or consider the diagnosis: insomnia (disease)",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform contraindication_check before prescribing",
+          "Agent must perform drug_interaction_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    },
+    {
+      "id": "primekg_L3_autosomal_dominant_nocturnal_f_4836",
+      "description": {
+        "purpose": "Clinical consultation - diagnostic_uncertainty (L3)",
+        "relevant_policies": null,
+        "notes": "PrimeKG enriched task. Disease: autosomal dominant nocturnal frontal lobe epilepsy. Differentials: . Difficulty: L3. Seed: 4836"
+      },
+      "user_scenario": {
+        "persona": "28-year-old male patient, education: college, occupation: IT support specialist (night-shift, rotating on-call)",
+        "instructions": {
+          "domain": "internal_medicine",
+          "reason_for_call": "I keep having these weird episodes in my sleep—my partner says I suddenly jerk, sit up, and sometimes shout, and I don’t remember it.",
+          "known_info": "Chief complaint: I keep having these weird episodes in my sleep—my partner says I suddenly jerk, sit up, and sometimes shout, and I don’t remember it.. Vitals: {\"blood_pressure\": \"122/78 mmHg\", \"heart_rate\": \"84 bpm\", \"temperature\": \"36.8 C\", \"respiratory_rate\": \"16 breaths/min\", \"bmi\": \"26.1 kg/m^2\"}. Current medications: Acitretin 25 mg PO once daily, Carbamazepine extended-release 400 mg PO twice daily, Vitamin D3 (cholecalciferol) 1000 IU PO once daily. Allergies: Penicillin - urticarial rash (childhood).",
+          "unknown_info": "autosomal dominant nocturnal frontal lobe epilepsy",
+          "task_instructions": "You are ZhangXX, a 28-year-old male IT support specialist on rotating night shifts. You are vague and a bit evasive; answer briefly unless asked follow-ups. Start by describing “weird sleep episodes”: you suddenly bolt upright, jerk/kick/thrash for a few seconds, sometimes shout, happen most nights (often more than once), you don’t remember, you fall back asleep, and you wake tired/unrefreshed.\nOnly if asked, add details: usually <1 minute; often soon after falling asleep but can be later; eyes open but you’re “not there”; sometimes wake with racing heart/panic; occasional tongue-side bite/sore jaw; bruises/knocked items; bladder loss once; worse with stress/sleep loss; since teens, worse lately; family member with “night seizures.”\nDo not volunteer daytime blank-outs, rising stomach sensation, irritability, avoidance of travel unless directly asked about daytime symptoms/aura/mood/impact.\nResist discussing sexual-type movements or hitting your partner; deny at first (“not really”), admit only if asked about injuries/sexual behaviors/safety.\nExpress misconceptions: think panic attacks/PTSD nightmares/sleepwalking; melatonin/caffeine cuts didn’t help.\nBe skeptical about costly tests/meds and worry about insurance/job/driving. If clinician is empathetic, soften slightly and share more but remain concerned about costs/labels."
+        }
+      },
+      "ticket": null,
+      "initial_state": null,
+      "evaluation_criteria": {
+        "actions": [
+          {
+            "action_id": "tool_0_record_diagnosis",
+            "requestor": "assistant",
+            "name": "record_diagnosis",
+            "arguments": {
+              "diagnosis": "Autosomal dominant nocturnal frontal lobe epilepsy (ADNFLE)"
+            },
+            "info": null,
+            "compare_args": [
+              "diagnosis"
+            ]
+          },
+          {
+            "action_id": "tool_1_prescribe_medication",
+            "requestor": "assistant",
+            "name": "prescribe_medication",
+            "arguments": {
+              "medication": "carbamazepine",
+              "indication": "Autosomal dominant nocturnal frontal lobe epilepsy"
+            },
+            "info": null,
+            "compare_args": [
+              "medication",
+              "indication"
+            ]
+          },
+          {
+            "action_id": "tool_2_refer_to_specialist",
+            "requestor": "assistant",
+            "name": "refer_to_specialist",
+            "arguments": {
+              "specialty": "Neurology (Epileptology if available)",
+              "reason": "Confirm diagnosis, optimize antiseizure regimen, consider EEG/video-EEG and genetic counseling given autosomal dominant pattern"
+            },
+            "info": null,
+            "compare_args": [
+              "specialty",
+              "reason"
+            ]
+          }
+        ],
+        "env_assertions": null,
+        "communicate_info": [
+          "autosomal dominant nocturnal frontal lobe epilepsy"
+        ],
+        "nl_assertions": [
+          "Before prescribing, the agent performs an allergy check and does not prescribe carbamazepine if a serious hypersensitivity history is present (critical).",
+          "Before prescribing, the agent performs a drug interaction check (e.g., warfarin, DOACs, hormonal contraception, macrolides/azoles, other antiseizure meds) and addresses clinically significant interactions (critical).",
+          "Before prescribing, the agent performs a contraindication check for carbamazepine (e.g., prior bone marrow suppression, significant hepatic disease, certain cardiac conduction disorders, pregnancy considerations, HLA-B*1502/HLA-A*3101 risk discussion/testing as appropriate) and modifies plan if present (critical).",
+          "The agent clearly explains the diagnosis using the exact terms \"autosomal dominant nocturnal frontal lobe epilepsy\" and \"seizures\" and distinguishes seizures from sleep disorders in plain language.",
+          "The agent explains treatment using the exact terms \"autosomal dominant nocturnal frontal lobe epilepsy\" and \"carbamazepine\", including expected benefits, common adverse effects (e.g., dizziness, diplopia, hyponatremia, rash), and serious warning signs (e.g., rash/fever, jaundice, infection symptoms) requiring urgent care.",
+          "The agent provides seizure safety counseling: driving/workplace safety per local rules, avoiding sleep deprivation and alcohol excess, and nocturnal injury prevention.",
+          "The agent assesses pregnancy potential/contraception needs when relevant and counsels on carbamazepine interaction with hormonal contraception and teratogenic risk; offers appropriate alternatives or mitigation (e.g., non-hormonal contraception, specialist input).",
+          "The agent recommends appropriate follow-up/monitoring plan (e.g., clinical response, adverse effects, labs as clinically indicated) even if not required as an outcome action.",
+          "Agent must explain_diagnosis: autosomal dominant nocturnal frontal lobe epilepsy, seizures",
+          "Agent must explain_treatment: autosomal dominant nocturnal frontal lobe epilepsy, carbamazepine",
+          "Agent should arrive at or consider the diagnosis: autosomal dominant nocturnal frontal lobe epilepsy",
+          "Agent must perform allergy_check before prescribing",
+          "Agent must perform drug_interaction_check before prescribing",
+          "Agent must perform contraindication_check before prescribing"
+        ],
+        "reward_basis": [
+          "CLINICAL_PROCESS"
+        ],
+        "medical_criteria": null
+      }
+    }
+  ]
 }

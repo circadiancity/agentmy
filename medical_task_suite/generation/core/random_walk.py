@@ -19,7 +19,7 @@ PrimeKG Random Walk 集成
 import json
 import random
 import networkx as nx
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional, Set, Tuple
 from dataclasses import dataclass, field
 from pathlib import Path
 from collections import defaultdict

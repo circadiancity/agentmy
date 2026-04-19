@@ -1,0 +1,13 @@
+{
+  "total_tasks": 20,
+  "train_tasks": 16,
+  "test_tasks": 4,
+  "difficulty_distribution": {
+    "L0": 1,
+    "L1": 9,
+    "L3": 2,
+    "L2": 8
+  },
+  "seed": 4822,
+  "model": "azure/gpt-5.2"
+}

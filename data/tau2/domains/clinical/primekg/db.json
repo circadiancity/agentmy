@@ -1,20 +1,2954 @@
 {
-  "domain": "primekg_internal_medicine",
-  "description": "Medical consultation tasks generated from PrimeKG knowledge graph using Random Walk algorithm with new medical format",
-  "source": "Harvard Medical School PrimeKG",
-  "task_count": 9,
-  "metadata": {
-    "primekg_version": "v2",
-    "primekg_nodes": 23087,
-    "primekg_edges": 617118,
-    "generated_by": "PrimeKG Random Walk Generator v2.1",
-    "generated_date": "2025-03-26",
-    "algorithm": "Random Walk with weighted edge selection",
-    "format_version": "2.1",
-    "features": [
-      "medical_persona: Structured patient data",
-      "medical_criteria: Tool categories, reasoning steps, safety checks",
-      "multi_turn: 5-10 conversation turns"
+  "patients": {
+    "P001": {
+      "patient_id": "P001",
+      "name": "Margaret Chen",
+      "age": 62,
+      "gender": "Female",
+      "chief_complaint": "Increased thirst and frequent urination for 3 weeks",
+      "vitals": {
+        "blood_pressure": "142/88",
+        "heart_rate": 78,
+        "temperature": 98.4,
+        "respiratory_rate": 16,
+        "spo2": 98.0,
+        "weight_kg": 89.5,
+        "height_cm": 162.0
+      },
+      "history": {
+        "past_medical": ["Type 2 Diabetes Mellitus (diagnosed 8 years ago)", "Hypertension", "Hyperlipidemia"],
+        "surgical": ["Cholecystectomy (2018)"],
+        "family": ["Father: MI at age 58", "Mother: Type 2 DM", "Sister: Breast cancer"],
+        "social": {
+          "smoking": "Never",
+          "alcohol": "Occasional, 1-2 glasses wine per week",
+          "occupation": "Retired teacher",
+          "exercise": "Walks 20 minutes 3x/week"
+        }
+      },
+      "allergies": ["Sulfonamides"],
+      "current_medications": ["Metformin 1000mg BID", "Lisinopril 20mg daily", "Atorvastatin 40mg daily", "Aspirin 81mg daily"],
+      "conditions": ["Type 2 Diabetes Mellitus", "Hypertension", "Hyperlipidemia"],
+      "insurance": "Medicare Part B"
+    },
+    "P002": {
+      "patient_id": "P002",
+      "name": "Robert Williams",
+      "age": 71,
+      "gender": "Male",
+      "chief_complaint": "Worsening shortness of breath and ankle swelling for 2 weeks",
+      "vitals": {
+        "blood_pressure": "156/94",
+        "heart_rate": 92,
+        "temperature": 98.2,
+        "respiratory_rate": 22,
+        "spo2": 93.0,
+        "weight_kg": 102.3,
+        "height_cm": 178.0
+      },
+      "history": {
+        "past_medical": ["Congestive Heart Failure (NYHA Class III)", "Hypertension", "Atrial Fibrillation", "Type 2 Diabetes Mellitus"],
+        "surgical": ["Coronary artery bypass graft (2019)", "Pacemaker insertion (2021)"],
+        "family": ["Father: CHF, died at 68", "Mother: Stroke at 72"],
+        "social": {
+          "smoking": "Former, quit 10 years ago, 30 pack-year history",
+          "alcohol": "None",
+          "occupation": "Retired mechanic",
+          "exercise": "Limited due to dyspnea"
+        }
+      },
+      "allergies": ["Penicillin", "Iodine contrast dye"],
+      "current_medications": ["Furosemide 40mg BID", "Carvedilol 25mg BID", "Lisinopril 10mg daily", "Warfarin 5mg daily", "Metformin 500mg BID", "Digoxin 0.125mg daily"],
+      "conditions": ["Heart Failure", "Hypertension", "Atrial Fibrillation", "Type 2 Diabetes Mellitus"],
+      "insurance": "Medicare Part A and B"
+    },
+    "P003": {
+      "patient_id": "P003",
+      "name": "David Thompson",
+      "age": 67,
+      "gender": "Male",
+      "chief_complaint": "Worsening cough with sputum production and breathlessness for 5 days",
+      "vitals": {
+        "blood_pressure": "138/82",
+        "heart_rate": 88,
+        "temperature": 98.6,
+        "respiratory_rate": 24,
+        "spo2": 90.0,
+        "weight_kg": 72.0,
+        "height_cm": 175.0
+      },
+      "history": {
+        "past_medical": ["COPD (GOLD Stage III)", "Chronic Bronchitis", "Osteoporosis"],
+        "surgical": ["None"],
+        "family": ["Father: Lung cancer", "Mother: COPD"],
+        "social": {
+          "smoking": "Current, 45 pack-year history",
+          "alcohol": "1-2 beers daily",
+          "occupation": "Retired construction worker",
+          "exercise": "Very limited due to dyspnea"
+        }
+      },
+      "allergies": ["Aspirin"],
+      "current_medications": ["Tiotropium 18mcg inhaled daily", "Fluticasone/Salmeterol 250/50 inhaled BID", "Albuterol PRN", "Prednisone 10mg daily", "Alendronate 70mg weekly"],
+      "conditions": ["COPD", "Chronic Bronchitis", "Osteoporosis"],
+      "insurance": "Medicare Part B"
+    },
+    "P004": {
+      "patient_id": "P004",
+      "name": "Sarah Martinez",
+      "age": 28,
+      "gender": "Female",
+      "chief_complaint": "Recurrent wheezing and chest tightness, especially at night",
+      "vitals": {
+        "blood_pressure": "118/74",
+        "heart_rate": 82,
+        "temperature": 98.6,
+        "respiratory_rate": 20,
+        "spo2": 96.0,
+        "weight_kg": 63.0,
+        "height_cm": 165.0
+      },
+      "history": {
+        "past_medical": ["Asthma (moderate persistent, since childhood)", "Allergic Rhinitis", "Eczema"],
+        "surgical": ["None"],
+        "family": ["Mother: Asthma", "Brother: Eczema", "Maternal grandmother: Asthma"],
+        "social": {
+          "smoking": "Never",
+          "alcohol": "Social, 1-2 drinks on weekends",
+          "occupation": "Graphic designer",
+          "exercise": "Yoga 3x/week, avoids intense cardio due to asthma"
+        }
+      },
+      "allergies": ["Dust mites", "Cat dander", "NSAIDs"],
+      "current_medications": ["Fluticasone 110mcg inhaled BID", "Montelukast 10mg daily", "Albuterol PRN", "Cetirizine 10mg daily"],
+      "conditions": ["Asthma", "Allergic Rhinitis"],
+      "insurance": "Blue Cross PPO"
+    },
+    "P005": {
+      "patient_id": "P005",
+      "name": "James O'Brien",
+      "age": 42,
+      "gender": "Male",
+      "chief_complaint": "Persistent low mood, loss of interest in activities, and insomnia for 2 months",
+      "vitals": {
+        "blood_pressure": "124/78",
+        "heart_rate": 68,
+        "temperature": 98.4,
+        "respiratory_rate": 16,
+        "spo2": 99.0,
+        "weight_kg": 81.0,
+        "height_cm": 180.0
+      },
+      "history": {
+        "past_medical": ["Major Depressive Disorder (recurrent)", "Generalized Anxiety Disorder", "Insomnia"],
+        "surgical": ["Appendectomy (2005)"],
+        "family": ["Mother: Depression", "Uncle: Bipolar disorder", "Father: Alcohol use disorder"],
+        "social": {
+          "smoking": "Former, quit 5 years ago",
+          "alcohol": "2-3 drinks per week",
+          "occupation": "Software engineer",
+          "exercise": "Previously ran 3x/week, stopped 2 months ago"
+        }
+      },
+      "allergies": ["None known"],
+      "current_medications": ["Sertraline 100mg daily", "Trazodone 50mg at bedtime"],
+      "conditions": ["Major Depressive Disorder", "Generalized Anxiety Disorder"],
+      "insurance": "Aetna HMO"
+    },
+    "P006": {
+      "patient_id": "P006",
+      "name": "Patricia Johnson",
+      "age": 58,
+      "gender": "Female",
+      "chief_complaint": "Chronic fatigue, weight gain, and constipation for 3 months",
+      "vitals": {
+        "blood_pressure": "128/80",
+        "heart_rate": 58,
+        "temperature": 97.2,
+        "respiratory_rate": 14,
+        "spo2": 98.0,
+        "weight_kg": 82.0,
+        "height_cm": 168.0
+      },
+      "history": {
+        "past_medical": ["Hypothyroidism", "Hyperlipidemia", "Vitamin D deficiency"],
+        "surgical": ["Hysterectomy (2015)"],
+        "family": ["Mother: Hypothyroidism", "Sister: Hashimoto's thyroiditis"],
+        "social": {
+          "smoking": "Never",
+          "alcohol": "Rare",
+          "occupation": "Office manager",
+          "exercise": "Minimal due to fatigue"
+        }
+      },
+      "allergies": ["Latex"],
+      "current_medications": ["Levothyroxine 100mcg daily", "Atorvastatin 20mg daily", "Vitamin D3 2000 IU daily", "Calcium 600mg BID"],
+      "conditions": ["Hypothyroidism", "Hyperlipidemia"],
+      "insurance": "United Healthcare"
+    },
+    "P007": {
+      "patient_id": "P007",
+      "name": "William Davis",
+      "age": 74,
+      "gender": "Male",
+      "chief_complaint": "Bilateral knee pain worsening over 6 months, difficulty climbing stairs",
+      "vitals": {
+        "blood_pressure": "136/84",
+        "heart_rate": 72,
+        "temperature": 98.4,
+        "respiratory_rate": 16,
+        "spo2": 97.0,
+        "weight_kg": 95.0,
+        "height_cm": 173.0
+      },
+      "history": {
+        "past_medical": ["Osteoarthritis (bilateral knees, lumbar spine)", "Hypertension", "Benign Prostatic Hyperplasia", "GERD"],
+        "surgical": ["Right knee arthroscopy (2018)", "Hernia repair (2010)"],
+        "family": ["Mother: Osteoarthritis", "Father: Hypertension, stroke"],
+        "social": {
+          "smoking": "Never",
+          "alcohol": "1 glass of wine with dinner",
+          "occupation": "Retired postal worker",
+          "exercise": "Swimming 2x/week"
+        }
+      },
+      "allergies": ["Codeine"],
+      "current_medications": ["Acetaminophen 500mg TID", "Celecoxib 200mg daily", "Amlodipine 5mg daily", "Tamsulosin 0.4mg daily", "Omeprazole 20mg daily"],
+      "conditions": ["Osteoarthritis", "Hypertension", "Benign Prostatic Hyperplasia", "GERD"],
+      "insurance": "Medicare Advantage"
+    },
+    "P008": {
+      "patient_id": "P008",
+      "name": "Linda Garcia",
+      "age": 51,
+      "gender": "Female",
+      "chief_complaint": "Burning epigastric pain worse after meals and at night for 4 weeks",
+      "vitals": {
+        "blood_pressure": "122/76",
+        "heart_rate": 74,
+        "temperature": 98.6,
+        "respiratory_rate": 16,
+        "spo2": 99.0,
+        "weight_kg": 71.0,
+        "height_cm": 160.0
+      },
+      "history": {
+        "past_medical": ["GERD", "H. pylori gastritis (treated 2022)", "Anxiety"],
+        "surgical": ["C-section x2"],
+        "family": ["Father: Peptic ulcer disease", "Mother: Colon cancer"],
+        "social": {
+          "smoking": "Never",
+          "alcohol": "Social, wine with dinner 2-3 times/week",
+          "occupation": "Restaurant manager",
+          "exercise": "Walking 30 min daily"
+        }
+      },
+      "allergies": ["Erythromycin"],
+      "current_medications": ["Omeprazole 40mg daily", "Buspirone 10mg BID", "Calcium carbonate PRN"],
+      "conditions": ["GERD", "Generalized Anxiety Disorder"],
+      "insurance": "Cigna PPO"
+    },
+    "P009": {
+      "patient_id": "P009",
+      "name": "Dorothy Wilson",
+      "age": 34,
+      "gender": "Female",
+      "chief_complaint": "Fatigue, pallor, and heavy menstrual periods for 4 months",
+      "vitals": {
+        "blood_pressure": "108/68",
+        "heart_rate": 96,
+        "temperature": 98.4,
+        "respiratory_rate": 18,
+        "spo2": 98.0,
+        "weight_kg": 58.0,
+        "height_cm": 163.0
+      },
+      "history": {
+        "past_medical": ["Iron deficiency anemia", "Menorrhagia", "Uterine fibroids"],
+        "surgical": ["None"],
+        "family": ["Mother: Anemia", "Sister: Uterine fibroids"],
+        "social": {
+          "smoking": "Never",
+          "alcohol": "Rare",
+          "occupation": "Elementary school teacher",
+          "exercise": "Light yoga"
+        }
+      },
+      "allergies": ["None known"],
+      "current_medications": ["Ferrous sulfate 325mg BID", "Vitamin C 500mg daily", "Tranexamic acid 1300mg during menses"],
+      "conditions": ["Iron Deficiency Anemia", "Menorrhagia"],
+      "insurance": "Anthem Blue Cross"
+    },
+    "P010": {
+      "patient_id": "P010",
+      "name": "Thomas Anderson",
+      "age": 55,
+      "gender": "Male",
+      "chief_complaint": "Productive cough with yellow-green sputum, fever, and chills for 3 days",
+      "vitals": {
+        "blood_pressure": "130/82",
+        "heart_rate": 102,
+        "temperature": 101.8,
+        "respiratory_rate": 24,
+        "spo2": 94.0,
+        "weight_kg": 85.0,
+        "height_cm": 176.0
+      },
+      "history": {
+        "past_medical": ["Community-acquired pneumonia (current)", "Type 2 Diabetes Mellitus", "Hypertension"],
+        "surgical": ["None"],
+        "family": ["Father: COPD", "Mother: Type 2 DM"],
+        "social": {
+          "smoking": "Former, quit 3 years ago, 20 pack-year history",
+          "alcohol": "Social, 2-3 beers on weekends",
+          "occupation": "Warehouse manager",
+          "exercise": "Occasional walking"
+        }
+      },
+      "allergies": ["Penicillin"],
+      "current_medications": ["Levofloxacin 750mg daily", "Metformin 1000mg BID", "Lisinopril 10mg daily", "Guaifenesin PRN"],
+      "conditions": ["Pneumonia", "Type 2 Diabetes Mellitus", "Hypertension"],
+      "insurance": "Kaiser Permanente"
+    },
+    "P011": {
+      "patient_id": "P011",
+      "name": "Karen Lopez",
+      "age": 26,
+      "gender": "Female",
+      "chief_complaint": "Painful urination, frequency, and urgency for 2 days",
+      "vitals": {
+        "blood_pressure": "116/72",
+        "heart_rate": 80,
+        "temperature": 99.8,
+        "respiratory_rate": 16,
+        "spo2": 99.0,
+        "weight_kg": 61.0,
+        "height_cm": 167.0
+      },
+      "history": {
+        "past_medical": ["Recurrent UTIs (3 in past year)"],
+        "surgical": ["None"],
+        "family": ["No significant family history"],
+        "social": {
+          "smoking": "Never",
+          "alcohol": "Social",
+          "occupation": "Nurse",
+          "exercise": "Running 4x/week"
+        }
+      },
+      "allergies": ["Trimethoprim-sulfamethoxazole"],
+      "current_medications": ["Nitrofurantoin 100mg BID (started today)", "Phenazopyridine 200mg TID PRN"],
+      "conditions": ["Urinary Tract Infection"],
+      "insurance": "Humana PPO"
+    },
+    "P012": {
+      "patient_id": "P012",
+      "name": "Jessica Rivera",
+      "age": 38,
+      "gender": "Female",
+      "chief_complaint": "Severe throbbing headache with nausea and light sensitivity for 2 days",
+      "vitals": {
+        "blood_pressure": "126/80",
+        "heart_rate": 76,
+        "temperature": 98.4,
+        "respiratory_rate": 16,
+        "spo2": 99.0,
+        "weight_kg": 66.0,
+        "height_cm": 170.0
+      },
+      "history": {
+        "past_medical": ["Migraine with aura (since age 16)", "Raynaud's phenomenon"],
+        "surgical": ["None"],
+        "family": ["Mother: Migraines", "Maternal aunt: Migraines"],
+        "social": {
+          "smoking": "Never",
+          "alcohol": "Avoids due to migraine trigger",
+          "occupation": "Accountant",
+          "exercise": "Pilates 3x/week"
+        }
+      },
+      "allergies": ["Sumatriptan (causes chest tightness)"],
+      "current_medications": ["Topiramate 50mg BID", "Rizatriptan 10mg PRN", "Ondansetron 4mg PRN"],
+      "conditions": ["Migraine with Aura"],
+      "insurance": "UnitedHealthcare Choice Plus"
+    },
+    "P013": {
+      "patient_id": "P013",
+      "name": "Harold Wright",
+      "age": 69,
+      "gender": "Male",
+      "chief_complaint": "Intermittent palpitations and dizziness for 1 week",
+      "vitals": {
+        "blood_pressure": "148/90",
+        "heart_rate": 112,
+        "temperature": 98.4,
+        "respiratory_rate": 18,
+        "spo2": 96.0,
+        "weight_kg": 88.0,
+        "height_cm": 174.0
+      },
+      "history": {
+        "past_medical": ["Atrial Fibrillation (paroxysmal)", "Hypertension", "Hyperlipidemia", "Obstructive Sleep Apnea"],
+        "surgical": ["Tonsillectomy (childhood)"],
+        "family": ["Father: Atrial fibrillation, stroke", "Brother: MI at age 62"],
+        "social": {
+          "smoking": "Former, quit 15 years ago",
+          "alcohol": "2-3 drinks daily",
+          "occupation": "Retired lawyer",
+          "exercise": "Golf 2x/week"
+        }
+      },
+      "allergies": ["ACE inhibitors (angioedema)"],
+      "current_medications": ["Apixaban 5mg BID", "Metoprolol succinate 100mg daily", "Losartan 100mg daily", "Rosuvastatin 20mg daily", "CPAP at night"],
+      "conditions": ["Atrial Fibrillation", "Hypertension", "Hyperlipidemia", "Obstructive Sleep Apnea"],
+      "insurance": "Medicare Supplement Plan G"
+    },
+    "P014": {
+      "patient_id": "P014",
+      "name": "Richard Kim",
+      "age": 64,
+      "gender": "Male",
+      "chief_complaint": "Foamy urine and bilateral leg swelling for 3 weeks",
+      "vitals": {
+        "blood_pressure": "158/96",
+        "heart_rate": 80,
+        "temperature": 98.2,
+        "respiratory_rate": 18,
+        "spo2": 97.0,
+        "weight_kg": 90.0,
+        "height_cm": 170.0
+      },
+      "history": {
+        "past_medical": ["Chronic Kidney Disease Stage 3b", "Type 2 Diabetes Mellitus", "Hypertension", "Diabetic Nephropathy"],
+        "surgical": ["AV fistula creation (left arm, 2023)"],
+        "family": ["Father: CKD, dialysis", "Mother: Type 2 DM"],
+        "social": {
+          "smoking": "Never",
+          "alcohol": "None",
+          "occupation": "Retired accountant",
+          "exercise": "Light walking"
+        }
+      },
+      "allergies": ["NSAIDs", "IV contrast dye"],
+      "current_medications": ["Insulin glargine 30 units at bedtime", "Insulin lispro per sliding scale", "Losartan 100mg daily", "Amlodipine 10mg daily", "Furosemide 20mg daily", "Sodium bicarbonate 650mg TID", "Sevelamer 800mg TID with meals", "Epoetin alfa 4000 units SC weekly"],
+      "conditions": ["Chronic Kidney Disease", "Type 2 Diabetes Mellitus", "Hypertension", "Diabetic Nephropathy"],
+      "insurance": "Medicare Part B"
+    },
+    "P015": {
+      "patient_id": "P015",
+      "name": "Angela Brooks",
+      "age": 45,
+      "gender": "Female",
+      "chief_complaint": "Unintentional weight loss of 15 lbs, fatigue, and night sweats for 6 weeks",
+      "vitals": {
+        "blood_pressure": "110/70",
+        "heart_rate": 90,
+        "temperature": 100.2,
+        "respiratory_rate": 18,
+        "spo2": 97.0,
+        "weight_kg": 56.0,
+        "height_cm": 165.0
+      },
+      "history": {
+        "past_medical": ["Iron deficiency anemia", "Anxiety"],
+        "surgical": ["None"],
+        "family": ["Mother: Non-Hodgkin lymphoma", "Father: Colon cancer at age 60"],
+        "social": {
+          "smoking": "Never",
+          "alcohol": "Rare",
+          "occupation": "High school teacher",
+          "exercise": "Previously active, now limited by fatigue"
+        }
+      },
+      "allergies": ["Amoxicillin"],
+      "current_medications": ["Ferrous sulfate 325mg daily", "Escitalopram 10mg daily"],
+      "conditions": ["Iron Deficiency Anemia", "Generalized Anxiety Disorder"],
+      "insurance": "Aetna PPO"
+    }
+  },
+  "lab_catalog": {
+    "CBC": {
+      "test_name": "CBC",
+      "category": "Hematology",
+      "unit": "various",
+      "reference_range": "see components",
+      "components": {
+        "WBC": {"unit": "x10^3/uL", "reference_range": "4.5-11.0"},
+        "RBC": {"unit": "x10^6/uL", "reference_range": "4.5-5.5 (M), 4.0-5.0 (F)"},
+        "Hemoglobin": {"unit": "g/dL", "reference_range": "13.5-17.5 (M), 12.0-16.0 (F)"},
+        "Hematocrit": {"unit": "%", "reference_range": "38.3-48.6 (M), 35.5-44.9 (F)"},
+        "MCV": {"unit": "fL", "reference_range": "80-100"},
+        "MCH": {"unit": "pg", "reference_range": "27-33"},
+        "MCHC": {"unit": "g/dL", "reference_range": "32-36"},
+        "Platelets": {"unit": "x10^3/uL", "reference_range": "150-400"},
+        "RDW": {"unit": "%", "reference_range": "11.5-14.5"}
+      }
+    },
+    "BMP": {
+      "test_name": "BMP",
+      "category": "Chemistry",
+      "unit": "various",
+      "reference_range": "see components",
+      "components": {
+        "Sodium": {"unit": "mEq/L", "reference_range": "136-145"},
+        "Potassium": {"unit": "mEq/L", "reference_range": "3.5-5.0"},
+        "Chloride": {"unit": "mEq/L", "reference_range": "98-106"},
+        "CO2": {"unit": "mEq/L", "reference_range": "23-29"},
+        "BUN": {"unit": "mg/dL", "reference_range": "7-20"},
+        "Creatinine": {"unit": "mg/dL", "reference_range": "0.7-1.3 (M), 0.6-1.1 (F)"},
+        "Glucose": {"unit": "mg/dL", "reference_range": "70-100"},
+        "Calcium": {"unit": "mg/dL", "reference_range": "8.5-10.5"}
+      }
+    },
+    "CMP": {
+      "test_name": "CMP",
+      "category": "Chemistry",
+      "unit": "various",
+      "reference_range": "see components",
+      "components": {
+        "Sodium": {"unit": "mEq/L", "reference_range": "136-145"},
+        "Potassium": {"unit": "mEq/L", "reference_range": "3.5-5.0"},
+        "Chloride": {"unit": "mEq/L", "reference_range": "98-106"},
+        "CO2": {"unit": "mEq/L", "reference_range": "23-29"},
+        "BUN": {"unit": "mg/dL", "reference_range": "7-20"},
+        "Creatinine": {"unit": "mg/dL", "reference_range": "0.7-1.3 (M), 0.6-1.1 (F)"},
+        "Glucose": {"unit": "mg/dL", "reference_range": "70-100"},
+        "Calcium": {"unit": "mg/dL", "reference_range": "8.5-10.5"},
+        "Total Protein": {"unit": "g/dL", "reference_range": "6.0-8.3"},
+        "Albumin": {"unit": "g/dL", "reference_range": "3.5-5.5"},
+        "Bilirubin Total": {"unit": "mg/dL", "reference_range": "0.1-1.2"},
+        "Alkaline Phosphatase": {"unit": "U/L", "reference_range": "44-147"},
+        "AST": {"unit": "U/L", "reference_range": "10-40"},
+        "ALT": {"unit": "U/L", "reference_range": "7-56"}
+      }
+    },
+    "LFTs": {
+      "test_name": "LFTs",
+      "category": "Chemistry",
+      "unit": "various",
+      "reference_range": "see components",
+      "components": {
+        "AST": {"unit": "U/L", "reference_range": "10-40"},
+        "ALT": {"unit": "U/L", "reference_range": "7-56"},
+        "Alkaline Phosphatase": {"unit": "U/L", "reference_range": "44-147"},
+        "Total Bilirubin": {"unit": "mg/dL", "reference_range": "0.1-1.2"},
+        "Direct Bilirubin": {"unit": "mg/dL", "reference_range": "0.0-0.3"},
+        "Albumin": {"unit": "g/dL", "reference_range": "3.5-5.5"},
+        "Total Protein": {"unit": "g/dL", "reference_range": "6.0-8.3"},
+        "GGT": {"unit": "U/L", "reference_range": "9-48"}
+      }
+    },
+    "lipid_panel": {
+      "test_name": "lipid_panel",
+      "category": "Chemistry",
+      "unit": "various",
+      "reference_range": "see components",
+      "components": {
+        "Total Cholesterol": {"unit": "mg/dL", "reference_range": "<200"},
+        "LDL": {"unit": "mg/dL", "reference_range": "<100"},
+        "HDL": {"unit": "mg/dL", "reference_range": ">40 (M), >50 (F)"},
+        "Triglycerides": {"unit": "mg/dL", "reference_range": "<150"},
+        "VLDL": {"unit": "mg/dL", "reference_range": "5-40"}
+      }
+    },
+    "HbA1c": {
+      "test_name": "HbA1c",
+      "category": "Endocrine",
+      "unit": "%",
+      "reference_range": "<5.7 (normal), 5.7-6.4 (prediabetes), >=6.5 (diabetes)",
+      "components": null
+    },
+    "TSH": {
+      "test_name": "TSH",
+      "category": "Endocrine",
+      "unit": "mIU/L",
+      "reference_range": "0.4-4.0",
+      "components": null
+    },
+    "urinalysis": {
+      "test_name": "urinalysis",
+      "category": "Urinalysis",
+      "unit": "various",
+      "reference_range": "see components",
+      "components": {
+        "Color": {"unit": "visual", "reference_range": "Yellow"},
+        "Clarity": {"unit": "visual", "reference_range": "Clear"},
+        "Specific Gravity": {"unit": "ratio", "reference_range": "1.005-1.030"},
+        "pH": {"unit": "pH", "reference_range": "4.5-8.0"},
+        "Protein": {"unit": "qualitative", "reference_range": "Negative"},
+        "Glucose": {"unit": "qualitative", "reference_range": "Negative"},
+        "Ketones": {"unit": "qualitative", "reference_range": "Negative"},
+        "Blood": {"unit": "qualitative", "reference_range": "Negative"},
+        "Leukocyte Esterase": {"unit": "qualitative", "reference_range": "Negative"},
+        "Nitrites": {"unit": "qualitative", "reference_range": "Negative"},
+        "WBC": {"unit": "/HPF", "reference_range": "0-5"},
+        "RBC": {"unit": "/HPF", "reference_range": "0-3"},
+        "Bacteria": {"unit": "qualitative", "reference_range": "None"}
+      }
+    },
+    "troponin": {
+      "test_name": "troponin",
+      "category": "Cardiac",
+      "unit": "ng/mL",
+      "reference_range": "<0.04",
+      "components": null
+    },
+    "BNP": {
+      "test_name": "BNP",
+      "category": "Cardiac",
+      "unit": "pg/mL",
+      "reference_range": "<100",
+      "components": null
+    },
+    "coagulation": {
+      "test_name": "coagulation",
+      "category": "Hematology",
+      "unit": "various",
+      "reference_range": "see components",
+      "components": {
+        "PT": {"unit": "seconds", "reference_range": "11-13.5"},
+        "INR": {"unit": "ratio", "reference_range": "0.8-1.1 (normal), 2.0-3.0 (therapeutic on warfarin)"},
+        "aPTT": {"unit": "seconds", "reference_range": "25-35"}
+      }
+    },
+    "ESR_CRP": {
+      "test_name": "ESR_CRP",
+      "category": "Inflammatory",
+      "unit": "various",
+      "reference_range": "see components",
+      "components": {
+        "ESR": {"unit": "mm/hr", "reference_range": "0-20 (M), 0-30 (F)"},
+        "CRP": {"unit": "mg/L", "reference_range": "<3.0"},
+        "hs-CRP": {"unit": "mg/L", "reference_range": "<1.0 (low risk), 1.0-3.0 (avg risk), >3.0 (high risk)"}
+      }
+    },
+    "iron_studies": {
+      "test_name": "iron_studies",
+      "category": "Hematology",
+      "unit": "various",
+      "reference_range": "see components",
+      "components": {
+        "Serum Iron": {"unit": "mcg/dL", "reference_range": "60-170"},
+        "TIBC": {"unit": "mcg/dL", "reference_range": "250-370"},
+        "Transferrin Saturation": {"unit": "%", "reference_range": "20-50"},
+        "Ferritin": {"unit": "ng/mL", "reference_range": "12-150 (F), 12-300 (M)"}
+      }
+    },
+    "thyroid_panel": {
+      "test_name": "thyroid_panel",
+      "category": "Endocrine",
+      "unit": "various",
+      "reference_range": "see components",
+      "components": {
+        "TSH": {"unit": "mIU/L", "reference_range": "0.4-4.0"},
+        "Free T4": {"unit": "ng/dL", "reference_range": "0.8-1.8"},
+        "Free T3": {"unit": "pg/mL", "reference_range": "2.3-4.2"},
+        "Thyroid Peroxidase Ab": {"unit": "IU/mL", "reference_range": "<35"}
+      }
+    },
+    "blood_glucose": {
+      "test_name": "blood_glucose",
+      "category": "Chemistry",
+      "unit": "mg/dL",
+      "reference_range": "Fasting: 70-100, Random: 70-140",
+      "components": null
+    }
+  },
+  "patient_labs": {
+    "P001": [
+      {
+        "test_name": "HbA1c",
+        "values": {"HbA1c": "8.9%"},
+        "interpretation": "Poorly controlled diabetes, above target of <7%",
+        "notes": "Increased from 7.8% six months ago. Consider medication adjustment."
+      },
+      {
+        "test_name": "BMP",
+        "values": {
+          "Sodium": "138",
+          "Potassium": "4.2",
+          "Chloride": "101",
+          "CO2": "25",
+          "BUN": "18",
+          "Creatinine": "0.9",
+          "Glucose": "215",
+          "Calcium": "9.4"
+        },
+        "interpretation": "Elevated fasting glucose consistent with uncontrolled diabetes. Renal function normal.",
+        "notes": null
+      },
+      {
+        "test_name": "lipid_panel",
+        "values": {
+          "Total Cholesterol": "228",
+          "LDL": "142",
+          "HDL": "44",
+          "Triglycerides": "210",
+          "VLDL": "42"
+        },
+        "interpretation": "Elevated LDL, low HDL, elevated triglycerides. Suboptimal lipid control despite statin therapy.",
+        "notes": "Consider increasing statin dose or adding ezetimibe."
+      }
+    ],
+    "P002": [
+      {
+        "test_name": "BNP",
+        "values": {"BNP": "680"},
+        "interpretation": "Significantly elevated, consistent with decompensated heart failure",
+        "notes": "Baseline BNP was 180 at last stable visit."
+      },
+      {
+        "test_name": "BMP",
+        "values": {
+          "Sodium": "132",
+          "Potassium": "5.1",
+          "Chloride": "98",
+          "CO2": "22",
+          "BUN": "32",
+          "Creatinine": "1.6",
+          "Glucose": "168",
+          "Calcium": "9.0"
+        },
+        "interpretation": "Hyponatremia and elevated potassium concerning in CHF. Elevated BUN/Cr suggesting prerenal azotemia from poor cardiac output. Hyperglycemia.",
+        "notes": "Monitor potassium closely given ACE inhibitor use."
+      },
+      {
+        "test_name": "coagulation",
+        "values": {
+          "PT": "18.2",
+          "INR": "2.4",
+          "aPTT": "32"
+        },
+        "interpretation": "INR within therapeutic range (2.0-3.0) for atrial fibrillation",
+        "notes": null
+      },
+      {
+        "test_name": "CBC",
+        "values": {
+          "WBC": "7.2",
+          "RBC": "4.1",
+          "Hemoglobin": "12.8",
+          "Hematocrit": "38.4",
+          "MCV": "93.7",
+          "MCH": "31.2",
+          "MCHC": "33.3",
+          "Platelets": "198",
+          "RDW": "13.2"
+        },
+        "interpretation": "Mild anemia, otherwise within normal limits",
+        "notes": null
+      }
+    ],
+    "P003": [
+      {
+        "test_name": "CBC",
+        "values": {
+          "WBC": "12.4",
+          "RBC": "5.2",
+          "Hemoglobin": "16.1",
+          "Hematocrit": "48.3",
+          "MCV": "92.9",
+          "MCH": "31.0",
+          "MCHC": "33.3",
+          "Platelets": "310",
+          "RDW": "13.0"
+        },
+        "interpretation": "Elevated WBC suggesting infection or COPD exacerbation. Polycythemia consistent with chronic hypoxemia.",
+        "notes": null
+      },
+      {
+        "test_name": "BMP",
+        "values": {
+          "Sodium": "140",
+          "Potassium": "4.0",
+          "Chloride": "96",
+          "CO2": "32",
+          "BUN": "16",
+          "Creatinine": "1.0",
+          "Glucose": "105",
+          "Calcium": "9.6"
+        },
+        "interpretation": "Elevated CO2 consistent with chronic CO2 retention in COPD. Low chloride from compensatory metabolic alkalosis.",
+        "notes": null
+      }
+    ],
+    "P006": [
+      {
+        "test_name": "thyroid_panel",
+        "values": {
+          "TSH": "8.4",
+          "Free T4": "0.6",
+          "Free T3": "2.0",
+          "Thyroid Peroxidase Ab": "285"
+        },
+        "interpretation": "Elevated TSH with low Free T4 and Free T3 indicating inadequately treated hypothyroidism. Elevated TPO antibodies confirm Hashimoto's thyroiditis.",
+        "notes": "Levothyroxine dose needs adjustment. Recheck in 6-8 weeks after dose increase."
+      },
+      {
+        "test_name": "lipid_panel",
+        "values": {
+          "Total Cholesterol": "248",
+          "LDL": "158",
+          "HDL": "52",
+          "Triglycerides": "190",
+          "VLDL": "38"
+        },
+        "interpretation": "Elevated LDL and triglycerides. Dyslipidemia may be worsened by undertreated hypothyroidism.",
+        "notes": "Optimize thyroid replacement before increasing statin dose."
+      }
+    ],
+    "P009": [
+      {
+        "test_name": "CBC",
+        "values": {
+          "WBC": "6.8",
+          "RBC": "3.6",
+          "Hemoglobin": "9.2",
+          "Hematocrit": "28.5",
+          "MCV": "72.0",
+          "MCH": "23.5",
+          "MCHC": "32.3",
+          "Platelets": "380",
+          "RDW": "18.2"
+        },
+        "interpretation": "Microcytic hypochromic anemia with elevated RDW, consistent with iron deficiency anemia. Reactive thrombocytosis.",
+        "notes": null
+      },
+      {
+        "test_name": "iron_studies",
+        "values": {
+          "Serum Iron": "28",
+          "TIBC": "420",
+          "Transferrin Saturation": "7",
+          "Ferritin": "6"
+        },
+        "interpretation": "Low serum iron, elevated TIBC, very low ferritin and transferrin saturation — classic iron deficiency anemia pattern.",
+        "notes": "Severe iron deficiency. Consider IV iron if oral supplementation inadequate."
+      }
+    ],
+    "P010": [
+      {
+        "test_name": "CBC",
+        "values": {
+          "WBC": "16.8",
+          "RBC": "4.8",
+          "Hemoglobin": "14.2",
+          "Hematocrit": "42.6",
+          "MCV": "88.8",
+          "MCH": "29.6",
+          "MCHC": "33.3",
+          "Platelets": "285",
+          "RDW": "13.5"
+        },
+        "interpretation": "Leukocytosis with left shift consistent with bacterial pneumonia.",
+        "notes": "Blood cultures pending."
+      },
+      {
+        "test_name": "BMP",
+        "values": {
+          "Sodium": "136",
+          "Potassium": "3.8",
+          "Chloride": "100",
+          "CO2": "21",
+          "BUN": "22",
+          "Creatinine": "1.1",
+          "Glucose": "198",
+          "Calcium": "9.2"
+        },
+        "interpretation": "Mildly low CO2 may reflect compensatory hyperventilation. Elevated glucose likely stress hyperglycemia plus known diabetes.",
+        "notes": null
+      },
+      {
+        "test_name": "ESR_CRP",
+        "values": {
+          "ESR": "52",
+          "CRP": "84.5",
+          "hs-CRP": "N/A"
+        },
+        "interpretation": "Markedly elevated inflammatory markers consistent with active infection.",
+        "notes": null
+      }
+    ],
+    "P011": [
+      {
+        "test_name": "urinalysis",
+        "values": {
+          "Color": "Amber",
+          "Clarity": "Cloudy",
+          "Specific Gravity": "1.025",
+          "pH": "6.0",
+          "Protein": "Trace",
+          "Glucose": "Negative",
+          "Ketones": "Negative",
+          "Blood": "Trace",
+          "Leukocyte Esterase": "3+",
+          "Nitrites": "Positive",
+          "WBC": "50-100",
+          "RBC": "5-10",
+          "Bacteria": "Many"
+        },
+        "interpretation": "Urinalysis consistent with acute bacterial urinary tract infection. Positive leukocyte esterase, nitrites, and significant bacteriuria.",
+        "notes": "Urine culture sent. Empiric antibiotics started."
+      }
+    ],
+    "P013": [
+      {
+        "test_name": "coagulation",
+        "values": {
+          "PT": "12.0",
+          "INR": "1.0",
+          "aPTT": "28"
+        },
+        "interpretation": "Normal coagulation. Note: Patient is on apixaban which does not reliably affect standard coagulation tests.",
+        "notes": "Anti-Xa level may be considered if assessing apixaban effect."
+      },
+      {
+        "test_name": "BMP",
+        "values": {
+          "Sodium": "141",
+          "Potassium": "4.4",
+          "Chloride": "103",
+          "CO2": "26",
+          "BUN": "19",
+          "Creatinine": "1.1",
+          "Glucose": "98",
+          "Calcium": "9.5"
+        },
+        "interpretation": "All values within normal limits. Renal function adequate for apixaban dosing.",
+        "notes": null
+      },
+      {
+        "test_name": "TSH",
+        "values": {"TSH": "2.1"},
+        "interpretation": "Normal TSH, thyroid dysfunction not a contributing factor to atrial fibrillation.",
+        "notes": null
+      }
+    ],
+    "P014": [
+      {
+        "test_name": "BMP",
+        "values": {
+          "Sodium": "137",
+          "Potassium": "5.4",
+          "Chloride": "104",
+          "CO2": "18",
+          "BUN": "48",
+          "Creatinine": "3.2",
+          "Glucose": "186",
+          "Calcium": "8.2"
+        },
+        "interpretation": "Elevated BUN and creatinine consistent with CKD Stage 3b (eGFR ~18 mL/min). Hyperkalemia, metabolic acidosis (low CO2), and hypocalcemia are complications of advanced CKD. Hyperglycemia present.",
+        "notes": "eGFR has declined from 32 to approximately 18 over 6 months. Nephrology follow-up recommended."
+      },
+      {
+        "test_name": "CBC",
+        "values": {
+          "WBC": "6.5",
+          "RBC": "3.4",
+          "Hemoglobin": "9.8",
+          "Hematocrit": "30.2",
+          "MCV": "88.8",
+          "MCH": "28.8",
+          "MCHC": "32.5",
+          "Platelets": "210",
+          "RDW": "14.8"
+        },
+        "interpretation": "Normocytic anemia consistent with anemia of chronic kidney disease (decreased erythropoietin production).",
+        "notes": "Currently on epoetin alfa. Consider dose adjustment."
+      },
+      {
+        "test_name": "urinalysis",
+        "values": {
+          "Color": "Yellow",
+          "Clarity": "Hazy",
+          "Specific Gravity": "1.010",
+          "pH": "5.5",
+          "Protein": "3+",
+          "Glucose": "2+",
+          "Ketones": "Negative",
+          "Blood": "Negative",
+          "Leukocyte Esterase": "Negative",
+          "Nitrites": "Negative",
+          "WBC": "2",
+          "RBC": "1",
+          "Bacteria": "None"
+        },
+        "interpretation": "Significant proteinuria (3+) consistent with diabetic nephropathy. Glucosuria from hyperglycemia. Fixed specific gravity concerning for decreased concentrating ability.",
+        "notes": "24-hour urine protein or spot urine protein/creatinine ratio recommended."
+      },
+      {
+        "test_name": "HbA1c",
+        "values": {"HbA1c": "8.1%"},
+        "interpretation": "Suboptimally controlled diabetes. Note HbA1c may be falsely low in CKD due to reduced RBC lifespan.",
+        "notes": null
+      }
+    ],
+    "P015": [
+      {
+        "test_name": "CBC",
+        "values": {
+          "WBC": "3.2",
+          "RBC": "3.8",
+          "Hemoglobin": "10.5",
+          "Hematocrit": "32.1",
+          "MCV": "78.0",
+          "MCH": "25.5",
+          "MCHC": "32.7",
+          "Platelets": "132",
+          "RDW": "16.8"
+        },
+        "interpretation": "Pancytopenia with microcytic anemia. Leukopenia and thrombocytopenia raise concern for bone marrow pathology given constitutional symptoms (weight loss, night sweats, fever).",
+        "notes": "Consider peripheral blood smear, LDH, and possible bone marrow biopsy."
+      },
+      {
+        "test_name": "CMP",
+        "values": {
+          "Sodium": "139",
+          "Potassium": "4.1",
+          "Chloride": "102",
+          "CO2": "24",
+          "BUN": "14",
+          "Creatinine": "0.8",
+          "Glucose": "92",
+          "Calcium": "11.2",
+          "Total Protein": "8.8",
+          "Albumin": "3.2",
+          "Bilirubin Total": "0.8",
+          "Alkaline Phosphatase": "168",
+          "AST": "32",
+          "ALT": "28"
+        },
+        "interpretation": "Hypercalcemia and elevated total protein with low albumin suggest elevated globulins — consider lymphoproliferative disorder. Elevated alkaline phosphatase may indicate bone involvement.",
+        "notes": "Serum protein electrophoresis, LDH, uric acid, and CT imaging recommended."
+      },
+      {
+        "test_name": "ESR_CRP",
+        "values": {
+          "ESR": "68",
+          "CRP": "24.5",
+          "hs-CRP": "N/A"
+        },
+        "interpretation": "Markedly elevated inflammatory markers. In the context of B symptoms (fever, weight loss, night sweats), lymphoma must be considered.",
+        "notes": null
+      }
+    ],
+    "P007": [
+      {
+        "test_name": "ESR_CRP",
+        "values": {
+          "ESR": "32",
+          "CRP": "8.2",
+          "hs-CRP": "N/A"
+        },
+        "interpretation": "Mildly elevated inflammatory markers, consistent with osteoarthritis flare.",
+        "notes": null
+      },
+      {
+        "test_name": "BMP",
+        "values": {
+          "Sodium": "140",
+          "Potassium": "4.3",
+          "Chloride": "102",
+          "CO2": "26",
+          "BUN": "17",
+          "Creatinine": "1.0",
+          "Glucose": "94",
+          "Calcium": "9.6"
+        },
+        "interpretation": "All values within normal limits. Renal function normal despite NSAID use.",
+        "notes": "Monitor renal function periodically given chronic celecoxib use."
+      }
     ]
-  }
+  },
+  "patient_imaging": {
+    "P002": [
+      {
+        "imaging_type": "X-ray",
+        "body_region": "Chest",
+        "findings": "Cardiomegaly with cardiothoracic ratio of 0.62. Bilateral pleural effusions, small to moderate on right, small on left. Pulmonary vascular congestion with cephalization of vessels. No consolidation or pneumothorax.",
+        "impression": "Findings consistent with decompensated congestive heart failure with bilateral pleural effusions and pulmonary edema."
+      }
+    ],
+    "P003": [
+      {
+        "imaging_type": "X-ray",
+        "body_region": "Chest",
+        "findings": "Hyperinflated lungs with flattened diaphragms. Increased AP diameter. No acute infiltrate or consolidation. No pleural effusion. Emphysematous changes predominantly in upper lobes.",
+        "impression": "Chronic changes of COPD/emphysema without acute superimposed process."
+      }
+    ],
+    "P007": [
+      {
+        "imaging_type": "X-ray",
+        "body_region": "Knee (bilateral)",
+        "findings": "Bilateral medial compartment joint space narrowing, more prominent on the right. Subchondral sclerosis and osteophyte formation at medial tibial plateau bilaterally. Small right knee joint effusion. No fracture or dislocation.",
+        "impression": "Moderate to severe bilateral medial compartment osteoarthritis, right worse than left."
+      }
+    ],
+    "P010": [
+      {
+        "imaging_type": "X-ray",
+        "body_region": "Chest",
+        "findings": "Right lower lobe consolidation with air bronchograms. Blunting of the right costophrenic angle suggesting small right pleural effusion. No pneumothorax. Heart size normal.",
+        "impression": "Right lower lobe pneumonia with associated small parapneumonic effusion."
+      }
+    ],
+    "P014": [
+      {
+        "imaging_type": "Ultrasound",
+        "body_region": "Kidney",
+        "findings": "Both kidneys are small, measuring 8.5 cm (right) and 8.8 cm (left). Increased cortical echogenicity bilaterally with poor corticomedullary differentiation. No hydronephrosis, renal calculi, or mass. Left arm AV fistula with appropriate flow.",
+        "impression": "Bilateral small echogenic kidneys consistent with chronic kidney disease. No obstruction."
+      }
+    ],
+    "P015": [
+      {
+        "imaging_type": "CT",
+        "body_region": "Chest/Abdomen/Pelvis",
+        "findings": "Multiple enlarged lymph nodes in the mediastinum (largest 3.2 cm), bilateral axillae, and retroperitoneum. Splenomegaly measuring 16.2 cm. No hepatomegaly. No pulmonary nodules or consolidation. No bowel obstruction.",
+        "impression": "Diffuse lymphadenopathy and splenomegaly. Findings highly suspicious for lymphoproliferative disorder. Recommend tissue biopsy for definitive diagnosis."
+      }
+    ],
+    "P013": [
+      {
+        "imaging_type": "Echocardiogram",
+        "body_region": "Heart",
+        "findings": "Left atrial enlargement (4.8 cm). Normal LV size with preserved systolic function (LVEF 58%). Mild mitral regurgitation. Mild tricuspid regurgitation with estimated RVSP 32 mmHg. No pericardial effusion. Diastolic dysfunction Grade I.",
+        "impression": "Left atrial enlargement consistent with atrial fibrillation. Preserved LV systolic function. Mild valvular regurgitation. Grade I diastolic dysfunction."
+      }
+    ]
+  },
+  "drugs": {
+    "metformin": {
+      "drug_name": "metformin",
+      "brand_names": ["Glucophage", "Glucophage XR", "Fortamet", "Riomet"],
+      "drug_class": "Biguanide",
+      "indications": ["Type 2 Diabetes Mellitus", "Prediabetes", "Polycystic Ovary Syndrome (off-label)"],
+      "contraindications": ["eGFR <30 mL/min", "Acute or chronic metabolic acidosis", "Radiographic contrast administration (hold 48 hrs)"],
+      "common_side_effects": ["Nausea", "Diarrhea", "Abdominal cramping", "Metallic taste"],
+      "serious_side_effects": ["Lactic acidosis (rare)", "Vitamin B12 deficiency"],
+      "interactions": {
+        "furosemide": "moderate",
+        "alcohol": "major",
+        "iodinated_contrast": "major",
+        "lisinopril": "minor"
+      },
+      "typical_dose": "500-2000mg daily in divided doses",
+      "pregnancy_category": "B"
+    },
+    "lisinopril": {
+      "drug_name": "lisinopril",
+      "brand_names": ["Zestril", "Prinivil"],
+      "drug_class": "ACE Inhibitor",
+      "indications": ["Hypertension", "Heart Failure", "Diabetic Nephropathy", "Post-MI"],
+      "contraindications": ["History of angioedema", "Bilateral renal artery stenosis", "Pregnancy", "Concomitant aliskiren in diabetic patients"],
+      "common_side_effects": ["Dry cough", "Dizziness", "Headache", "Hyperkalemia"],
+      "serious_side_effects": ["Angioedema", "Acute kidney injury", "Hyperkalemia"],
+      "interactions": {
+        "losartan": "major",
+        "spironolactone": "major",
+        "potassium_supplements": "major",
+        "aliskiren": "major",
+        "NSAIDs": "moderate",
+        "metformin": "minor",
+        "furosemide": "moderate",
+        "lithium": "major"
+      },
+      "typical_dose": "5-40mg daily",
+      "pregnancy_category": "D"
+    },
+    "atorvastatin": {
+      "drug_name": "atorvastatin",
+      "brand_names": ["Lipitor"],
+      "drug_class": "HMG-CoA Reductase Inhibitor (Statin)",
+      "indications": ["Hyperlipidemia", "Atherosclerotic cardiovascular disease prevention", "Familial hypercholesterolemia"],
+      "contraindications": ["Active liver disease", "Unexplained persistent elevated transaminases", "Pregnancy", "Breastfeeding"],
+      "common_side_effects": ["Myalgia", "Headache", "GI upset", "Elevated transaminases"],
+      "serious_side_effects": ["Rhabdomyolysis", "Hepatotoxicity", "New-onset diabetes"],
+      "interactions": {
+        "clarithromycin": "major",
+        "cyclosporine": "major",
+        "gemfibrozil": "major",
+        "niacin": "moderate",
+        "warfarin": "moderate",
+        "diltiazem": "moderate",
+        "grapefruit_juice": "moderate",
+        "colchicine": "moderate"
+      },
+      "typical_dose": "10-80mg daily",
+      "pregnancy_category": "X"
+    },
+    "aspirin": {
+      "drug_name": "aspirin",
+      "brand_names": ["Bayer", "Ecotrin", "Bufferin"],
+      "drug_class": "NSAID / Antiplatelet",
+      "indications": ["Pain", "Fever", "Inflammation", "Antiplatelet therapy for cardiovascular protection", "Acute coronary syndrome"],
+      "contraindications": ["Active GI bleeding", "Aspirin-exacerbated respiratory disease", "Children with viral infections (Reye syndrome)"],
+      "common_side_effects": ["GI upset", "Heartburn", "Easy bruising"],
+      "serious_side_effects": ["GI bleeding", "Hemorrhagic stroke", "Tinnitus", "Reye syndrome in children"],
+      "interactions": {
+        "warfarin": "major",
+        "apixaban": "major",
+        "ibuprofen": "moderate",
+        "clopidogrel": "moderate",
+        "methotrexate": "major",
+        "heparin": "major",
+        "SSRIs": "moderate"
+      },
+      "typical_dose": "81-325mg daily (antiplatelet); 325-650mg q4-6h (analgesic)",
+      "pregnancy_category": "D"
+    },
+    "furosemide": {
+      "drug_name": "furosemide",
+      "brand_names": ["Lasix"],
+      "drug_class": "Loop Diuretic",
+      "indications": ["Heart Failure", "Edema", "Hypertension", "Pulmonary edema", "Ascites"],
+      "contraindications": ["Anuria", "Severe electrolyte depletion", "Hypersensitivity to sulfonamides (cross-reactivity possible)"],
+      "common_side_effects": ["Hypokalemia", "Dehydration", "Dizziness", "Hyperuricemia", "Hyperglycemia"],
+      "serious_side_effects": ["Severe electrolyte imbalance", "Ototoxicity", "Pancreatitis", "Acute kidney injury"],
+      "interactions": {
+        "lisinopril": "moderate",
+        "digoxin": "major",
+        "gentamicin": "major",
+        "metformin": "moderate",
+        "lithium": "major",
+        "NSAIDs": "moderate",
+        "succinylcholine": "moderate",
+        "corticosteroids": "moderate"
+      },
+      "typical_dose": "20-80mg daily or BID",
+      "pregnancy_category": "C"
+    },
+    "carvedilol": {
+      "drug_name": "carvedilol",
+      "brand_names": ["Coreg", "Coreg CR"],
+      "drug_class": "Non-selective Beta-blocker with Alpha-1 blocking activity",
+      "indications": ["Heart Failure", "Hypertension", "Left ventricular dysfunction post-MI"],
+      "contraindications": ["Decompensated heart failure requiring IV inotropes", "Severe bradycardia", "2nd or 3rd degree AV block", "Severe hepatic impairment", "Asthma"],
+      "common_side_effects": ["Dizziness", "Fatigue", "Hypotension", "Bradycardia", "Weight gain"],
+      "serious_side_effects": ["Severe bradycardia", "Heart block", "Bronchospasm", "Worsening heart failure"],
+      "interactions": {
+        "digoxin": "moderate",
+        "insulin": "moderate",
+        "clonidine": "major",
+        "diltiazem": "major",
+        "verapamil": "major",
+        "rifampin": "moderate",
+        "fluoxetine": "moderate"
+      },
+      "typical_dose": "3.125-25mg BID",
+      "pregnancy_category": "C"
+    },
+    "warfarin": {
+      "drug_name": "warfarin",
+      "brand_names": ["Coumadin", "Jantoven"],
+      "drug_class": "Vitamin K Antagonist",
+      "indications": ["Atrial Fibrillation", "DVT/PE treatment and prophylaxis", "Mechanical heart valves", "Stroke prevention"],
+      "contraindications": ["Active bleeding", "Pregnancy", "Severe hepatic disease", "Unsupervised patient with poor compliance"],
+      "common_side_effects": ["Bleeding", "Bruising"],
+      "serious_side_effects": ["Major hemorrhage", "Warfarin-induced skin necrosis", "Purple toe syndrome", "Calciphylaxis"],
+      "interactions": {
+        "aspirin": "major",
+        "atorvastatin": "moderate",
+        "amiodarone": "major",
+        "fluconazole": "major",
+        "metronidazole": "major",
+        "rifampin": "major",
+        "vitamin_K": "major",
+        "cranberry_juice": "moderate",
+        "NSAIDs": "major",
+        "ciprofloxacin": "major",
+        "acetaminophen": "moderate"
+      },
+      "typical_dose": "Individualized, typically 2-10mg daily, adjusted by INR",
+      "pregnancy_category": "X"
+    },
+    "digoxin": {
+      "drug_name": "digoxin",
+      "brand_names": ["Lanoxin"],
+      "drug_class": "Cardiac Glycoside",
+      "indications": ["Heart Failure", "Atrial Fibrillation (rate control)"],
+      "contraindications": ["Ventricular fibrillation", "Hypokalemia", "Hypercalcemia"],
+      "common_side_effects": ["Nausea", "Dizziness", "Visual disturbances (yellow-green halos)"],
+      "serious_side_effects": ["Digitalis toxicity", "Cardiac arrhythmias", "Heart block"],
+      "interactions": {
+        "amiodarone": "major",
+        "verapamil": "major",
+        "quinidine": "major",
+        "furosemide": "major",
+        "spironolactone": "moderate",
+        "carvedilol": "moderate",
+        "erythromycin": "moderate",
+        "antacids": "minor"
+      },
+      "typical_dose": "0.125-0.25mg daily",
+      "pregnancy_category": "C"
+    },
+    "losartan": {
+      "drug_name": "losartan",
+      "brand_names": ["Cozaar"],
+      "drug_class": "Angiotensin II Receptor Blocker (ARB)",
+      "indications": ["Hypertension", "Diabetic Nephropathy", "Stroke prevention in hypertension with LVH"],
+      "contraindications": ["Pregnancy", "Bilateral renal artery stenosis", "Concomitant aliskiren in diabetic patients"],
+      "common_side_effects": ["Dizziness", "Hyperkalemia", "Fatigue"],
+      "serious_side_effects": ["Angioedema (rare)", "Acute kidney injury", "Hyperkalemia"],
+      "interactions": {
+        "lisinopril": "major",
+        "potassium_supplements": "major",
+        "spironolactone": "major",
+        "NSAIDs": "moderate",
+        "lithium": "major",
+        "aliskiren": "major",
+        "rifampin": "moderate",
+        "fluconazole": "moderate"
+      },
+      "typical_dose": "25-100mg daily",
+      "pregnancy_category": "D"
+    },
+    "amlodipine": {
+      "drug_name": "amlodipine",
+      "brand_names": ["Norvasc"],
+      "drug_class": "Calcium Channel Blocker (Dihydropyridine)",
+      "indications": ["Hypertension", "Chronic stable angina", "Vasospastic angina"],
+      "contraindications": ["Severe aortic stenosis", "Cardiogenic shock"],
+      "common_side_effects": ["Peripheral edema", "Dizziness", "Flushing", "Headache"],
+      "serious_side_effects": ["Severe hypotension", "Worsening angina (rare)"],
+      "interactions": {
+        "simvastatin": "major",
+        "cyclosporine": "moderate",
+        "diltiazem": "moderate",
+        "rifampin": "moderate"
+      },
+      "typical_dose": "2.5-10mg daily",
+      "pregnancy_category": "C"
+    },
+    "metoprolol_succinate": {
+      "drug_name": "metoprolol_succinate",
+      "brand_names": ["Toprol-XL"],
+      "drug_class": "Selective Beta-1 Blocker",
+      "indications": ["Hypertension", "Heart Failure", "Angina", "Atrial Fibrillation (rate control)"],
+      "contraindications": ["Severe bradycardia", "Decompensated heart failure", "2nd or 3rd degree heart block", "Cardiogenic shock"],
+      "common_side_effects": ["Fatigue", "Dizziness", "Bradycardia", "Depression"],
+      "serious_side_effects": ["Severe bradycardia", "Heart block", "Bronchospasm", "Masking hypoglycemia in diabetics"],
+      "interactions": {
+        "clonidine": "major",
+        "verapamil": "major",
+        "diltiazem": "major",
+        "fluoxetine": "moderate",
+        "paroxetine": "moderate",
+        "diphenhydramine": "moderate",
+        "rifampin": "moderate"
+      },
+      "typical_dose": "25-200mg daily",
+      "pregnancy_category": "C"
+    },
+    "sertraline": {
+      "drug_name": "sertraline",
+      "brand_names": ["Zoloft"],
+      "drug_class": "Selective Serotonin Reuptake Inhibitor (SSRI)",
+      "indications": ["Major Depressive Disorder", "Generalized Anxiety Disorder", "Panic Disorder", "PTSD", "OCD", "Social Anxiety Disorder"],
+      "contraindications": ["Concurrent MAOI use (within 14 days)", "Concurrent pimozide use"],
+      "common_side_effects": ["Nausea", "Diarrhea", "Insomnia", "Sexual dysfunction", "Headache", "Dry mouth"],
+      "serious_side_effects": ["Serotonin syndrome", "Suicidal ideation (black box warning in <25 yr)", "QT prolongation", "Hyponatremia (SIADH)", "Bleeding risk"],
+      "interactions": {
+        "MAOIs": "major",
+        "tramadol": "major",
+        "linezolid": "major",
+        "pimozide": "major",
+        "warfarin": "moderate",
+        "aspirin": "moderate",
+        "trazodone": "moderate",
+        "lithium": "moderate",
+        "sumatriptan": "moderate",
+        "NSAIDs": "moderate"
+      },
+      "typical_dose": "50-200mg daily",
+      "pregnancy_category": "C"
+    },
+    "trazodone": {
+      "drug_name": "trazodone",
+      "brand_names": ["Desyrel", "Oleptro"],
+      "drug_class": "Serotonin Antagonist and Reuptake Inhibitor (SARI)",
+      "indications": ["Major Depressive Disorder", "Insomnia (off-label)"],
+      "contraindications": ["Concurrent MAOI use", "Concurrent linezolid"],
+      "common_side_effects": ["Drowsiness", "Dizziness", "Dry mouth", "Nausea", "Headache"],
+      "serious_side_effects": ["Priapism", "Serotonin syndrome", "Orthostatic hypotension", "QT prolongation", "Suicidal ideation"],
+      "interactions": {
+        "MAOIs": "major",
+        "sertraline": "moderate",
+        "fluoxetine": "moderate",
+        "ketoconazole": "moderate",
+        "phenytoin": "moderate",
+        "carbamazepine": "moderate",
+        "digoxin": "minor",
+        "warfarin": "moderate"
+      },
+      "typical_dose": "50-150mg at bedtime (insomnia); 150-400mg daily (depression)",
+      "pregnancy_category": "C"
+    },
+    "levothyroxine": {
+      "drug_name": "levothyroxine",
+      "brand_names": ["Synthroid", "Levoxyl", "Tirosint", "Unithroid"],
+      "drug_class": "Thyroid Hormone",
+      "indications": ["Hypothyroidism", "TSH suppression in thyroid cancer"],
+      "contraindications": ["Untreated adrenal insufficiency", "Acute myocardial infarction"],
+      "common_side_effects": ["Usually none at correct dose"],
+      "serious_side_effects": ["Angina/MI (if over-replaced, especially elderly)", "Osteoporosis (if chronically over-replaced)", "Arrhythmias"],
+      "interactions": {
+        "calcium_supplements": "moderate",
+        "iron_supplements": "moderate",
+        "antacids": "moderate",
+        "warfarin": "moderate",
+        "carbamazepine": "moderate",
+        "sucralfate": "moderate",
+        "cholestyramine": "major",
+        "proton_pump_inhibitors": "minor"
+      },
+      "typical_dose": "1.6 mcg/kg/day; typical 50-200 mcg daily",
+      "pregnancy_category": "A"
+    },
+    "omeprazole": {
+      "drug_name": "omeprazole",
+      "brand_names": ["Prilosec", "Prilosec OTC"],
+      "drug_class": "Proton Pump Inhibitor (PPI)",
+      "indications": ["GERD", "Peptic Ulcer Disease", "H. pylori eradication (with antibiotics)", "Zollinger-Ellison syndrome", "NSAID-induced ulcer prophylaxis"],
+      "contraindications": ["Known hypersensitivity", "Concurrent rilpivirine"],
+      "common_side_effects": ["Headache", "Nausea", "Diarrhea", "Abdominal pain", "Flatulence"],
+      "serious_side_effects": ["C. difficile infection", "Hypomagnesemia", "Bone fractures (long-term)", "Vitamin B12 deficiency", "Interstitial nephritis"],
+      "interactions": {
+        "clopidogrel": "major",
+        "methotrexate": "moderate",
+        "levothyroxine": "minor",
+        "iron_supplements": "moderate",
+        "ketoconazole": "moderate",
+        "mycophenolate": "moderate",
+        "tacrolimus": "moderate",
+        "diazepam": "moderate"
+      },
+      "typical_dose": "20-40mg daily",
+      "pregnancy_category": "C"
+    },
+    "celecoxib": {
+      "drug_name": "celecoxib",
+      "brand_names": ["Celebrex"],
+      "drug_class": "COX-2 Selective NSAID",
+      "indications": ["Osteoarthritis", "Rheumatoid Arthritis", "Ankylosing Spondylitis", "Acute pain"],
+      "contraindications": ["Sulfonamide allergy", "Active GI bleeding", "Severe hepatic impairment", "Post-CABG surgery"],
+      "common_side_effects": ["Abdominal pain", "Diarrhea", "Headache", "Dizziness"],
+      "serious_side_effects": ["Cardiovascular thrombotic events", "GI bleeding", "Renal impairment", "Hepatotoxicity"],
+      "interactions": {
+        "warfarin": "major",
+        "aspirin": "moderate",
+        "lisinopril": "moderate",
+        "fluconazole": "moderate",
+        "lithium": "moderate",
+        "furosemide": "moderate",
+        "methotrexate": "moderate"
+      },
+      "typical_dose": "100-200mg daily or BID",
+      "pregnancy_category": "C (D in third trimester)"
+    },
+    "tamsulosin": {
+      "drug_name": "tamsulosin",
+      "brand_names": ["Flomax"],
+      "drug_class": "Alpha-1 Adrenergic Blocker (selective)",
+      "indications": ["Benign Prostatic Hyperplasia", "Ureteral stones (off-label)"],
+      "contraindications": ["Known hypersensitivity"],
+      "common_side_effects": ["Dizziness", "Retrograde ejaculation", "Rhinitis", "Headache"],
+      "serious_side_effects": ["Orthostatic hypotension", "Priapism (rare)", "Intraoperative floppy iris syndrome"],
+      "interactions": {
+        "sildenafil": "major",
+        "tadalafil": "major",
+        "ketoconazole": "moderate",
+        "cimetidine": "moderate",
+        "paroxetine": "moderate"
+      },
+      "typical_dose": "0.4mg daily",
+      "pregnancy_category": "B (not indicated in females)"
+    },
+    "albuterol": {
+      "drug_name": "albuterol",
+      "brand_names": ["ProAir", "Ventolin", "Proventil"],
+      "drug_class": "Short-acting Beta-2 Agonist (SABA)",
+      "indications": ["Asthma (acute relief)", "COPD (acute relief)", "Exercise-induced bronchospasm"],
+      "contraindications": ["Known hypersensitivity"],
+      "common_side_effects": ["Tremor", "Tachycardia", "Palpitations", "Nervousness", "Headache"],
+      "serious_side_effects": ["Paradoxical bronchospasm", "Hypokalemia", "Cardiac arrhythmias"],
+      "interactions": {
+        "beta_blockers": "major",
+        "digoxin": "moderate",
+        "MAOIs": "major",
+        "diuretics": "moderate",
+        "tricyclic_antidepressants": "moderate"
+      },
+      "typical_dose": "2 puffs q4-6h PRN",
+      "pregnancy_category": "C"
+    },
+    "fluticasone": {
+      "drug_name": "fluticasone",
+      "brand_names": ["Flovent", "Flonase", "ArmonAir"],
+      "drug_class": "Inhaled Corticosteroid",
+      "indications": ["Asthma (maintenance)", "COPD (combination therapy)", "Allergic rhinitis (nasal)"],
+      "contraindications": ["Primary treatment of acute bronchospasm", "Untreated fungal infections"],
+      "common_side_effects": ["Oral candidiasis", "Hoarseness", "Pharyngitis", "Headache"],
+      "serious_side_effects": ["Adrenal suppression (high dose, long-term)", "Osteoporosis", "Growth suppression in children", "Glaucoma"],
+      "interactions": {
+        "ritonavir": "major",
+        "ketoconazole": "major",
+        "itraconazole": "moderate"
+      },
+      "typical_dose": "88-440 mcg inhaled BID",
+      "pregnancy_category": "C"
+    },
+    "montelukast": {
+      "drug_name": "montelukast",
+      "brand_names": ["Singulair"],
+      "drug_class": "Leukotriene Receptor Antagonist",
+      "indications": ["Asthma (maintenance)", "Allergic Rhinitis", "Exercise-induced bronchospasm prevention"],
+      "contraindications": ["Known hypersensitivity"],
+      "common_side_effects": ["Headache", "Abdominal pain", "Fatigue"],
+      "serious_side_effects": ["Neuropsychiatric events (black box warning: mood changes, suicidal ideation)", "Eosinophilic vasculitis (Churg-Strauss)"],
+      "interactions": {
+        "phenobarbital": "moderate",
+        "rifampin": "moderate",
+        "gemfibrozil": "minor"
+      },
+      "typical_dose": "10mg daily at bedtime",
+      "pregnancy_category": "B"
+    },
+    "prednisone": {
+      "drug_name": "prednisone",
+      "brand_names": ["Deltasone", "Rayos"],
+      "drug_class": "Systemic Corticosteroid",
+      "indications": ["COPD exacerbation", "Asthma exacerbation", "Autoimmune diseases", "Allergic reactions", "Inflammatory conditions"],
+      "contraindications": ["Systemic fungal infections", "Live vaccines during high-dose therapy"],
+      "common_side_effects": ["Increased appetite", "Weight gain", "Insomnia", "Mood changes", "Hyperglycemia", "Fluid retention"],
+      "serious_side_effects": ["Adrenal suppression", "Osteoporosis", "Avascular necrosis", "Immunosuppression", "Psychosis", "Peptic ulcer", "Cushing syndrome"],
+      "interactions": {
+        "NSAIDs": "moderate",
+        "warfarin": "moderate",
+        "insulin": "moderate",
+        "metformin": "moderate",
+        "furosemide": "moderate",
+        "rifampin": "moderate",
+        "ketoconazole": "moderate",
+        "live_vaccines": "major",
+        "fluoroquinolones": "moderate"
+      },
+      "typical_dose": "5-60mg daily, varies by indication",
+      "pregnancy_category": "C"
+    },
+    "tiotropium": {
+      "drug_name": "tiotropium",
+      "brand_names": ["Spiriva", "Spiriva Respimat"],
+      "drug_class": "Long-acting Muscarinic Antagonist (LAMA)",
+      "indications": ["COPD (maintenance)", "Asthma (add-on therapy)"],
+      "contraindications": ["Known hypersensitivity to atropine or its derivatives"],
+      "common_side_effects": ["Dry mouth", "Constipation", "Urinary retention", "Upper respiratory tract infection"],
+      "serious_side_effects": ["Paradoxical bronchospasm", "Urinary retention", "Narrow-angle glaucoma worsening"],
+      "interactions": {
+        "ipratropium": "moderate",
+        "other_anticholinergics": "moderate"
+      },
+      "typical_dose": "18 mcg inhaled daily (HandiHaler) or 2.5 mcg/actuation 2 puffs daily (Respimat)",
+      "pregnancy_category": "C"
+    },
+    "insulin_glargine": {
+      "drug_name": "insulin_glargine",
+      "brand_names": ["Lantus", "Basaglar", "Toujeo"],
+      "drug_class": "Long-acting Insulin Analog",
+      "indications": ["Type 1 Diabetes Mellitus", "Type 2 Diabetes Mellitus"],
+      "contraindications": ["Hypoglycemia", "Known hypersensitivity"],
+      "common_side_effects": ["Hypoglycemia", "Injection site reactions", "Weight gain"],
+      "serious_side_effects": ["Severe hypoglycemia", "Hypokalemia", "Lipodystrophy"],
+      "interactions": {
+        "beta_blockers": "moderate",
+        "thiazolidinediones": "moderate",
+        "ACE_inhibitors": "moderate",
+        "alcohol": "major",
+        "corticosteroids": "moderate",
+        "sulfonylureas": "moderate"
+      },
+      "typical_dose": "Individualized; typical starting 10 units at bedtime",
+      "pregnancy_category": "C"
+    },
+    "insulin_lispro": {
+      "drug_name": "insulin_lispro",
+      "brand_names": ["Humalog", "Admelog"],
+      "drug_class": "Rapid-acting Insulin Analog",
+      "indications": ["Type 1 Diabetes Mellitus", "Type 2 Diabetes Mellitus"],
+      "contraindications": ["Hypoglycemia"],
+      "common_side_effects": ["Hypoglycemia", "Injection site reactions", "Weight gain"],
+      "serious_side_effects": ["Severe hypoglycemia", "Hypokalemia"],
+      "interactions": {
+        "beta_blockers": "moderate",
+        "ACE_inhibitors": "moderate",
+        "alcohol": "major",
+        "corticosteroids": "moderate"
+      },
+      "typical_dose": "Individualized, given before meals",
+      "pregnancy_category": "B"
+    },
+    "apixaban": {
+      "drug_name": "apixaban",
+      "brand_names": ["Eliquis"],
+      "drug_class": "Direct Oral Anticoagulant (Factor Xa Inhibitor)",
+      "indications": ["Non-valvular Atrial Fibrillation (stroke prevention)", "DVT/PE treatment", "DVT/PE prophylaxis after hip/knee replacement"],
+      "contraindications": ["Active pathological bleeding", "Severe hypersensitivity"],
+      "common_side_effects": ["Bleeding", "Bruising", "Nausea"],
+      "serious_side_effects": ["Major hemorrhage", "Spinal/epidural hematoma", "GI bleeding"],
+      "interactions": {
+        "aspirin": "major",
+        "NSAIDs": "major",
+        "ketoconazole": "major",
+        "rifampin": "major",
+        "carbamazepine": "major",
+        "phenytoin": "major",
+        "heparin": "major",
+        "St_Johns_Wort": "major",
+        "clopidogrel": "moderate"
+      },
+      "typical_dose": "5mg BID (AF); 2.5mg BID (reduced dose criteria)",
+      "pregnancy_category": "B"
+    },
+    "rosuvastatin": {
+      "drug_name": "rosuvastatin",
+      "brand_names": ["Crestor"],
+      "drug_class": "HMG-CoA Reductase Inhibitor (Statin)",
+      "indications": ["Hyperlipidemia", "Atherosclerotic cardiovascular disease prevention"],
+      "contraindications": ["Active liver disease", "Pregnancy", "Breastfeeding"],
+      "common_side_effects": ["Myalgia", "Headache", "Abdominal pain", "Nausea"],
+      "serious_side_effects": ["Rhabdomyolysis", "Hepatotoxicity", "Proteinuria (high dose)", "New-onset diabetes"],
+      "interactions": {
+        "cyclosporine": "major",
+        "gemfibrozil": "major",
+        "warfarin": "moderate",
+        "antacids": "minor",
+        "niacin": "moderate"
+      },
+      "typical_dose": "5-40mg daily",
+      "pregnancy_category": "X"
+    },
+    "levofloxacin": {
+      "drug_name": "levofloxacin",
+      "brand_names": ["Levaquin"],
+      "drug_class": "Fluoroquinolone Antibiotic",
+      "indications": ["Community-acquired Pneumonia", "UTI", "Acute Sinusitis", "Skin Infections"],
+      "contraindications": ["Known hypersensitivity to fluoroquinolones", "Myasthenia gravis"],
+      "common_side_effects": ["Nausea", "Diarrhea", "Headache", "Insomnia", "Dizziness"],
+      "serious_side_effects": ["Tendon rupture (black box warning)", "Peripheral neuropathy", "QT prolongation", "Aortic dissection/aneurysm", "C. difficile colitis", "Hypoglycemia"],
+      "interactions": {
+        "warfarin": "major",
+        "NSAIDs": "moderate",
+        "antacids": "moderate",
+        "iron_supplements": "moderate",
+        "sucralfate": "moderate",
+        "prednisone": "moderate",
+        "insulin": "moderate",
+        "theophylline": "moderate"
+      },
+      "typical_dose": "250-750mg daily",
+      "pregnancy_category": "C"
+    },
+    "nitrofurantoin": {
+      "drug_name": "nitrofurantoin",
+      "brand_names": ["Macrobid", "Macrodantin"],
+      "drug_class": "Nitrofuran Antibiotic",
+      "indications": ["Uncomplicated UTI", "UTI prophylaxis"],
+      "contraindications": ["CrCl <30 mL/min", "Pregnancy at term (38-42 weeks)", "Neonates <1 month"],
+      "common_side_effects": ["Nausea", "Headache", "Flatulence", "Brown discoloration of urine"],
+      "serious_side_effects": ["Pulmonary fibrosis (chronic use)", "Hepatotoxicity", "Peripheral neuropathy"],
+      "interactions": {
+        "antacids": "moderate",
+        "probenecid": "moderate",
+        "norfloxacin": "moderate"
+      },
+      "typical_dose": "100mg BID for 5-7 days",
+      "pregnancy_category": "B (contraindicated at term)"
+    },
+    "topiramate": {
+      "drug_name": "topiramate",
+      "brand_names": ["Topamax", "Qudexy XR", "Trokendi XR"],
+      "drug_class": "Anticonvulsant",
+      "indications": ["Epilepsy", "Migraine prevention", "Weight loss (combination with phentermine)"],
+      "contraindications": ["Pregnancy (teratogenic)", "Metabolic acidosis with concurrent metformin"],
+      "common_side_effects": ["Paresthesias", "Cognitive impairment", "Weight loss", "Dizziness", "Fatigue", "Kidney stones"],
+      "serious_side_effects": ["Metabolic acidosis", "Angle-closure glaucoma", "Oligohidrosis/hyperthermia", "Nephrolithiasis", "Teratogenicity (cleft lip/palate)"],
+      "interactions": {
+        "oral_contraceptives": "major",
+        "metformin": "moderate",
+        "valproic_acid": "major",
+        "phenytoin": "moderate",
+        "carbonic_anhydrase_inhibitors": "moderate",
+        "lithium": "moderate",
+        "hydrochlorothiazide": "minor"
+      },
+      "typical_dose": "25-100mg BID (epilepsy); 25-100mg daily (migraine)",
+      "pregnancy_category": "D"
+    },
+    "rizatriptan": {
+      "drug_name": "rizatriptan",
+      "brand_names": ["Maxalt", "Maxalt-MLT"],
+      "drug_class": "Serotonin 5-HT1B/1D Agonist (Triptan)",
+      "indications": ["Migraine (acute treatment)"],
+      "contraindications": ["Ischemic heart disease", "Uncontrolled hypertension", "Basilar/hemiplegic migraine", "MAOIs within 14 days", "Concurrent ergotamine"],
+      "common_side_effects": ["Dizziness", "Drowsiness", "Fatigue", "Chest tightness", "Paresthesias"],
+      "serious_side_effects": ["Serotonin syndrome (with SSRIs)", "Coronary vasospasm", "Stroke", "Medication overuse headache"],
+      "interactions": {
+        "MAOIs": "major",
+        "propranolol": "moderate",
+        "SSRIs": "moderate",
+        "SNRIs": "moderate",
+        "ergotamine": "major"
+      },
+      "typical_dose": "5-10mg per dose, max 30mg/day",
+      "pregnancy_category": "C"
+    },
+    "escitalopram": {
+      "drug_name": "escitalopram",
+      "brand_names": ["Lexapro"],
+      "drug_class": "Selective Serotonin Reuptake Inhibitor (SSRI)",
+      "indications": ["Major Depressive Disorder", "Generalized Anxiety Disorder"],
+      "contraindications": ["Concurrent MAOI use", "Concurrent pimozide use", "Known hypersensitivity"],
+      "common_side_effects": ["Nausea", "Insomnia", "Fatigue", "Sexual dysfunction", "Dry mouth", "Sweating"],
+      "serious_side_effects": ["Serotonin syndrome", "QT prolongation", "Suicidal ideation (black box in <25 yr)", "Hyponatremia"],
+      "interactions": {
+        "MAOIs": "major",
+        "pimozide": "major",
+        "tramadol": "major",
+        "linezolid": "major",
+        "NSAIDs": "moderate",
+        "warfarin": "moderate",
+        "lithium": "moderate",
+        "triptans": "moderate"
+      },
+      "typical_dose": "10-20mg daily",
+      "pregnancy_category": "C"
+    },
+    "ferrous_sulfate": {
+      "drug_name": "ferrous_sulfate",
+      "brand_names": ["Feosol", "Fer-In-Sol"],
+      "drug_class": "Iron Supplement",
+      "indications": ["Iron Deficiency Anemia", "Iron supplementation in pregnancy"],
+      "contraindications": ["Hemochromatosis", "Hemosiderosis", "Hemolytic anemia"],
+      "common_side_effects": ["Constipation", "Nausea", "Dark stools", "Abdominal pain"],
+      "serious_side_effects": ["Iron overload (chronic excessive use)", "GI ulceration"],
+      "interactions": {
+        "levothyroxine": "moderate",
+        "tetracyclines": "moderate",
+        "fluoroquinolones": "moderate",
+        "antacids": "moderate",
+        "levodopa": "moderate",
+        "calcium_supplements": "moderate",
+        "proton_pump_inhibitors": "moderate"
+      },
+      "typical_dose": "325mg (65mg elemental iron) 1-3 times daily",
+      "pregnancy_category": "A"
+    },
+    "buspirone": {
+      "drug_name": "buspirone",
+      "brand_names": ["BuSpar"],
+      "drug_class": "Azapirone Anxiolytic",
+      "indications": ["Generalized Anxiety Disorder"],
+      "contraindications": ["Concurrent MAOI use", "Severe hepatic or renal impairment"],
+      "common_side_effects": ["Dizziness", "Nausea", "Headache", "Nervousness", "Lightheadedness"],
+      "serious_side_effects": ["Serotonin syndrome (with serotonergic drugs)", "Movement disorders (rare)"],
+      "interactions": {
+        "MAOIs": "major",
+        "erythromycin": "moderate",
+        "itraconazole": "moderate",
+        "grapefruit_juice": "moderate",
+        "rifampin": "moderate",
+        "SSRIs": "moderate"
+      },
+      "typical_dose": "5-30mg BID-TID",
+      "pregnancy_category": "B"
+    },
+    "acetaminophen": {
+      "drug_name": "acetaminophen",
+      "brand_names": ["Tylenol", "Panadol"],
+      "drug_class": "Analgesic / Antipyretic",
+      "indications": ["Mild to moderate pain", "Fever"],
+      "contraindications": ["Severe hepatic impairment", "Active liver disease"],
+      "common_side_effects": ["Generally well tolerated at recommended doses"],
+      "serious_side_effects": ["Hepatotoxicity (overdose)", "Acute liver failure", "Stevens-Johnson syndrome (rare)"],
+      "interactions": {
+        "warfarin": "moderate",
+        "alcohol": "major",
+        "isoniazid": "moderate",
+        "carbamazepine": "moderate"
+      },
+      "typical_dose": "325-1000mg q4-6h, max 3000-4000mg/day",
+      "pregnancy_category": "B"
+    },
+    "amoxicillin": {
+      "drug_name": "amoxicillin",
+      "brand_names": ["Amoxil", "Moxatag"],
+      "drug_class": "Aminopenicillin Antibiotic",
+      "indications": ["Otitis media", "Strep pharyngitis", "H. pylori eradication", "UTI", "Pneumonia", "Sinusitis"],
+      "contraindications": ["Penicillin allergy", "Mononucleosis (risk of rash)"],
+      "common_side_effects": ["Diarrhea", "Nausea", "Rash", "Vomiting"],
+      "serious_side_effects": ["Anaphylaxis", "C. difficile colitis", "Stevens-Johnson syndrome", "Seizures (high dose)"],
+      "interactions": {
+        "warfarin": "moderate",
+        "methotrexate": "moderate",
+        "oral_contraceptives": "minor",
+        "probenecid": "moderate",
+        "allopurinol": "minor"
+      },
+      "typical_dose": "250-500mg TID or 875mg BID",
+      "pregnancy_category": "B"
+    },
+    "hydrochlorothiazide": {
+      "drug_name": "hydrochlorothiazide",
+      "brand_names": ["Microzide"],
+      "drug_class": "Thiazide Diuretic",
+      "indications": ["Hypertension", "Edema", "Nephrolithiasis (calcium stones)"],
+      "contraindications": ["Anuria", "Sulfonamide allergy (caution)"],
+      "common_side_effects": ["Hypokalemia", "Hyperuricemia", "Hyperglycemia", "Dizziness", "Photosensitivity"],
+      "serious_side_effects": ["Severe hyponatremia", "Pancreatitis", "Agranulocytosis", "Renal failure"],
+      "interactions": {
+        "lithium": "major",
+        "digoxin": "moderate",
+        "NSAIDs": "moderate",
+        "corticosteroids": "moderate",
+        "metformin": "minor",
+        "ACE_inhibitors": "moderate"
+      },
+      "typical_dose": "12.5-50mg daily",
+      "pregnancy_category": "B"
+    },
+    "gabapentin": {
+      "drug_name": "gabapentin",
+      "brand_names": ["Neurontin", "Gralise", "Horizant"],
+      "drug_class": "Gabapentinoid (Anticonvulsant)",
+      "indications": ["Neuropathic pain", "Postherpetic neuralgia", "Epilepsy (adjunct)", "Restless leg syndrome"],
+      "contraindications": ["Known hypersensitivity"],
+      "common_side_effects": ["Dizziness", "Drowsiness", "Ataxia", "Peripheral edema", "Weight gain"],
+      "serious_side_effects": ["Respiratory depression (with opioids)", "Suicidal ideation", "Angioedema", "Drug reaction with eosinophilia"],
+      "interactions": {
+        "opioids": "major",
+        "antacids": "moderate",
+        "morphine": "major"
+      },
+      "typical_dose": "300-3600mg daily in divided doses",
+      "pregnancy_category": "C"
+    },
+    "clopidogrel": {
+      "drug_name": "clopidogrel",
+      "brand_names": ["Plavix"],
+      "drug_class": "P2Y12 Platelet Inhibitor (Thienopyridine)",
+      "indications": ["Acute Coronary Syndrome", "Post-PCI/stent", "Stroke prevention", "PAD"],
+      "contraindications": ["Active bleeding"],
+      "common_side_effects": ["Bleeding", "Bruising", "Diarrhea", "Rash"],
+      "serious_side_effects": ["Major hemorrhage", "TTP", "Neutropenia"],
+      "interactions": {
+        "omeprazole": "major",
+        "aspirin": "moderate",
+        "warfarin": "major",
+        "NSAIDs": "moderate",
+        "repaglinide": "major",
+        "apixaban": "moderate"
+      },
+      "typical_dose": "75mg daily",
+      "pregnancy_category": "B"
+    },
+    "linagliptin": {
+      "drug_name": "linagliptin",
+      "brand_names": ["Tradjenta"],
+      "drug_class": "DPP-4 Inhibitor",
+      "indications": ["Type 2 Diabetes Mellitus"],
+      "contraindications": ["History of pancreatitis", "Known hypersensitivity"],
+      "common_side_effects": ["Nasopharyngitis", "Hypoglycemia (with sulfonylureas/insulin)"],
+      "serious_side_effects": ["Pancreatitis", "Bullous pemphigoid", "Angioedema"],
+      "interactions": {
+        "sulfonylureas": "moderate",
+        "insulin": "moderate",
+        "rifampin": "moderate"
+      },
+      "typical_dose": "5mg daily",
+      "pregnancy_category": "B"
+    },
+    "empagliflozin": {
+      "drug_name": "empagliflozin",
+      "brand_names": ["Jardiance"],
+      "drug_class": "SGLT2 Inhibitor",
+      "indications": ["Type 2 Diabetes Mellitus", "Heart Failure (with reduced EF)", "CKD"],
+      "contraindications": ["Severe renal impairment (eGFR <20)", "Dialysis", "Type 1 DM"],
+      "common_side_effects": ["Genital yeast infections", "UTI", "Increased urination", "Thirst"],
+      "serious_side_effects": ["Diabetic ketoacidosis", "Fournier gangrene", "Acute kidney injury", "Necrotizing fasciitis of perineum"],
+      "interactions": {
+        "insulin": "moderate",
+        "sulfonylureas": "moderate",
+        "diuretics": "moderate",
+        "lithium": "moderate"
+      },
+      "typical_dose": "10-25mg daily",
+      "pregnancy_category": "D"
+    },
+    "semaglutide": {
+      "drug_name": "semaglutide",
+      "brand_names": ["Ozempic", "Rybelsus", "Wegovy"],
+      "drug_class": "GLP-1 Receptor Agonist",
+      "indications": ["Type 2 Diabetes Mellitus", "Obesity/Weight management"],
+      "contraindications": ["Personal or family history of medullary thyroid carcinoma", "MEN2 syndrome", "Pregnancy"],
+      "common_side_effects": ["Nausea", "Vomiting", "Diarrhea", "Abdominal pain", "Constipation"],
+      "serious_side_effects": ["Pancreatitis", "Thyroid C-cell tumors (black box)", "Gallbladder disease", "Acute kidney injury", "Diabetic retinopathy worsening"],
+      "interactions": {
+        "insulin": "moderate",
+        "sulfonylureas": "moderate",
+        "oral_medications": "minor"
+      },
+      "typical_dose": "0.25-1mg SC weekly (Ozempic); 3-14mg PO daily (Rybelsus); 2.4mg SC weekly (Wegovy)",
+      "pregnancy_category": "X"
+    },
+    "spironolactone": {
+      "drug_name": "spironolactone",
+      "brand_names": ["Aldactone"],
+      "drug_class": "Potassium-sparing Diuretic / Aldosterone Antagonist",
+      "indications": ["Heart Failure", "Hypertension", "Ascites", "Hyperaldosteronism", "Acne/Hirsutism (off-label)"],
+      "contraindications": ["Hyperkalemia (K >5.0)", "Anuria", "Addison's disease", "Concurrent eplerenone"],
+      "common_side_effects": ["Hyperkalemia", "Gynecomastia", "Breast tenderness", "Dizziness", "GI upset"],
+      "serious_side_effects": ["Life-threatening hyperkalemia", "Hyponatremia", "Acute kidney injury"],
+      "interactions": {
+        "ACE_inhibitors": "major",
+        "ARBs": "major",
+        "potassium_supplements": "major",
+        "digoxin": "moderate",
+        "NSAIDs": "moderate",
+        "lithium": "major",
+        "trimethoprim": "major"
+      },
+      "typical_dose": "12.5-50mg daily (HF); 25-200mg daily (other)",
+      "pregnancy_category": "C"
+    },
+    "amiodarone": {
+      "drug_name": "amiodarone",
+      "brand_names": ["Cordarone", "Pacerone"],
+      "drug_class": "Class III Antiarrhythmic",
+      "indications": ["Ventricular arrhythmias", "Atrial fibrillation (rhythm control)", "Supraventricular tachycardia"],
+      "contraindications": ["Severe sinus node dysfunction", "2nd/3rd degree AV block", "Cardiogenic shock", "Iodine hypersensitivity"],
+      "common_side_effects": ["Photosensitivity", "Corneal microdeposits", "GI upset", "Tremor", "Fatigue"],
+      "serious_side_effects": ["Pulmonary toxicity", "Hepatotoxicity", "Thyroid dysfunction (hypo or hyper)", "Peripheral neuropathy", "Optic neuropathy", "Torsades de pointes (rare)"],
+      "interactions": {
+        "warfarin": "major",
+        "digoxin": "major",
+        "simvastatin": "major",
+        "metoprolol": "moderate",
+        "diltiazem": "major",
+        "fluoroquinolones": "major",
+        "cyclosporine": "major"
+      },
+      "typical_dose": "Loading: 800-1600mg/day for 1-3 weeks; Maintenance: 100-400mg daily",
+      "pregnancy_category": "D"
+    },
+    "diltiazem": {
+      "drug_name": "diltiazem",
+      "brand_names": ["Cardizem", "Tiazac", "Dilacor"],
+      "drug_class": "Calcium Channel Blocker (Non-dihydropyridine)",
+      "indications": ["Hypertension", "Angina", "Atrial fibrillation/flutter (rate control)", "SVT"],
+      "contraindications": ["Severe LV dysfunction", "Sick sinus syndrome", "2nd/3rd degree AV block", "Concurrent IV beta-blockers"],
+      "common_side_effects": ["Constipation", "Dizziness", "Headache", "Bradycardia", "Peripheral edema"],
+      "serious_side_effects": ["Heart block", "Severe bradycardia", "Heart failure worsening", "Hepatotoxicity"],
+      "interactions": {
+        "simvastatin": "major",
+        "carvedilol": "major",
+        "metoprolol": "major",
+        "amiodarone": "major",
+        "cyclosporine": "major",
+        "atorvastatin": "moderate",
+        "amlodipine": "moderate",
+        "digoxin": "moderate"
+      },
+      "typical_dose": "120-360mg daily (extended release); 30-90mg TID-QID (immediate release)",
+      "pregnancy_category": "C"
+    },
+    "alendronate": {
+      "drug_name": "alendronate",
+      "brand_names": ["Fosamax"],
+      "drug_class": "Bisphosphonate",
+      "indications": ["Osteoporosis treatment and prevention", "Paget's disease"],
+      "contraindications": ["Esophageal abnormalities", "Inability to sit upright 30 min", "Hypocalcemia", "CrCl <35 mL/min"],
+      "common_side_effects": ["GI upset", "Abdominal pain", "Musculoskeletal pain", "Headache"],
+      "serious_side_effects": ["Osteonecrosis of the jaw", "Atypical femoral fracture", "Esophageal ulceration", "Hypocalcemia"],
+      "interactions": {
+        "calcium_supplements": "moderate",
+        "iron_supplements": "moderate",
+        "antacids": "moderate",
+        "NSAIDs": "moderate",
+        "aspirin": "moderate"
+      },
+      "typical_dose": "70mg weekly or 10mg daily",
+      "pregnancy_category": "C"
+    },
+    "epoetin_alfa": {
+      "drug_name": "epoetin_alfa",
+      "brand_names": ["Epogen", "Procrit"],
+      "drug_class": "Erythropoiesis-Stimulating Agent",
+      "indications": ["Anemia of CKD", "Chemotherapy-induced anemia", "Surgical blood loss reduction"],
+      "contraindications": ["Uncontrolled hypertension", "Pure red cell aplasia from prior ESA use"],
+      "common_side_effects": ["Hypertension", "Headache", "Arthralgias", "Injection site pain"],
+      "serious_side_effects": ["Thromboembolic events", "Pure red cell aplasia", "Increased mortality in cancer patients (if Hgb >11)", "Hypertensive crisis"],
+      "interactions": {
+        "ACE_inhibitors": "minor",
+        "androgens": "minor"
+      },
+      "typical_dose": "50-300 units/kg 3x/week SC or IV",
+      "pregnancy_category": "C"
+    },
+    "sevelamer": {
+      "drug_name": "sevelamer",
+      "brand_names": ["Renagel", "Renvela"],
+      "drug_class": "Phosphate Binder",
+      "indications": ["Hyperphosphatemia in CKD/ESRD"],
+      "contraindications": ["Bowel obstruction", "Hypophosphatemia"],
+      "common_side_effects": ["Nausea", "Vomiting", "Diarrhea", "Constipation", "Abdominal pain"],
+      "serious_side_effects": ["Bowel obstruction/perforation", "Fecal impaction"],
+      "interactions": {
+        "levothyroxine": "moderate",
+        "ciprofloxacin": "major",
+        "mycophenolate": "moderate"
+      },
+      "typical_dose": "800-1600mg TID with meals",
+      "pregnancy_category": "C"
+    },
+    "sodium_bicarbonate": {
+      "drug_name": "sodium_bicarbonate",
+      "brand_names": ["Neut"],
+      "drug_class": "Alkalinizing Agent",
+      "indications": ["Metabolic acidosis", "Hyperkalemia (adjunct)", "Urine alkalinization"],
+      "contraindications": ["Metabolic or respiratory alkalosis", "Hypocalcemia"],
+      "common_side_effects": ["Bloating", "Flatulence", "Metabolic alkalosis"],
+      "serious_side_effects": ["Hypokalemia", "Hypocalcemia", "Hypernatremia", "Fluid overload"],
+      "interactions": {
+        "aspirin": "moderate",
+        "lithium": "moderate",
+        "methotrexate": "moderate",
+        "tetracyclines": "moderate",
+        "iron_supplements": "moderate"
+      },
+      "typical_dose": "325-2000mg 1-4 times daily",
+      "pregnancy_category": "C"
+    },
+    "cetirizine": {
+      "drug_name": "cetirizine",
+      "brand_names": ["Zyrtec"],
+      "drug_class": "Second-generation Antihistamine",
+      "indications": ["Allergic Rhinitis", "Chronic Urticaria"],
+      "contraindications": ["Known hypersensitivity to cetirizine or hydroxyzine"],
+      "common_side_effects": ["Drowsiness", "Dry mouth", "Fatigue", "Headache"],
+      "serious_side_effects": ["Angioedema (rare)", "Seizures (rare)"],
+      "interactions": {
+        "alcohol": "moderate",
+        "CNS_depressants": "moderate",
+        "theophylline": "minor"
+      },
+      "typical_dose": "5-10mg daily",
+      "pregnancy_category": "B"
+    },
+    "ondansetron": {
+      "drug_name": "ondansetron",
+      "brand_names": ["Zofran"],
+      "drug_class": "Serotonin 5-HT3 Antagonist",
+      "indications": ["Nausea and vomiting (chemotherapy-induced, post-operative, acute gastroenteritis)"],
+      "contraindications": ["Concurrent apomorphine", "Congenital long QT syndrome"],
+      "common_side_effects": ["Headache", "Constipation", "Dizziness"],
+      "serious_side_effects": ["QT prolongation", "Serotonin syndrome (with serotonergic drugs)", "Anaphylaxis"],
+      "interactions": {
+        "apomorphine": "major",
+        "SSRIs": "moderate",
+        "tramadol": "moderate",
+        "phenytoin": "moderate"
+      },
+      "typical_dose": "4-8mg q8h PRN",
+      "pregnancy_category": "B"
+    },
+    "phenazopyridine": {
+      "drug_name": "phenazopyridine",
+      "brand_names": ["Pyridium", "AZO Standard"],
+      "drug_class": "Urinary Tract Analgesic",
+      "indications": ["Symptomatic relief of UTI pain/burning"],
+      "contraindications": ["Renal insufficiency", "Hepatic insufficiency", "G6PD deficiency"],
+      "common_side_effects": ["Orange discoloration of urine", "Headache", "GI upset"],
+      "serious_side_effects": ["Hemolytic anemia (G6PD)", "Hepatotoxicity", "Methemoglobinemia"],
+      "interactions": {},
+      "typical_dose": "200mg TID for 2 days",
+      "pregnancy_category": "B"
+    },
+    "tranexamic_acid": {
+      "drug_name": "tranexamic_acid",
+      "brand_names": ["Lysteda", "Cyklokapron"],
+      "drug_class": "Antifibrinolytic",
+      "indications": ["Heavy menstrual bleeding", "Hemophilia bleeding episodes", "Surgical bleeding reduction"],
+      "contraindications": ["Active thromboembolic disease", "History of DVT/PE", "Concurrent Factor IX complex use", "Subarachnoid hemorrhage"],
+      "common_side_effects": ["Headache", "Abdominal pain", "Back pain", "Nausea"],
+      "serious_side_effects": ["Thromboembolic events", "Visual disturbances", "Seizures (high dose IV)"],
+      "interactions": {
+        "oral_contraceptives": "major",
+        "factor_IX_complex": "major",
+        "tretinoin": "moderate"
+      },
+      "typical_dose": "1300mg TID during menses (max 5 days)",
+      "pregnancy_category": "B"
+    },
+    "ibuprofen": {
+      "drug_name": "ibuprofen",
+      "brand_names": ["Advil", "Motrin"],
+      "drug_class": "NSAID",
+      "indications": ["Pain", "Fever", "Inflammation", "Osteoarthritis", "Rheumatoid arthritis", "Dysmenorrhea"],
+      "contraindications": ["Active GI bleeding", "Severe renal impairment", "Post-CABG surgery", "3rd trimester pregnancy"],
+      "common_side_effects": ["GI upset", "Nausea", "Headache", "Dizziness"],
+      "serious_side_effects": ["GI bleeding/ulceration", "Cardiovascular thrombotic events", "Renal impairment", "Hepatotoxicity", "Stevens-Johnson syndrome"],
+      "interactions": {
+        "aspirin": "moderate",
+        "warfarin": "major",
+        "apixaban": "major",
+        "lisinopril": "moderate",
+        "losartan": "moderate",
+        "furosemide": "moderate",
+        "methotrexate": "major",
+        "lithium": "major",
+        "SSRIs": "moderate",
+        "corticosteroids": "moderate"
+      },
+      "typical_dose": "200-800mg q6-8h, max 3200mg/day",
+      "pregnancy_category": "C (D in 3rd trimester)"
+    },
+    "methotrexate": {
+      "drug_name": "methotrexate",
+      "brand_names": ["Trexall", "Otrexup", "Rasuvo"],
+      "drug_class": "Antimetabolite / DMARD",
+      "indications": ["Rheumatoid Arthritis", "Psoriasis", "Cancer (various)", "Ectopic pregnancy"],
+      "contraindications": ["Pregnancy", "Breastfeeding", "Severe hepatic impairment", "Severe renal impairment", "Immunodeficiency", "Blood dyscrasias"],
+      "common_side_effects": ["Nausea", "Fatigue", "Mouth sores", "Elevated liver enzymes"],
+      "serious_side_effects": ["Bone marrow suppression", "Hepatotoxicity/fibrosis", "Pulmonary toxicity", "Renal failure", "Severe infections"],
+      "interactions": {
+        "NSAIDs": "major",
+        "trimethoprim": "major",
+        "probenecid": "major",
+        "omeprazole": "moderate",
+        "amoxicillin": "moderate",
+        "aspirin": "major",
+        "penicillins": "moderate",
+        "live_vaccines": "major"
+      },
+      "typical_dose": "7.5-25mg weekly (RA/psoriasis)",
+      "pregnancy_category": "X"
+    },
+    "allopurinol": {
+      "drug_name": "allopurinol",
+      "brand_names": ["Zyloprim", "Aloprim"],
+      "drug_class": "Xanthine Oxidase Inhibitor",
+      "indications": ["Gout", "Hyperuricemia", "Urate nephropathy", "Tumor lysis syndrome prevention"],
+      "contraindications": ["HLA-B*5801 positive (high risk of hypersensitivity)"],
+      "common_side_effects": ["Rash", "GI upset", "Elevated liver enzymes"],
+      "serious_side_effects": ["Stevens-Johnson syndrome/TEN", "DRESS syndrome", "Hepatotoxicity", "Bone marrow suppression"],
+      "interactions": {
+        "azathioprine": "major",
+        "mercaptopurine": "major",
+        "warfarin": "moderate",
+        "ACE_inhibitors": "moderate",
+        "amoxicillin": "minor",
+        "thiazide_diuretics": "moderate"
+      },
+      "typical_dose": "100-800mg daily",
+      "pregnancy_category": "C"
+    },
+    "fluoxetine": {
+      "drug_name": "fluoxetine",
+      "brand_names": ["Prozac", "Sarafem"],
+      "drug_class": "Selective Serotonin Reuptake Inhibitor (SSRI)",
+      "indications": ["Major Depressive Disorder", "OCD", "Bulimia Nervosa", "Panic Disorder", "PMDD"],
+      "contraindications": ["Concurrent MAOI use", "Concurrent pimozide or thioridazine"],
+      "common_side_effects": ["Nausea", "Insomnia", "Headache", "Anxiety", "Sexual dysfunction", "Weight loss"],
+      "serious_side_effects": ["Serotonin syndrome", "Suicidal ideation (black box in <25 yr)", "QT prolongation", "Hyponatremia", "Mania induction"],
+      "interactions": {
+        "MAOIs": "major",
+        "pimozide": "major",
+        "thioridazine": "major",
+        "tramadol": "major",
+        "trazodone": "moderate",
+        "carvedilol": "moderate",
+        "metoprolol": "moderate",
+        "warfarin": "moderate",
+        "NSAIDs": "moderate",
+        "lithium": "moderate"
+      },
+      "typical_dose": "20-80mg daily",
+      "pregnancy_category": "C"
+    },
+    "glipizide": {
+      "drug_name": "glipizide",
+      "brand_names": ["Glucotrol", "Glucotrol XL"],
+      "drug_class": "Sulfonylurea",
+      "indications": ["Type 2 Diabetes Mellitus"],
+      "contraindications": ["Type 1 DM", "Diabetic ketoacidosis", "Sulfonamide allergy"],
+      "common_side_effects": ["Hypoglycemia", "Weight gain", "Nausea", "Dizziness"],
+      "serious_side_effects": ["Severe hypoglycemia", "Hemolytic anemia", "Hepatotoxicity", "SIADH"],
+      "interactions": {
+        "fluconazole": "major",
+        "beta_blockers": "moderate",
+        "alcohol": "major",
+        "NSAIDs": "moderate",
+        "ACE_inhibitors": "moderate",
+        "sulfonamide_antibiotics": "moderate"
+      },
+      "typical_dose": "5-20mg daily or BID",
+      "pregnancy_category": "C"
+    },
+    "sitagliptin": {
+      "drug_name": "sitagliptin",
+      "brand_names": ["Januvia"],
+      "drug_class": "DPP-4 Inhibitor",
+      "indications": ["Type 2 Diabetes Mellitus"],
+      "contraindications": ["History of pancreatitis with DPP-4 inhibitors"],
+      "common_side_effects": ["Upper respiratory tract infection", "Nasopharyngitis", "Headache"],
+      "serious_side_effects": ["Pancreatitis", "Angioedema", "Stevens-Johnson syndrome", "Bullous pemphigoid"],
+      "interactions": {
+        "insulin": "moderate",
+        "sulfonylureas": "moderate",
+        "digoxin": "minor"
+      },
+      "typical_dose": "100mg daily (adjust for renal impairment)",
+      "pregnancy_category": "B"
+    },
+    "pantoprazole": {
+      "drug_name": "pantoprazole",
+      "brand_names": ["Protonix"],
+      "drug_class": "Proton Pump Inhibitor (PPI)",
+      "indications": ["GERD", "Erosive esophagitis", "Zollinger-Ellison syndrome", "NSAID-induced ulcer prophylaxis"],
+      "contraindications": ["Known hypersensitivity", "Concurrent rilpivirine"],
+      "common_side_effects": ["Headache", "Diarrhea", "Nausea", "Abdominal pain"],
+      "serious_side_effects": ["C. difficile infection", "Hypomagnesemia", "Bone fractures (long-term)", "Interstitial nephritis"],
+      "interactions": {
+        "clopidogrel": "moderate",
+        "methotrexate": "moderate",
+        "iron_supplements": "moderate",
+        "ketoconazole": "moderate",
+        "mycophenolate": "moderate"
+      },
+      "typical_dose": "20-40mg daily",
+      "pregnancy_category": "B"
+    }
+  },
+  "diseases": {
+    "Type 2 Diabetes Mellitus": {
+      "disease_name": "Type 2 Diabetes Mellitus",
+      "icd10_code": "E11.9",
+      "description": "A chronic metabolic disorder characterized by insulin resistance and relative insulin deficiency, resulting in hyperglycemia.",
+      "typical_symptoms": ["Polyuria", "Polydipsia", "Polyphagia", "Fatigue", "Blurred vision", "Slow wound healing", "Numbness/tingling in extremities"],
+      "diagnostic_criteria": ["Fasting plasma glucose >=126 mg/dL", "2-hour OGTT >=200 mg/dL", "HbA1c >=6.5%", "Random glucose >=200 mg/dL with symptoms"],
+      "risk_factors": ["Obesity", "Family history", "Sedentary lifestyle", "Age >45", "Gestational diabetes history", "PCOS", "Race/ethnicity (African American, Hispanic, Native American)"],
+      "complications": ["Diabetic retinopathy", "Diabetic nephropathy", "Diabetic neuropathy", "Cardiovascular disease", "Diabetic foot ulcers", "Diabetic ketoacidosis"],
+      "category": "Endocrine"
+    },
+    "Hypertension": {
+      "disease_name": "Hypertension",
+      "icd10_code": "I10",
+      "description": "Persistently elevated arterial blood pressure, defined as systolic >=130 mmHg and/or diastolic >=80 mmHg on repeated measurements.",
+      "typical_symptoms": ["Usually asymptomatic", "Headache (severe hypertension)", "Visual changes", "Chest pain", "Dyspnea", "Dizziness"],
+      "diagnostic_criteria": ["SBP >=130 or DBP >=80 on 2+ separate occasions", "Ambulatory BP monitoring average >=125/75", "Home BP monitoring average >=130/80"],
+      "risk_factors": ["Age", "Obesity", "High sodium diet", "Physical inactivity", "Excessive alcohol", "Family history", "African American race", "Chronic kidney disease"],
+      "complications": ["Stroke", "Myocardial infarction", "Heart failure", "Chronic kidney disease", "Retinopathy", "Aortic aneurysm", "Peripheral artery disease"],
+      "category": "Cardiovascular"
+    },
+    "COPD": {
+      "disease_name": "COPD",
+      "icd10_code": "J44.1",
+      "description": "A chronic inflammatory lung disease causing obstructed airflow from the lungs, encompassing emphysema and chronic bronchitis.",
+      "typical_symptoms": ["Chronic cough", "Sputum production", "Dyspnea on exertion", "Wheezing", "Chest tightness", "Frequent respiratory infections"],
+      "diagnostic_criteria": ["Post-bronchodilator FEV1/FVC <0.70", "Consistent symptoms", "Significant exposure history (smoking, occupational)"],
+      "risk_factors": ["Cigarette smoking", "Occupational dust/chemical exposure", "Alpha-1 antitrypsin deficiency", "Air pollution", "Childhood respiratory infections"],
+      "complications": ["Acute exacerbations", "Cor pulmonale", "Pneumonia", "Pneumothorax", "Respiratory failure", "Lung cancer", "Depression"],
+      "category": "Pulmonary"
+    },
+    "Asthma": {
+      "disease_name": "Asthma",
+      "icd10_code": "J45.40",
+      "description": "A chronic inflammatory disorder of the airways characterized by variable airflow obstruction and bronchial hyperresponsiveness.",
+      "typical_symptoms": ["Recurrent wheezing", "Shortness of breath", "Chest tightness", "Cough (especially at night or early morning)", "Symptoms triggered by allergens, exercise, or cold air"],
+      "diagnostic_criteria": ["Episodic symptoms of airflow obstruction", "FEV1 improvement >=12% and 200mL after bronchodilator", "Positive methacholine challenge", "Peak flow variability >20%"],
+      "risk_factors": ["Family history of asthma/atopy", "Allergic rhinitis", "Eczema", "Obesity", "Smoking exposure", "Occupational exposures", "Air pollution"],
+      "complications": ["Status asthmaticus", "Pneumothorax", "Atelectasis", "Respiratory failure", "Fixed airway remodeling", "Medication side effects (chronic steroids)"],
+      "category": "Pulmonary"
+    },
+    "Major Depressive Disorder": {
+      "disease_name": "Major Depressive Disorder",
+      "icd10_code": "F33.1",
+      "description": "A mood disorder characterized by persistent feelings of sadness, hopelessness, and loss of interest or pleasure in activities, with significant functional impairment.",
+      "typical_symptoms": ["Depressed mood most of the day", "Anhedonia", "Weight change", "Sleep disturbance (insomnia or hypersomnia)", "Psychomotor agitation or retardation", "Fatigue", "Feelings of worthlessness or guilt", "Poor concentration", "Suicidal ideation"],
+      "diagnostic_criteria": ["5 or more symptoms during same 2-week period (must include depressed mood or anhedonia)", "Symptoms cause significant distress or functional impairment", "Not attributable to substance use or medical condition"],
+      "risk_factors": ["Family history", "Previous depressive episodes", "Chronic medical illness", "Substance abuse", "Traumatic life events", "Female sex", "Social isolation"],
+      "complications": ["Suicide", "Substance abuse", "Cardiovascular disease", "Impaired work/social function", "Chronic pain syndromes"],
+      "category": "Psychiatric"
+    },
+    "Heart Failure": {
+      "disease_name": "Heart Failure",
+      "icd10_code": "I50.9",
+      "description": "A clinical syndrome resulting from structural or functional cardiac disorders that impair the ability of the ventricle to fill or eject blood.",
+      "typical_symptoms": ["Dyspnea (exertional and at rest)", "Orthopnea", "Paroxysmal nocturnal dyspnea", "Peripheral edema", "Fatigue", "Weight gain", "Jugular venous distension", "S3 gallop"],
+      "diagnostic_criteria": ["Framingham criteria (2 major or 1 major + 2 minor)", "Elevated BNP (>100 pg/mL) or NT-proBNP (>300 pg/mL)", "Echocardiographic evidence of systolic or diastolic dysfunction"],
+      "risk_factors": ["Coronary artery disease", "Hypertension", "Diabetes", "Valvular heart disease", "Cardiomyopathy", "Obesity", "Smoking", "Excessive alcohol use"],
+      "complications": ["Cardiogenic shock", "Arrhythmias", "Renal failure (cardiorenal syndrome)", "Hepatic congestion", "Pulmonary edema", "Sudden cardiac death"],
+      "category": "Cardiovascular"
+    },
+    "Chronic Kidney Disease": {
+      "disease_name": "Chronic Kidney Disease",
+      "icd10_code": "N18.4",
+      "description": "Progressive loss of kidney function over months to years, classified by GFR and albuminuria categories.",
+      "typical_symptoms": ["Often asymptomatic in early stages", "Fatigue", "Edema", "Foamy urine (proteinuria)", "Decreased urine output", "Nausea", "Loss of appetite", "Pruritus", "Muscle cramps"],
+      "diagnostic_criteria": ["eGFR <60 mL/min/1.73m2 for >=3 months", "Kidney damage markers (albuminuria, urine sediment abnormalities, electrolyte abnormalities) for >=3 months"],
+      "risk_factors": ["Diabetes", "Hypertension", "Family history of CKD", "Obesity", "Age >60", "African American race", "NSAID use", "Autoimmune diseases"],
+      "complications": ["Anemia", "Hyperkalemia", "Metabolic acidosis", "Hyperphosphatemia", "Secondary hyperparathyroidism", "Cardiovascular disease", "ESRD requiring dialysis"],
+      "category": "Nephrology"
+    },
+    "Hypothyroidism": {
+      "disease_name": "Hypothyroidism",
+      "icd10_code": "E03.9",
+      "description": "A condition in which the thyroid gland does not produce enough thyroid hormone, leading to decreased metabolic activity.",
+      "typical_symptoms": ["Fatigue", "Weight gain", "Cold intolerance", "Constipation", "Dry skin", "Hair loss", "Bradycardia", "Depression", "Myalgia", "Menstrual irregularity", "Cognitive slowing"],
+      "diagnostic_criteria": ["Elevated TSH (>4.0-10.0 mIU/L)", "Low Free T4 (<0.8 ng/dL)", "Elevated TSH with normal Free T4 = subclinical hypothyroidism"],
+      "risk_factors": ["Female sex", "Age >60", "Hashimoto's thyroiditis", "Prior thyroid surgery or radiation", "Lithium use", "Amiodarone use", "Family history", "Other autoimmune diseases"],
+      "complications": ["Myxedema coma", "Cardiovascular disease", "Hyperlipidemia", "Infertility", "Peripheral neuropathy", "Depression"],
+      "category": "Endocrine"
+    },
+    "Osteoarthritis": {
+      "disease_name": "Osteoarthritis",
+      "icd10_code": "M17.0",
+      "description": "A degenerative joint disease characterized by progressive loss of articular cartilage, subchondral bone changes, and osteophyte formation.",
+      "typical_symptoms": ["Joint pain worse with activity", "Morning stiffness (<30 minutes)", "Joint swelling", "Crepitus", "Decreased range of motion", "Bony enlargement (Heberden/Bouchard nodes)"],
+      "diagnostic_criteria": ["Clinical: age >50, stiffness <30 min, crepitus, bony tenderness", "Radiographic: joint space narrowing, osteophytes, subchondral sclerosis, subchondral cysts"],
+      "risk_factors": ["Age", "Obesity", "Joint injury/overuse", "Female sex", "Genetics", "Malalignment", "Occupation (repetitive stress)"],
+      "complications": ["Chronic pain", "Disability", "Falls", "Opioid dependence", "Muscle atrophy", "Joint deformity"],
+      "category": "Musculoskeletal"
+    },
+    "GERD": {
+      "disease_name": "GERD",
+      "icd10_code": "K21.0",
+      "description": "A condition in which gastric acid frequently flows back into the esophagus, causing symptoms and/or mucosal damage.",
+      "typical_symptoms": ["Heartburn", "Regurgitation", "Dysphagia", "Chest pain", "Chronic cough", "Hoarseness", "Globus sensation", "Dental erosion"],
+      "diagnostic_criteria": ["Typical symptoms responding to PPI trial", "Endoscopic evidence of erosive esophagitis", "Abnormal pH monitoring (acid exposure time >6%)", "Positive symptom association on pH-impedance testing"],
+      "risk_factors": ["Obesity", "Hiatal hernia", "Pregnancy", "Smoking", "Alcohol", "Certain foods (caffeine, chocolate, spicy)", "Medications (NSAIDs, calcium channel blockers)"],
+      "complications": ["Erosive esophagitis", "Barrett's esophagus", "Esophageal stricture", "Esophageal adenocarcinoma", "Aspiration pneumonia", "Dental erosion"],
+      "category": "Gastrointestinal"
+    },
+    "Iron Deficiency Anemia": {
+      "disease_name": "Iron Deficiency Anemia",
+      "icd10_code": "D50.9",
+      "description": "Anemia resulting from insufficient iron to support normal red blood cell production, the most common cause of anemia worldwide.",
+      "typical_symptoms": ["Fatigue", "Pallor", "Weakness", "Dyspnea on exertion", "Tachycardia", "Pica", "Restless legs", "Brittle nails (koilonychia)", "Glossitis"],
+      "diagnostic_criteria": ["Low hemoglobin (M <13.5, F <12.0 g/dL)", "Low MCV (<80 fL)", "Low serum ferritin (<30 ng/mL)", "Low serum iron", "Elevated TIBC", "Low transferrin saturation (<20%)"],
+      "risk_factors": ["Menorrhagia", "Pregnancy", "Poor dietary iron intake", "Malabsorption (celiac disease)", "GI blood loss", "Chronic NSAID use", "Vegetarian/vegan diet"],
+      "complications": ["Severe anemia requiring transfusion", "Heart failure (chronic severe anemia)", "Impaired cognitive function", "Restless legs syndrome", "Pica"],
+      "category": "Hematology"
+    },
+    "Community-Acquired Pneumonia": {
+      "disease_name": "Community-Acquired Pneumonia",
+      "icd10_code": "J18.9",
+      "description": "An acute infection of the pulmonary parenchyma acquired outside of healthcare settings.",
+      "typical_symptoms": ["Productive cough", "Fever/chills", "Dyspnea", "Pleuritic chest pain", "Tachycardia", "Tachypnea", "Crackles on auscultation", "Malaise"],
+      "diagnostic_criteria": ["New infiltrate on chest imaging", "Plus clinical findings: fever, purulent sputum, leukocytosis, hypoxemia", "CURB-65 or PSI for severity assessment"],
+      "risk_factors": ["Age >65", "Smoking", "COPD", "Diabetes", "Immunosuppression", "Alcoholism", "Heart failure", "Recent viral URI"],
+      "complications": ["Parapneumonic effusion", "Empyema", "Lung abscess", "ARDS", "Sepsis", "Respiratory failure"],
+      "category": "Infectious Disease"
+    },
+    "Urinary Tract Infection": {
+      "disease_name": "Urinary Tract Infection",
+      "icd10_code": "N39.0",
+      "description": "An infection involving any part of the urinary system, most commonly the bladder (cystitis) or kidneys (pyelonephritis).",
+      "typical_symptoms": ["Dysuria", "Urinary frequency", "Urgency", "Suprapubic pain", "Hematuria", "Cloudy/foul-smelling urine", "Fever (pyelonephritis)", "Flank pain (pyelonephritis)"],
+      "diagnostic_criteria": ["Positive urinalysis (pyuria, nitrites, leukocyte esterase)", "Urine culture >=10^5 CFU/mL (or >=10^3 with symptoms)", "Clinical symptoms"],
+      "risk_factors": ["Female sex", "Sexual activity", "Spermicide use", "Postmenopausal status", "Urinary catheter", "Urinary obstruction", "Diabetes", "Prior UTI history"],
+      "complications": ["Pyelonephritis", "Urosepsis", "Renal abscess", "Recurrent UTIs", "Chronic kidney damage (rare)"],
+      "category": "Infectious Disease"
+    },
+    "Migraine with Aura": {
+      "disease_name": "Migraine with Aura",
+      "icd10_code": "G43.109",
+      "description": "A primary headache disorder characterized by recurrent moderate to severe headaches with associated visual, sensory, or language disturbances preceding the headache.",
+      "typical_symptoms": ["Visual aura (scintillating scotoma, zigzag lines)", "Unilateral throbbing headache", "Nausea/vomiting", "Photophobia", "Phonophobia", "Sensory aura (tingling)", "Duration 4-72 hours"],
+      "diagnostic_criteria": ["At least 2 attacks with aura", "Aura: fully reversible visual, sensory, or speech symptoms", "At least 2 of: unilateral spread, each symptom lasts 5-60 min, at least 1 positive symptom, aura accompanied by headache within 60 min"],
+      "risk_factors": ["Family history", "Female sex", "Hormonal changes", "Stress", "Sleep disturbance", "Certain foods/drinks", "Weather changes", "Sensory stimuli"],
+      "complications": ["Chronic migraine", "Status migrainosus", "Medication overuse headache", "Migrainous infarction", "Persistent aura without infarction"],
+      "category": "Neurological"
+    },
+    "Atrial Fibrillation": {
+      "disease_name": "Atrial Fibrillation",
+      "icd10_code": "I48.0",
+      "description": "A supraventricular tachyarrhythmia with uncoordinated atrial electrical activation leading to ineffective atrial contraction and irregular ventricular response.",
+      "typical_symptoms": ["Palpitations", "Dyspnea", "Fatigue", "Dizziness", "Chest discomfort", "Exercise intolerance", "May be asymptomatic"],
+      "diagnostic_criteria": ["ECG showing: irregular R-R intervals, absence of distinct P waves, irregular atrial activity", "Duration: paroxysmal (<7 days), persistent (>7 days), permanent"],
+      "risk_factors": ["Age", "Hypertension", "Heart failure", "Valvular heart disease", "Obesity", "Obstructive sleep apnea", "Alcohol use", "Thyroid disease", "Diabetes"],
+      "complications": ["Stroke/thromboembolism", "Heart failure", "Cognitive decline", "Reduced quality of life", "Tachycardia-mediated cardiomyopathy"],
+      "category": "Cardiovascular"
+    },
+    "Hyperlipidemia": {
+      "disease_name": "Hyperlipidemia",
+      "icd10_code": "E78.5",
+      "description": "Abnormally elevated levels of lipids or lipoproteins in the blood, a major modifiable risk factor for atherosclerotic cardiovascular disease.",
+      "typical_symptoms": ["Usually asymptomatic", "Xanthomas (severe cases)", "Xanthelasma", "Corneal arcus"],
+      "diagnostic_criteria": ["Total cholesterol >200 mg/dL", "LDL >100 mg/dL (or >70 for high-risk patients)", "HDL <40 mg/dL (M) or <50 mg/dL (F)", "Triglycerides >150 mg/dL"],
+      "risk_factors": ["Diet high in saturated fat", "Obesity", "Physical inactivity", "Genetics (familial hypercholesterolemia)", "Diabetes", "Hypothyroidism", "CKD", "Medications (thiazides, beta-blockers)"],
+      "complications": ["Coronary artery disease", "Myocardial infarction", "Stroke", "Peripheral artery disease", "Pancreatitis (severe hypertriglyceridemia >500)"],
+      "category": "Cardiovascular"
+    },
+    "Type 1 Diabetes Mellitus": {
+      "disease_name": "Type 1 Diabetes Mellitus",
+      "icd10_code": "E10.9",
+      "description": "An autoimmune disorder resulting in destruction of pancreatic beta cells, leading to absolute insulin deficiency.",
+      "typical_symptoms": ["Polyuria", "Polydipsia", "Weight loss", "Fatigue", "Diabetic ketoacidosis (presentation)", "Blurred vision"],
+      "diagnostic_criteria": ["Fasting glucose >=126 mg/dL", "Random glucose >=200 with symptoms", "Positive autoantibodies (GAD65, IA-2, ZnT8, IAA)", "C-peptide low or absent"],
+      "risk_factors": ["Family history", "HLA-DR3/DR4 genotype", "Northern European descent", "Other autoimmune diseases", "Environmental triggers (viral infections)"],
+      "complications": ["Diabetic ketoacidosis", "Hypoglycemia", "Retinopathy", "Nephropathy", "Neuropathy", "Cardiovascular disease"],
+      "category": "Endocrine"
+    },
+    "Coronary Artery Disease": {
+      "disease_name": "Coronary Artery Disease",
+      "icd10_code": "I25.10",
+      "description": "Atherosclerotic disease of the coronary arteries, leading to reduced myocardial perfusion.",
+      "typical_symptoms": ["Angina (substernal chest pressure)", "Dyspnea on exertion", "Fatigue", "Diaphoresis", "Jaw/arm pain", "May be asymptomatic"],
+      "diagnostic_criteria": ["Positive stress test", "Coronary angiography showing >=50% stenosis", "Coronary CT angiography showing calcification/stenosis", "Clinical presentation with troponin elevation (ACS)"],
+      "risk_factors": ["Hypertension", "Hyperlipidemia", "Diabetes", "Smoking", "Family history of premature CAD", "Obesity", "Sedentary lifestyle", "Male sex", "Age"],
+      "complications": ["Myocardial infarction", "Heart failure", "Arrhythmias", "Cardiogenic shock", "Sudden cardiac death"],
+      "category": "Cardiovascular"
+    },
+    "Generalized Anxiety Disorder": {
+      "disease_name": "Generalized Anxiety Disorder",
+      "icd10_code": "F41.1",
+      "description": "A mental health disorder characterized by persistent, excessive worry about various aspects of life that is difficult to control.",
+      "typical_symptoms": ["Excessive worry", "Restlessness", "Fatigue", "Difficulty concentrating", "Irritability", "Muscle tension", "Sleep disturbance"],
+      "diagnostic_criteria": ["Excessive anxiety/worry occurring more days than not for >=6 months", "Difficulty controlling worry", "3+ of: restlessness, fatigue, concentration difficulty, irritability, muscle tension, sleep disturbance", "Significant distress or functional impairment"],
+      "risk_factors": ["Family history", "Female sex", "Childhood adversity", "Chronic medical conditions", "Substance use", "Stressful life events"],
+      "complications": ["Depression", "Substance abuse", "Insomnia", "Irritable bowel syndrome", "Cardiovascular disease", "Impaired work performance"],
+      "category": "Psychiatric"
+    },
+    "Benign Prostatic Hyperplasia": {
+      "disease_name": "Benign Prostatic Hyperplasia",
+      "icd10_code": "N40.0",
+      "description": "Non-malignant enlargement of the prostate gland causing lower urinary tract symptoms due to bladder outlet obstruction.",
+      "typical_symptoms": ["Urinary frequency", "Nocturia", "Urgency", "Weak stream", "Hesitancy", "Incomplete emptying", "Post-void dribbling", "Straining"],
+      "diagnostic_criteria": ["IPSS (International Prostate Symptom Score) >=8 (moderate)", "DRE showing enlarged prostate", "Elevated post-void residual", "Decreased peak urinary flow rate (<10 mL/s)"],
+      "risk_factors": ["Age >50", "Family history", "Obesity", "Diabetes", "Physical inactivity", "Metabolic syndrome"],
+      "complications": ["Urinary retention", "UTI", "Bladder stones", "Renal insufficiency", "Hematuria"],
+      "category": "Urology"
+    },
+    "Allergic Rhinitis": {
+      "disease_name": "Allergic Rhinitis",
+      "icd10_code": "J30.9",
+      "description": "IgE-mediated inflammation of the nasal mucosa caused by exposure to allergens, resulting in nasal congestion, rhinorrhea, sneezing, and pruritus.",
+      "typical_symptoms": ["Nasal congestion", "Rhinorrhea (clear, watery)", "Sneezing", "Nasal pruritus", "Post-nasal drip", "Eye itching/tearing", "Allergic shiners"],
+      "diagnostic_criteria": ["Consistent symptoms with allergen exposure", "Positive skin prick testing", "Elevated allergen-specific IgE", "Nasal eosinophilia"],
+      "risk_factors": ["Family history of atopy", "Asthma", "Eczema", "Early childhood allergen exposure"],
+      "complications": ["Sinusitis", "Otitis media", "Nasal polyps", "Sleep disturbance", "Asthma exacerbation", "Impaired quality of life"],
+      "category": "Allergy/Immunology"
+    },
+    "Obstructive Sleep Apnea": {
+      "disease_name": "Obstructive Sleep Apnea",
+      "icd10_code": "G47.33",
+      "description": "A sleep disorder characterized by repetitive upper airway obstruction during sleep, causing intermittent hypoxemia and sleep fragmentation.",
+      "typical_symptoms": ["Loud snoring", "Witnessed apneas", "Excessive daytime sleepiness", "Morning headaches", "Dry mouth on waking", "Nocturia", "Poor concentration", "Irritability"],
+      "diagnostic_criteria": ["Polysomnography: AHI >=5 with symptoms or AHI >=15 regardless of symptoms", "Home sleep apnea testing can be used for high pretest probability"],
+      "risk_factors": ["Obesity (BMI >30)", "Male sex", "Age >50", "Large neck circumference (>17in M, >16in F)", "Craniofacial abnormalities", "Family history", "Alcohol use"],
+      "complications": ["Hypertension", "Atrial fibrillation", "Heart failure", "Stroke", "Motor vehicle accidents", "Type 2 diabetes", "Depression"],
+      "category": "Sleep Medicine"
+    },
+    "Chronic Bronchitis": {
+      "disease_name": "Chronic Bronchitis",
+      "icd10_code": "J42",
+      "description": "A form of COPD defined by a productive cough lasting at least 3 months per year for 2 or more consecutive years.",
+      "typical_symptoms": ["Chronic productive cough", "Mucoid or purulent sputum", "Dyspnea", "Wheezing", "Frequent respiratory infections"],
+      "diagnostic_criteria": ["Productive cough for >=3 months/year for >=2 consecutive years", "Exclusion of other causes of chronic cough", "Often associated with airflow limitation on spirometry"],
+      "risk_factors": ["Cigarette smoking", "Air pollution", "Occupational exposures", "Recurrent respiratory infections"],
+      "complications": ["Acute exacerbations", "Pneumonia", "Cor pulmonale", "Respiratory failure"],
+      "category": "Pulmonary"
+    },
+    "Osteoporosis": {
+      "disease_name": "Osteoporosis",
+      "icd10_code": "M81.0",
+      "description": "A systemic skeletal disorder characterized by low bone mass and microarchitectural deterioration, leading to increased bone fragility and fracture risk.",
+      "typical_symptoms": ["Often asymptomatic until fracture", "Loss of height", "Kyphosis", "Back pain (vertebral compression fracture)", "Fragility fractures"],
+      "diagnostic_criteria": ["DXA T-score <=-2.5 at spine, hip, or forearm", "Fragility fracture (hip, vertebral)", "FRAX score indicating high fracture risk"],
+      "risk_factors": ["Postmenopausal status", "Age", "Female sex", "Low body weight", "Smoking", "Excessive alcohol", "Glucocorticoid use", "Family history", "Calcium/Vitamin D deficiency"],
+      "complications": ["Hip fracture", "Vertebral compression fractures", "Wrist fractures", "Chronic pain", "Disability", "Mortality (hip fractures)"],
+      "category": "Musculoskeletal"
+    },
+    "Gout": {
+      "disease_name": "Gout",
+      "icd10_code": "M10.9",
+      "description": "A form of inflammatory arthritis caused by deposition of monosodium urate crystals in joints and tissues due to hyperuricemia.",
+      "typical_symptoms": ["Acute monoarticular arthritis (classically 1st MTP)", "Severe pain", "Erythema", "Swelling", "Warmth", "Tophi (chronic gout)", "Fever"],
+      "diagnostic_criteria": ["Identification of monosodium urate crystals in synovial fluid (gold standard)", "Serum uric acid >6.8 mg/dL (may be normal during acute flare)", "Clinical presentation with rapid onset monoarthritis"],
+      "risk_factors": ["Male sex", "Obesity", "Alcohol use (beer, spirits)", "Purine-rich diet", "Diuretic use", "CKD", "Metabolic syndrome", "Genetics"],
+      "complications": ["Chronic gouty arthritis", "Tophi", "Nephrolithiasis (urate stones)", "Chronic kidney disease", "Joint destruction"],
+      "category": "Rheumatology"
+    },
+    "Peptic Ulcer Disease": {
+      "disease_name": "Peptic Ulcer Disease",
+      "icd10_code": "K27.9",
+      "description": "A defect in the gastric or duodenal mucosa extending through the muscularis mucosae, most commonly caused by H. pylori or NSAID use.",
+      "typical_symptoms": ["Epigastric pain (burning)", "Nausea", "Bloating", "Early satiety", "Pain worse with meals (gastric) or relieved by meals (duodenal)", "Melena", "Hematemesis"],
+      "diagnostic_criteria": ["Upper endoscopy showing ulceration", "H. pylori testing (stool antigen, urea breath test, or biopsy)", "Clinical symptoms responsive to acid suppression"],
+      "risk_factors": ["H. pylori infection", "NSAID use", "Smoking", "Alcohol", "Zollinger-Ellison syndrome", "Physiologic stress (ICU)"],
+      "complications": ["GI hemorrhage", "Perforation", "Gastric outlet obstruction", "Malignancy (gastric ulcers)"],
+      "category": "Gastrointestinal"
+    },
+    "Deep Vein Thrombosis": {
+      "disease_name": "Deep Vein Thrombosis",
+      "icd10_code": "I82.40",
+      "description": "Formation of a blood clot in a deep vein, most commonly in the lower extremities.",
+      "typical_symptoms": ["Unilateral leg swelling", "Pain/tenderness", "Warmth", "Erythema", "Palpable cord", "Homan's sign (unreliable)"],
+      "diagnostic_criteria": ["Compression ultrasonography showing non-compressible vein", "Elevated D-dimer (sensitive but not specific)", "Wells score for pretest probability"],
+      "risk_factors": ["Immobilization", "Recent surgery", "Cancer", "Oral contraceptives/HRT", "Pregnancy", "Inherited thrombophilia", "Obesity", "Prior DVT/PE"],
+      "complications": ["Pulmonary embolism", "Post-thrombotic syndrome", "Chronic venous insufficiency", "Phlegmasia cerulea dolens"],
+      "category": "Hematology"
+    },
+    "Pulmonary Embolism": {
+      "disease_name": "Pulmonary Embolism",
+      "icd10_code": "I26.99",
+      "description": "Obstruction of the pulmonary arterial vasculature by thrombus, most often originating from deep veins of the lower extremities.",
+      "typical_symptoms": ["Acute dyspnea", "Pleuritic chest pain", "Tachycardia", "Tachypnea", "Cough", "Hemoptysis", "Syncope (massive PE)", "Hypoxemia"],
+      "diagnostic_criteria": ["CT pulmonary angiography (gold standard)", "Ventilation-perfusion scan", "Elevated D-dimer", "Wells score for pretest probability", "ECG (S1Q3T3 pattern, sinus tachycardia)"],
+      "risk_factors": ["Same as DVT", "Immobilization", "Surgery", "Cancer", "Thrombophilia", "Oral contraceptives"],
+      "complications": ["Right heart failure", "Cardiogenic shock", "Death", "Chronic thromboembolic pulmonary hypertension"],
+      "category": "Pulmonary"
+    },
+    "Acute Myocardial Infarction": {
+      "disease_name": "Acute Myocardial Infarction",
+      "icd10_code": "I21.9",
+      "description": "Myocardial necrosis resulting from acute obstruction of a coronary artery.",
+      "typical_symptoms": ["Severe substernal chest pain/pressure", "Radiation to left arm, jaw, back", "Diaphoresis", "Nausea/vomiting", "Dyspnea", "Anxiety/sense of doom"],
+      "diagnostic_criteria": ["Rise and/or fall of cardiac troponin with at least one value above 99th percentile", "Plus: symptoms of ischemia, new ST-T changes, new Q waves, imaging evidence of new loss of viable myocardium"],
+      "risk_factors": ["Hypertension", "Hyperlipidemia", "Diabetes", "Smoking", "Family history", "Obesity", "Male sex", "Cocaine use"],
+      "complications": ["Cardiogenic shock", "Arrhythmias (VT/VF)", "Heart failure", "Mechanical complications (papillary muscle rupture, ventricular septal defect)", "Dressler syndrome"],
+      "category": "Cardiovascular"
+    },
+    "Stroke": {
+      "disease_name": "Stroke",
+      "icd10_code": "I63.9",
+      "description": "Acute neurological deficit caused by cerebrovascular ischemia (ischemic stroke) or hemorrhage (hemorrhagic stroke).",
+      "typical_symptoms": ["Sudden unilateral weakness/numbness", "Speech difficulty (aphasia/dysarthria)", "Visual field loss", "Ataxia", "Severe headache (hemorrhagic)", "Confusion", "Dizziness"],
+      "diagnostic_criteria": ["CT head (rule out hemorrhage)", "MRI with DWI (identify ischemic core)", "CTA/MRA (vessel occlusion)", "NIH Stroke Scale for severity"],
+      "risk_factors": ["Hypertension", "Atrial fibrillation", "Diabetes", "Hyperlipidemia", "Smoking", "Carotid stenosis", "Prior stroke/TIA", "Sickle cell disease"],
+      "complications": ["Permanent disability", "Dysphagia/aspiration pneumonia", "Depression", "DVT/PE", "Hemorrhagic transformation", "Cerebral edema", "Seizures"],
+      "category": "Neurological"
+    },
+    "Rheumatoid Arthritis": {
+      "disease_name": "Rheumatoid Arthritis",
+      "icd10_code": "M06.9",
+      "description": "A chronic autoimmune inflammatory disease primarily affecting the synovial joints, leading to progressive joint destruction.",
+      "typical_symptoms": ["Symmetric polyarthritis (MCP, PIP, wrists)", "Morning stiffness >60 minutes", "Joint swelling and tenderness", "Fatigue", "Rheumatoid nodules", "Swan neck/boutonniere deformities (late)"],
+      "diagnostic_criteria": ["2010 ACR/EULAR criteria (score >=6/10)", "Joint involvement, serology (RF, anti-CCP), acute phase reactants (ESR, CRP), duration >=6 weeks"],
+      "risk_factors": ["Female sex", "Age 40-60", "Family history", "Smoking", "HLA-DR4", "Obesity"],
+      "complications": ["Joint destruction", "Cervical spine instability", "Interstitial lung disease", "Cardiovascular disease", "Vasculitis", "Felty syndrome"],
+      "category": "Rheumatology"
+    },
+    "Cellulitis": {
+      "disease_name": "Cellulitis",
+      "icd10_code": "L03.90",
+      "description": "An acute bacterial skin infection involving the dermis and subcutaneous tissue, most commonly caused by streptococci or staphylococci.",
+      "typical_symptoms": ["Erythema", "Warmth", "Swelling", "Tenderness", "Poorly defined borders", "Fever", "Lymphangitis (red streaking)"],
+      "diagnostic_criteria": ["Clinical diagnosis based on classic findings", "Blood cultures (if systemic toxicity)", "Imaging to rule out abscess if fluctuant"],
+      "risk_factors": ["Skin break/wound", "Tinea pedis", "Lymphedema", "Obesity", "Diabetes", "Peripheral vascular disease", "Immunosuppression", "Prior cellulitis"],
+      "complications": ["Abscess formation", "Bacteremia/sepsis", "Necrotizing fasciitis", "Osteomyelitis", "Lymphedema", "Recurrence"],
+      "category": "Infectious Disease"
+    },
+    "Chronic Obstructive Pulmonary Disease Exacerbation": {
+      "disease_name": "Chronic Obstructive Pulmonary Disease Exacerbation",
+      "icd10_code": "J44.1",
+      "description": "An acute worsening of respiratory symptoms in COPD that results in additional therapy, often triggered by infections or environmental factors.",
+      "typical_symptoms": ["Increased dyspnea", "Increased sputum volume", "Increased sputum purulence", "Wheezing", "Chest tightness", "Fever (if infectious)", "Tachypnea"],
+      "diagnostic_criteria": ["Acute worsening of respiratory symptoms beyond normal day-to-day variations", "Change in baseline dyspnea, cough, and/or sputum that warrants a change in management"],
+      "risk_factors": ["Prior exacerbation history", "Lower FEV1", "Active smoking", "Viral or bacterial infection", "Air pollution", "Non-adherence to medications"],
+      "complications": ["Respiratory failure", "Pneumonia", "Pneumothorax", "Need for mechanical ventilation", "Death"],
+      "category": "Pulmonary"
+    },
+    "Diabetic Nephropathy": {
+      "disease_name": "Diabetic Nephropathy",
+      "icd10_code": "E11.21",
+      "description": "Kidney damage resulting from diabetes mellitus, the leading cause of end-stage renal disease.",
+      "typical_symptoms": ["Often asymptomatic early", "Foamy urine (proteinuria)", "Edema", "Hypertension worsening", "Fatigue", "Nausea (advanced)"],
+      "diagnostic_criteria": ["Persistent albuminuria (>30 mg/g creatinine) on 2 of 3 specimens over 3-6 months", "Declining eGFR", "In the setting of diabetes >=10 years (Type 1) or at diagnosis (Type 2)", "Diabetic retinopathy often concurrent"],
+      "risk_factors": ["Poor glycemic control", "Hypertension", "Duration of diabetes", "Smoking", "African American/Hispanic ethnicity", "Family history of CKD"],
+      "complications": ["End-stage renal disease", "Cardiovascular disease", "Hyperkalemia", "Metabolic acidosis", "Anemia"],
+      "category": "Nephrology"
+    },
+    "Pneumothorax": {
+      "disease_name": "Pneumothorax",
+      "icd10_code": "J93.9",
+      "description": "Presence of air in the pleural space, which may occur spontaneously or secondary to trauma or lung disease.",
+      "typical_symptoms": ["Sudden onset chest pain (sharp, pleuritic)", "Dyspnea", "Decreased breath sounds on affected side", "Hyperresonance to percussion", "Tracheal deviation (tension pneumothorax)"],
+      "diagnostic_criteria": ["Chest X-ray showing visceral pleural line without lung markings peripherally", "CT chest (more sensitive for small pneumothorax)", "Ultrasound (absence of lung sliding)"],
+      "risk_factors": ["Tall, thin body habitus", "Smoking", "COPD/bullous disease", "Marfan syndrome", "Mechanical ventilation", "Trauma"],
+      "complications": ["Tension pneumothorax", "Respiratory failure", "Recurrence", "Re-expansion pulmonary edema"],
+      "category": "Pulmonary"
+    },
+    "Hypothermia": {
+      "disease_name": "Hypothermia",
+      "icd10_code": "T68",
+      "description": "Core body temperature below 35°C (95°F), which can be mild (32-35°C), moderate (28-32°C), or severe (<28°C).",
+      "typical_symptoms": ["Shivering (mild)", "Confusion", "Slurred speech", "Bradycardia", "Hypotension", "Loss of shivering (moderate-severe)", "Paradoxical undressing", "Cardiac arrhythmias"],
+      "diagnostic_criteria": ["Core temperature <35°C (95°F)", "Clinical assessment", "ECG may show Osborn (J) waves"],
+      "risk_factors": ["Cold exposure", "Elderly age", "Alcohol intoxication", "Homelessness", "Hypothyroidism", "Sepsis", "Burns"],
+      "complications": ["Cardiac arrhythmias (VF)", "Coagulopathy", "Rhabdomyolysis", "Acute kidney injury", "Death"],
+      "category": "Environmental/Emergency"
+    },
+    "Sepsis": {
+      "disease_name": "Sepsis",
+      "icd10_code": "A41.9",
+      "description": "Life-threatening organ dysfunction caused by a dysregulated host response to infection.",
+      "typical_symptoms": ["Fever or hypothermia", "Tachycardia", "Tachypnea", "Altered mental status", "Hypotension", "Oliguria", "Mottled skin"],
+      "diagnostic_criteria": ["Suspected or documented infection PLUS acute increase in SOFA score >=2 points", "qSOFA >=2 (altered mentation, SBP <=100, RR >=22) for bedside screening"],
+      "risk_factors": ["Age >65", "Immunosuppression", "Chronic disease (diabetes, CKD, liver disease)", "Indwelling devices", "Recent surgery", "Burns"],
+      "complications": ["Septic shock", "Multi-organ failure", "DIC", "ARDS", "Acute kidney injury", "Death (mortality 20-40%)"],
+      "category": "Infectious Disease"
+    },
+    "Acute Kidney Injury": {
+      "disease_name": "Acute Kidney Injury",
+      "icd10_code": "N17.9",
+      "description": "A rapid decline in renal function occurring over hours to days, characterized by accumulation of waste products and fluid/electrolyte imbalances.",
+      "typical_symptoms": ["Decreased urine output", "Fluid overload/edema", "Nausea", "Fatigue", "Confusion", "Chest pain (if pericarditis)", "May be asymptomatic"],
+      "diagnostic_criteria": ["KDIGO criteria: increase in SCr >=0.3 mg/dL within 48h, or increase >=1.5x baseline within 7 days, or urine output <0.5 mL/kg/h for 6h"],
+      "risk_factors": ["Pre-existing CKD", "Diabetes", "Heart failure", "Nephrotoxic drugs (NSAIDs, aminoglycosides, contrast)", "Sepsis", "Volume depletion", "Advanced age"],
+      "complications": ["Hyperkalemia", "Metabolic acidosis", "Fluid overload/pulmonary edema", "Uremia", "Need for dialysis", "Progression to CKD"],
+      "category": "Nephrology"
+    },
+    "Pancreatitis": {
+      "disease_name": "Pancreatitis",
+      "icd10_code": "K85.9",
+      "description": "Inflammation of the pancreas, most commonly caused by gallstones or alcohol abuse.",
+      "typical_symptoms": ["Severe epigastric pain radiating to back", "Nausea/vomiting", "Abdominal tenderness", "Fever", "Tachycardia", "Pain worse after eating"],
+      "diagnostic_criteria": ["2 of 3: characteristic abdominal pain, lipase/amylase >3x upper normal, imaging findings consistent with pancreatitis"],
+      "risk_factors": ["Gallstones", "Alcohol abuse", "Hypertriglyceridemia (>1000 mg/dL)", "ERCP", "Medications", "Trauma", "Autoimmune"],
+      "complications": ["Pancreatic necrosis", "Pseudocyst", "Abscess", "SIRS/organ failure", "Chronic pancreatitis"],
+      "category": "Gastrointestinal"
+    },
+    "Cirrhosis": {
+      "disease_name": "Cirrhosis",
+      "icd10_code": "K74.60",
+      "description": "End-stage liver disease characterized by diffuse hepatic fibrosis with replacement of normal architecture by regenerative nodules.",
+      "typical_symptoms": ["Fatigue", "Jaundice", "Ascites", "Spider angiomata", "Palmar erythema", "Gynecomastia", "Easy bruising", "Hepatomegaly/splenomegaly", "Muscle wasting"],
+      "diagnostic_criteria": ["Liver biopsy (gold standard)", "FibroScan/elastography", "Laboratory (low albumin, elevated INR, elevated bilirubin)", "Imaging showing nodular liver, splenomegaly, ascites"],
+      "risk_factors": ["Chronic hepatitis B/C", "Alcohol abuse", "NAFLD/NASH", "Autoimmune hepatitis", "Primary biliary cholangitis", "Hemochromatosis"],
+      "complications": ["Variceal bleeding", "Spontaneous bacterial peritonitis", "Hepatic encephalopathy", "Hepatorenal syndrome", "Hepatocellular carcinoma", "Coagulopathy"],
+      "category": "Hepatology"
+    },
+    "Epilepsy": {
+      "disease_name": "Epilepsy",
+      "icd10_code": "G40.909",
+      "description": "A neurological disorder characterized by recurrent, unprovoked seizures due to abnormal excessive brain electrical activity.",
+      "typical_symptoms": ["Recurrent seizures (tonic-clonic, focal, absence)", "Aura (focal onset)", "Loss of consciousness", "Postictal confusion", "Tongue biting", "Urinary incontinence"],
+      "diagnostic_criteria": [">=2 unprovoked seizures >24h apart", "1 unprovoked seizure with high recurrence risk (>60%)", "EEG showing epileptiform discharges", "MRI brain for structural etiology"],
+      "risk_factors": ["Family history", "Head trauma", "Stroke", "CNS infections", "Brain tumors", "Perinatal injury", "Cortical dysplasia"],
+      "complications": ["Status epilepticus", "Sudden unexpected death in epilepsy (SUDEP)", "Injuries from seizures", "Cognitive impairment", "Psychosocial disability"],
+      "category": "Neurological"
+    },
+    "Anaphylaxis": {
+      "disease_name": "Anaphylaxis",
+      "icd10_code": "T78.2",
+      "description": "A severe, potentially life-threatening systemic allergic reaction with rapid onset, involving multiple organ systems.",
+      "typical_symptoms": ["Urticaria/angioedema", "Dyspnea/wheezing/stridor", "Hypotension", "Tachycardia", "Abdominal pain/vomiting", "Dizziness/syncope", "Pruritus", "Throat tightness"],
+      "diagnostic_criteria": ["Acute onset (minutes to hours) with involvement of skin/mucosal tissue PLUS respiratory compromise and/or reduced BP", "Or: 2+ organ systems involved after exposure to likely allergen", "Elevated serum tryptase (if available)"],
+      "risk_factors": ["Prior anaphylaxis", "Atopy", "Food allergies", "Insect venom allergy", "Drug allergies", "Mastocytosis"],
+      "complications": ["Death", "Biphasic reaction", "Cardiac arrest", "Respiratory failure", "Anoxic brain injury"],
+      "category": "Allergy/Immunology"
+    },
+    "Peripheral Artery Disease": {
+      "disease_name": "Peripheral Artery Disease",
+      "icd10_code": "I73.9",
+      "description": "Atherosclerotic occlusive disease of the lower extremities, causing reduced blood flow to the legs.",
+      "typical_symptoms": ["Intermittent claudication", "Rest pain (severe)", "Non-healing wounds/ulcers", "Cool extremities", "Diminished pulses", "Hair loss on legs", "Skin atrophy"],
+      "diagnostic_criteria": ["Ankle-brachial index (ABI) <0.9", "Arterial duplex ultrasonography", "CTA or MRA of lower extremities", "Angiography"],
+      "risk_factors": ["Smoking", "Diabetes", "Hypertension", "Hyperlipidemia", "Age >65", "Family history of atherosclerosis"],
+      "complications": ["Critical limb ischemia", "Gangrene", "Amputation", "Concurrent coronary/cerebrovascular disease"],
+      "category": "Cardiovascular"
+    },
+    "Thyroid Cancer": {
+      "disease_name": "Thyroid Cancer",
+      "icd10_code": "C73",
+      "description": "Malignant neoplasm of the thyroid gland; papillary thyroid cancer is the most common type, accounting for 80-85% of cases.",
+      "typical_symptoms": ["Thyroid nodule (often incidental)", "Neck swelling", "Hoarseness", "Dysphagia", "Cervical lymphadenopathy", "Usually asymptomatic"],
+      "diagnostic_criteria": ["FNA biopsy of thyroid nodule", "Bethesda classification system", "Ultrasonographic features (microcalcifications, irregular margins, taller-than-wide)", "Molecular testing (BRAF, RAS)"],
+      "risk_factors": ["Radiation exposure (especially childhood)", "Family history", "Female sex", "Iodine deficiency", "Hashimoto's thyroiditis", "Genetic syndromes (MEN2, FAP)"],
+      "complications": ["Local invasion", "Lymph node metastasis", "Distant metastasis (lung, bone)", "Recurrence", "Hypothyroidism (post-treatment)"],
+      "category": "Oncology"
+    },
+    "Non-Hodgkin Lymphoma": {
+      "disease_name": "Non-Hodgkin Lymphoma",
+      "icd10_code": "C85.90",
+      "description": "A heterogeneous group of lymphoproliferative malignancies originating from B cells, T cells, or NK cells.",
+      "typical_symptoms": ["Painless lymphadenopathy", "B symptoms (fever, night sweats, weight loss >10%)", "Fatigue", "Splenomegaly", "Hepatomegaly", "Pruritus"],
+      "diagnostic_criteria": ["Excisional lymph node biopsy with immunohistochemistry", "Flow cytometry", "CT/PET staging", "Bone marrow biopsy"],
+      "risk_factors": ["Immunosuppression (HIV, transplant)", "Autoimmune diseases", "H. pylori (MALT lymphoma)", "EBV infection", "Age", "Family history"],
+      "complications": ["Bone marrow failure", "Tumor lysis syndrome", "Superior vena cava syndrome", "Spinal cord compression", "Treatment-related toxicity"],
+      "category": "Oncology"
+    },
+    "Vitamin D Deficiency": {
+      "disease_name": "Vitamin D Deficiency",
+      "icd10_code": "E55.9",
+      "description": "Insufficient levels of vitamin D, defined as 25(OH)D <20 ng/mL, which can lead to bone disorders and has been associated with various systemic effects.",
+      "typical_symptoms": ["Often asymptomatic", "Fatigue", "Bone pain", "Muscle weakness", "Depression", "Impaired wound healing"],
+      "diagnostic_criteria": ["25(OH)D <20 ng/mL (deficiency)", "25(OH)D 20-29 ng/mL (insufficiency)", "Elevated PTH may be present"],
+      "risk_factors": ["Limited sun exposure", "Dark skin pigmentation", "Obesity", "Malabsorption", "Elderly age", "Breastfed infants", "Chronic kidney disease"],
+      "complications": ["Osteomalacia", "Osteoporosis", "Fractures", "Secondary hyperparathyroidism", "Rickets (children)"],
+      "category": "Endocrine"
+    },
+    "Insomnia": {
+      "disease_name": "Insomnia",
+      "icd10_code": "G47.00",
+      "description": "A sleep disorder characterized by difficulty initiating or maintaining sleep, or early morning awakening, with associated daytime impairment.",
+      "typical_symptoms": ["Difficulty falling asleep", "Difficulty staying asleep", "Early morning awakening", "Non-restorative sleep", "Daytime fatigue", "Irritability", "Poor concentration"],
+      "diagnostic_criteria": ["Sleep difficulty >=3 nights per week", "Present for >=3 months (chronic)", "Adequate opportunity for sleep", "Daytime dysfunction", "Not better explained by another sleep disorder"],
+      "risk_factors": ["Female sex", "Older age", "Psychiatric disorders (depression, anxiety)", "Medical conditions", "Shift work", "Substance use", "Stress"],
+      "complications": ["Depression", "Anxiety", "Cardiovascular disease", "Impaired work performance", "Motor vehicle accidents", "Substance abuse"],
+      "category": "Sleep Medicine"
+    },
+    "Menorrhagia": {
+      "disease_name": "Menorrhagia",
+      "icd10_code": "N92.0",
+      "description": "Abnormally heavy or prolonged menstrual bleeding (>80 mL per cycle or >7 days), a common gynecological complaint.",
+      "typical_symptoms": ["Heavy menstrual flow", "Passing large clots", "Soaking through pads/tampons frequently", "Menstrual periods lasting >7 days", "Anemia symptoms (fatigue, pallor)"],
+      "diagnostic_criteria": ["Clinical assessment of menstrual blood loss", "Hemoglobin/iron studies showing anemia", "Pelvic ultrasound to evaluate structural causes", "Endometrial biopsy if age >45 or risk factors"],
+      "risk_factors": ["Uterine fibroids", "Polyps", "Adenomyosis", "Coagulation disorders", "Hypothyroidism", "IUD use (copper)", "Perimenopause"],
+      "complications": ["Iron deficiency anemia", "Reduced quality of life", "Need for surgical intervention"],
+      "category": "Gynecology"
+    },
+    "Chronic Pain Syndrome": {
+      "disease_name": "Chronic Pain Syndrome",
+      "icd10_code": "G89.4",
+      "description": "Pain persisting beyond the normal time of healing (typically >3 months) that is associated with significant emotional distress or functional disability.",
+      "typical_symptoms": ["Persistent pain", "Reduced mobility", "Sleep disturbance", "Fatigue", "Depression/anxiety", "Decreased appetite", "Social withdrawal"],
+      "diagnostic_criteria": ["Pain lasting >3 months", "Pain associated with significant emotional distress", "Pain associated with significant functional disability", "Cannot be attributed entirely to another condition"],
+      "risk_factors": ["Prior injury/surgery", "Obesity", "Psychological factors", "Social factors", "Genetics", "Central sensitization"],
+      "complications": ["Opioid dependence", "Depression", "Disability", "Social isolation", "Substance abuse", "Suicide risk"],
+      "category": "Pain Medicine"
+    },
+    "Uterine Fibroids": {
+      "disease_name": "Uterine Fibroids",
+      "icd10_code": "D25.9",
+      "description": "Benign smooth muscle tumors of the uterus (leiomyomas), the most common pelvic tumors in women.",
+      "typical_symptoms": ["Heavy menstrual bleeding", "Pelvic pressure/pain", "Urinary frequency", "Constipation", "Abdominal distension", "Dyspareunia", "Often asymptomatic"],
+      "diagnostic_criteria": ["Pelvic ultrasound showing well-defined uterine masses", "MRI (if needed for surgical planning)", "Clinical examination with enlarged, irregular uterus"],
+      "risk_factors": ["African American race", "Age 30-50", "Nulliparity", "Family history", "Obesity", "Early menarche"],
+      "complications": ["Menorrhagia leading to anemia", "Infertility", "Pregnancy complications", "Rare malignant degeneration (leiomyosarcoma)"],
+      "category": "Gynecology"
+    }
+  },
+  "imaging_catalog": {
+    "xray_chest": {
+      "imaging_type": "X-ray",
+      "body_region": "Chest",
+      "description": "Posteroanterior and lateral radiograph of the chest to evaluate cardiopulmonary structures.",
+      "typical_indications": ["Cough", "Dyspnea", "Chest pain", "Pneumonia", "Heart failure", "COPD", "Pleural effusion", "Pre-operative evaluation"]
+    },
+    "xray_knee": {
+      "imaging_type": "X-ray",
+      "body_region": "Knee",
+      "description": "AP and lateral radiographs of the knee joint to evaluate bony structures and joint space.",
+      "typical_indications": ["Knee pain", "Osteoarthritis", "Trauma", "Effusion", "Pre-surgical planning"]
+    },
+    "ct_chest": {
+      "imaging_type": "CT",
+      "body_region": "Chest",
+      "description": "Computed tomography of the chest with or without IV contrast for detailed cross-sectional imaging of thoracic structures.",
+      "typical_indications": ["Pulmonary embolism", "Lung nodule characterization", "Lung cancer staging", "Lymphadenopathy", "Thoracic aortic disease"]
+    },
+    "ct_abdomen_pelvis": {
+      "imaging_type": "CT",
+      "body_region": "Abdomen/Pelvis",
+      "description": "Computed tomography of the abdomen and pelvis with or without IV contrast.",
+      "typical_indications": ["Abdominal pain", "Appendicitis", "Diverticulitis", "Kidney stones", "Cancer staging", "Bowel obstruction", "Trauma"]
+    },
+    "ct_head": {
+      "imaging_type": "CT",
+      "body_region": "Head",
+      "description": "Non-contrast computed tomography of the head for rapid evaluation of intracranial pathology.",
+      "typical_indications": ["Acute stroke", "Head trauma", "Altered mental status", "Severe headache", "Rule out hemorrhage"]
+    },
+    "mri_brain": {
+      "imaging_type": "MRI",
+      "body_region": "Brain",
+      "description": "Magnetic resonance imaging of the brain with or without gadolinium contrast for detailed evaluation of brain parenchyma.",
+      "typical_indications": ["Stroke (DWI)", "Brain tumor", "Multiple sclerosis", "Epilepsy evaluation", "Pituitary pathology", "Migraine with concerning features"]
+    },
+    "mri_spine": {
+      "imaging_type": "MRI",
+      "body_region": "Spine",
+      "description": "MRI of the cervical, thoracic, or lumbar spine for evaluation of spinal cord, nerve roots, and surrounding structures.",
+      "typical_indications": ["Radiculopathy", "Spinal stenosis", "Herniated disc", "Cord compression", "Cancer metastases", "Infection (osteomyelitis/epidural abscess)"]
+    },
+    "ultrasound_kidney": {
+      "imaging_type": "Ultrasound",
+      "body_region": "Kidney",
+      "description": "Renal ultrasound to evaluate kidney size, parenchymal echogenicity, hydronephrosis, and masses.",
+      "typical_indications": ["Chronic kidney disease evaluation", "Hydronephrosis", "Renal cysts/masses", "Kidney stones", "Renal artery stenosis (with Doppler)"]
+    },
+    "ultrasound_abdomen": {
+      "imaging_type": "Ultrasound",
+      "body_region": "Abdomen",
+      "description": "Abdominal ultrasound to evaluate liver, gallbladder, pancreas, spleen, and kidneys.",
+      "typical_indications": ["Right upper quadrant pain", "Gallstones", "Cholecystitis", "Liver disease", "Ascites", "Abdominal aortic aneurysm screening"]
+    },
+    "echocardiogram": {
+      "imaging_type": "Echocardiogram",
+      "body_region": "Heart",
+      "description": "Transthoracic echocardiogram (TTE) using ultrasound to evaluate cardiac structure and function.",
+      "typical_indications": ["Heart failure evaluation", "Valvular heart disease", "Cardiomyopathy", "Pericardial effusion", "Endocarditis", "Post-MI assessment", "Atrial fibrillation"]
+    },
+    "ct_pulmonary_angiography": {
+      "imaging_type": "CT",
+      "body_region": "Chest (Pulmonary Vasculature)",
+      "description": "CT angiography of the pulmonary arteries with IV contrast for detection of pulmonary embolism.",
+      "typical_indications": ["Suspected pulmonary embolism", "Acute dyspnea with pleuritic chest pain", "Elevated D-dimer with high clinical suspicion"]
+    },
+    "dexa_scan": {
+      "imaging_type": "DXA",
+      "body_region": "Hip/Spine",
+      "description": "Dual-energy X-ray absorptiometry for bone mineral density measurement.",
+      "typical_indications": ["Osteoporosis screening (women >=65, men >=70)", "Glucocorticoid use", "Fragility fracture", "Monitoring treatment response"]
+    }
+  },
+  "treatment_guidelines": {
+    "Type 2 Diabetes Mellitus": {
+      "condition": "Type 2 Diabetes Mellitus",
+      "first_line": ["Lifestyle modifications (diet, exercise, weight loss)", "Metformin 500mg BID titrated to 1000mg BID"],
+      "second_line": ["Add GLP-1 receptor agonist (semaglutide, liraglutide) if ASCVD or CKD", "Add SGLT2 inhibitor (empagliflozin, dapagliflozin) if heart failure or CKD", "Add sulfonylurea or DPP-4 inhibitor if cost is a barrier", "Insulin therapy if HbA1c significantly above target"],
+      "lifestyle_modifications": ["Medical nutrition therapy", "150 min/week moderate-intensity aerobic exercise", "Weight loss of 5-7% if overweight", "Smoking cessation", "Limit alcohol intake"],
+      "monitoring": ["HbA1c every 3 months until at goal, then every 6 months", "Annual dilated eye exam", "Annual urine albumin/creatinine ratio", "Annual foot exam", "Lipid panel annually", "Blood pressure at every visit"],
+      "referral_criteria": ["Endocrinology: complex insulin regimen, recurrent hypoglycemia", "Ophthalmology: annual screening", "Podiatry: foot ulcers, neuropathy", "Nephrology: eGFR <30 or rapidly declining", "Diabetes educator/nutritionist"],
+      "red_flags": ["DKA (nausea, vomiting, abdominal pain, fruity breath, altered mental status)", "Hyperosmolar hyperglycemic state (glucose >600, AMS)", "Severe hypoglycemia (loss of consciousness, seizure)", "New foot ulcer or gangrene"]
+    },
+    "Hypertension": {
+      "condition": "Hypertension",
+      "first_line": ["ACE inhibitor or ARB (preferred in diabetes/CKD)", "Calcium channel blocker (amlodipine)", "Thiazide diuretic (chlorthalidone or hydrochlorothiazide)"],
+      "second_line": ["Combination of first-line agents", "Add spironolactone for resistant hypertension", "Beta-blocker (if compelling indication: HF, post-MI, rate control)", "Alpha-blocker (if concurrent BPH)"],
+      "lifestyle_modifications": ["DASH diet", "Sodium restriction <2300 mg/day", "Regular aerobic exercise (150 min/week)", "Weight loss if BMI >25", "Limit alcohol (<=2 drinks/day men, <=1 women)", "Smoking cessation"],
+      "monitoring": ["Blood pressure at every visit", "Basic metabolic panel 1-2 weeks after starting/changing ACE/ARB/diuretic", "Annual metabolic panel", "Consider home blood pressure monitoring"],
+      "referral_criteria": ["Resistant hypertension (uncontrolled on 3 drugs including diuretic)", "Suspected secondary hypertension (young onset, sudden onset, hypokalemia)", "Hypertensive emergency/urgency", "Renal artery stenosis concern"],
+      "red_flags": ["BP >180/120 with end-organ damage (hypertensive emergency)", "Acute aortic dissection (tearing chest/back pain)", "Eclampsia (in pregnancy)", "Hypertensive encephalopathy (headache, confusion, papilledema)"]
+    },
+    "Heart Failure": {
+      "condition": "Heart Failure",
+      "first_line": ["ACE inhibitor or ARB (or ARNI: sacubitril/valsartan)", "Beta-blocker (carvedilol, metoprolol succinate, bisoprolol)", "Loop diuretic (furosemide) for volume overload", "SGLT2 inhibitor (dapagliflozin or empagliflozin) for HFrEF"],
+      "second_line": ["Spironolactone or eplerenone (mineralocorticoid receptor antagonist)", "Hydralazine/isosorbide dinitrate (especially in African Americans)", "Digoxin for symptom control", "Ivabradine if HR >70 despite max beta-blocker"],
+      "lifestyle_modifications": ["Sodium restriction (<2000 mg/day)", "Fluid restriction (1.5-2L/day if hyponatremic)", "Daily weight monitoring", "Regular moderate exercise (cardiac rehab)", "Smoking cessation", "Limit alcohol"],
+      "monitoring": ["Daily weights", "BNP/NT-proBNP trends", "Renal function and electrolytes (especially K+ on ACE/ARB/MRA)", "Echocardiogram annually or with clinical change", "NYHA functional class assessment"],
+      "referral_criteria": ["Cardiology: all new diagnoses, LVEF <40%, refractory symptoms", "Advanced HF specialist: consideration for LVAD or transplant", "Cardiac rehab", "Palliative care: refractory NYHA Class IV"],
+      "red_flags": ["Acute decompensation (worsening dyspnea, rapid weight gain >3 lbs/day)", "Cardiogenic shock (hypotension, cold extremities, altered mental status)", "New arrhythmia", "Syncope"]
+    },
+    "COPD": {
+      "condition": "COPD",
+      "first_line": ["SABA (albuterol) PRN for all patients", "LAMA (tiotropium) for GOLD B-D", "LABA (salmeterol, formoterol) for GOLD B-D", "ICS/LABA combination if frequent exacerbations and eosinophils >300"],
+      "second_line": ["Triple therapy (ICS/LAMA/LABA)", "Roflumilast for frequent exacerbations with chronic bronchitis phenotype", "Azithromycin prophylaxis for frequent exacerbations", "Supplemental oxygen if PaO2 <55 or SpO2 <88%"],
+      "lifestyle_modifications": ["Smoking cessation (most important intervention)", "Pulmonary rehabilitation", "Annual influenza vaccination", "Pneumococcal vaccination", "COVID-19 vaccination", "Nutritional support if underweight"],
+      "monitoring": ["Spirometry annually", "Pulse oximetry at visits", "Exacerbation frequency tracking", "Symptom assessment (CAT or mMRC)", "Annual chest X-ray if indicated"],
+      "referral_criteria": ["Pulmonology: diagnostic uncertainty, severe COPD, frequent exacerbations", "Pulmonary rehabilitation", "Surgical: lung volume reduction surgery or transplant evaluation", "Palliative care: end-stage disease"],
+      "red_flags": ["Acute exacerbation with respiratory failure", "SpO2 <88% on room air", "Altered mental status (CO2 narcosis)", "Hemoptysis", "Rapid decline in FEV1"]
+    },
+    "Asthma": {
+      "condition": "Asthma",
+      "first_line": ["Step 1: Low-dose ICS-formoterol PRN", "Step 2: Low-dose ICS daily + SABA PRN", "Step 3: Low-dose ICS/LABA combination", "Step 4: Medium-dose ICS/LABA"],
+      "second_line": ["Step 5: High-dose ICS/LABA + LAMA", "Add-on LTRA (montelukast)", "Biologic therapy (omalizumab, mepolizumab, dupilumab) for severe asthma", "Short course oral corticosteroids for exacerbations"],
+      "lifestyle_modifications": ["Allergen avoidance", "Smoking cessation and avoidance of secondhand smoke", "Weight management", "Regular exercise with proper warm-up", "Stress management", "Influenza vaccination"],
+      "monitoring": ["Spirometry at diagnosis and periodically", "Asthma Control Test (ACT) at each visit", "Peak flow monitoring at home", "Review inhaler technique at each visit", "Monitor for side effects of ICS"],
+      "referral_criteria": ["Allergist/immunologist: allergy testing, immunotherapy consideration", "Pulmonology: severe or difficult-to-control asthma", "Emergency: status asthmaticus", "Step 4-5 therapy needed"],
+      "red_flags": ["Peak flow <50% personal best", "No improvement with rescue inhaler", "Difficulty speaking in full sentences", "Cyanosis", "Silent chest (severe obstruction)", "Altered consciousness"]
+    },
+    "Major Depressive Disorder": {
+      "condition": "Major Depressive Disorder",
+      "first_line": ["SSRI (sertraline, escitalopram, fluoxetine)", "Psychotherapy (CBT, interpersonal therapy)", "Combined pharmacotherapy + psychotherapy"],
+      "second_line": ["SNRI (venlafaxine, duloxetine)", "Bupropion (especially if fatigue, sexual dysfunction, or smoking cessation needed)", "Mirtazapine (especially if insomnia and poor appetite)", "Augmentation with atypical antipsychotic or lithium"],
+      "lifestyle_modifications": ["Regular exercise (30 min, 5x/week)", "Sleep hygiene", "Social engagement", "Stress reduction techniques", "Limit alcohol", "Healthy diet"],
+      "monitoring": ["PHQ-9 at each visit", "Suicidal ideation assessment at every visit", "Side effects assessment (especially first 4-8 weeks)", "Response assessment at 4-6 weeks", "Consider dose adjustment if no response by 6-8 weeks"],
+      "referral_criteria": ["Psychiatry: treatment-resistant depression, suicidal ideation, psychotic features, bipolar concern", "Emergency: active suicidal plan/intent", "Psychotherapy", "Electroconvulsive therapy consideration"],
+      "red_flags": ["Suicidal ideation with plan or intent", "Psychotic symptoms", "Manic/hypomanic symptoms (screen for bipolar)", "Severe functional impairment", "Substance abuse comorbidity", "Failure of 2+ adequate medication trials"]
+    },
+    "Atrial Fibrillation": {
+      "condition": "Atrial Fibrillation",
+      "first_line": ["Anticoagulation based on CHA2DS2-VASc score (>=2 men, >=3 women)", "DOAC preferred (apixaban, rivaroxaban, edoxaban, dabigatran)", "Rate control: beta-blocker (metoprolol) or CCB (diltiazem)", "Target heart rate <110 bpm (lenient) or <80 bpm (strict)"],
+      "second_line": ["Rhythm control: antiarrhythmic drugs (amiodarone, flecainide, sotalol)", "Cardioversion (electrical or pharmacological)", "Catheter ablation for drug-refractory AF", "Left atrial appendage occlusion if anticoagulation contraindicated"],
+      "lifestyle_modifications": ["Weight loss if obese", "OSA treatment (CPAP)", "Limit alcohol intake", "Moderate exercise", "Manage underlying conditions (HTN, DM, HF)"],
+      "monitoring": ["Heart rate at each visit", "ECG periodically", "CHA2DS2-VASc score annually", "Renal function (for DOAC dosing)", "INR if on warfarin (target 2.0-3.0)", "Thyroid function"],
+      "referral_criteria": ["Cardiology: all new diagnoses", "Electrophysiology: catheter ablation candidacy", "Anticoagulation clinic if on warfarin", "Emergency: rapid ventricular response with hemodynamic instability"],
+      "red_flags": ["Hemodynamic instability (hypotension, syncope, acute HF)", "Stroke symptoms", "Heart rate >150 with symptoms", "Pre-excited AF (WPW)"]
+    },
+    "Chronic Kidney Disease": {
+      "condition": "Chronic Kidney Disease",
+      "first_line": ["ACE inhibitor or ARB (if albuminuria)", "SGLT2 inhibitor (dapagliflozin, empagliflozin) for eGFR 20-90 with albuminuria", "Blood pressure control (<130/80)", "Glycemic control (HbA1c <7% or individualized)"],
+      "second_line": ["Finerenone (nonsteroidal MRA) for diabetic CKD", "Phosphate binders (sevelamer, calcium acetate) for hyperphosphatemia", "Erythropoiesis-stimulating agents for anemia (Hgb <10)", "Sodium bicarbonate for metabolic acidosis", "Vitamin D supplementation"],
+      "lifestyle_modifications": ["Low-sodium diet (<2g/day)", "Protein restriction (0.8 g/kg/day in CKD 3-5)", "Potassium restriction if hyperkalemic", "Phosphorus restriction", "Smoking cessation", "Regular exercise"],
+      "monitoring": ["eGFR and urine albumin/creatinine ratio every 3-6 months", "Electrolytes, calcium, phosphorus every 3-6 months", "PTH annually (CKD 3) or every 3-6 months (CKD 4-5)", "Hemoglobin every 3-6 months", "Iron studies annually"],
+      "referral_criteria": ["Nephrology: eGFR <30, rapid decline (>5 mL/min/year), uncertain etiology", "Vascular access planning: eGFR <20", "Transplant evaluation: eGFR <20", "Dietitian: all CKD patients"],
+      "red_flags": ["Potassium >6.0 mEq/L", "Severe metabolic acidosis (bicarbonate <12)", "Volume overload refractory to diuretics", "Uremic symptoms (pericarditis, encephalopathy, bleeding)", "Rapid eGFR decline"]
+    },
+    "Osteoarthritis": {
+      "condition": "Osteoarthritis",
+      "first_line": ["Acetaminophen (up to 3g/day)", "Topical NSAIDs (diclofenac gel)", "Physical therapy and exercise", "Weight loss if BMI >25"],
+      "second_line": ["Oral NSAIDs (lowest effective dose, shortest duration)", "Duloxetine for chronic OA pain", "Intra-articular corticosteroid injections (limit to 3-4/year per joint)", "Topical capsaicin"],
+      "lifestyle_modifications": ["Low-impact aerobic exercise (walking, swimming, cycling)", "Strength training", "Weight management", "Assistive devices (cane, brace)", "Activity modification", "Heat/cold therapy"],
+      "monitoring": ["Pain assessment at each visit (NRS or VAS)", "Functional status assessment", "Renal function if on NSAIDs", "GI symptoms if on NSAIDs", "Radiographic progression if clinically indicated"],
+      "referral_criteria": ["Orthopedics: failure of conservative management, consideration for joint replacement", "Physical therapy: all patients", "Rheumatology: if inflammatory arthritis suspected", "Pain management: refractory pain"],
+      "red_flags": ["Hot, swollen joint (consider septic arthritis)", "Acute locking of joint", "Rapid functional decline", "Signs of inflammatory arthritis (prolonged morning stiffness, multiple joint involvement)"]
+    },
+    "GERD": {
+      "condition": "GERD",
+      "first_line": ["Lifestyle modifications", "PPI (omeprazole 20mg or equivalent) for 8 weeks", "Step down to H2 blocker (famotidine) or PRN PPI after symptom control"],
+      "second_line": ["Increase PPI to BID dosing", "Switch PPI", "Add H2 blocker at bedtime", "Baclofen for refractory reflux", "Surgical fundoplication (Nissen) for refractory cases"],
+      "lifestyle_modifications": ["Weight loss", "Elevate head of bed 6-8 inches", "Avoid eating 3 hours before bedtime", "Avoid trigger foods (caffeine, chocolate, alcohol, spicy/fatty foods)", "Smoking cessation", "Avoid tight-fitting clothing"],
+      "monitoring": ["Symptom assessment at 8 weeks", "Consider step-down after 8 weeks of PPI", "Annual reassessment of PPI need", "Endoscopy if alarm symptoms", "Magnesium level if long-term PPI"],
+      "referral_criteria": ["GI: alarm symptoms (dysphagia, weight loss, bleeding), failure of 8-week PPI trial", "Endoscopy: screening for Barrett's if chronic GERD >5 years", "Surgical: refractory symptoms despite maximal medical therapy"],
+      "red_flags": ["Dysphagia (especially progressive)", "Odynophagia", "Unintentional weight loss", "GI bleeding (melena, hematemesis)", "Iron deficiency anemia", "Chest pain (rule out cardiac cause first)"]
+    },
+    "Iron Deficiency Anemia": {
+      "condition": "Iron Deficiency Anemia",
+      "first_line": ["Oral iron supplementation (ferrous sulfate 325mg daily on empty stomach)", "Vitamin C 250-500mg with iron to enhance absorption", "Identify and treat underlying cause"],
+      "second_line": ["IV iron (ferric carboxymaltose, iron sucrose) if oral intolerant or malabsorption", "Blood transfusion if Hgb <7 or symptomatic severe anemia", "Hormonal therapy for menorrhagia"],
+      "lifestyle_modifications": ["Iron-rich diet (red meat, spinach, beans, fortified cereals)", "Avoid calcium, tea, coffee with iron supplement (interfere with absorption)", "Take iron on empty stomach if tolerated"],
+      "monitoring": ["CBC and reticulocyte count at 4-8 weeks", "Ferritin at 3 months to assess replenishment", "Continue iron 3-6 months after hemoglobin normalizes to replete stores", "If no response in 4-6 weeks, reassess diagnosis"],
+      "referral_criteria": ["GI: men or postmenopausal women (evaluate for GI bleeding)", "Gynecology: premenopausal women with menorrhagia", "Hematology: refractory anemia, concurrent cytopenias", "Celiac disease screening if malabsorption suspected"],
+      "red_flags": ["Hemoglobin <7 g/dL", "Active bleeding", "Hemodynamic instability (tachycardia, hypotension)", "Concurrent leukopenia or thrombocytopenia (consider bone marrow pathology)", "No response to adequate iron trial"]
+    },
+    "Community-Acquired Pneumonia": {
+      "condition": "Community-Acquired Pneumonia",
+      "first_line": ["Outpatient (no comorbidities): amoxicillin 1g TID", "Outpatient (with comorbidities): amoxicillin/clavulanate + macrolide OR respiratory fluoroquinolone", "Inpatient (non-ICU): beta-lactam + macrolide OR respiratory fluoroquinolone", "Inpatient (ICU): beta-lactam + macrolide OR beta-lactam + respiratory fluoroquinolone"],
+      "second_line": ["Doxycycline as alternative to macrolide", "If MRSA risk: add vancomycin or linezolid", "If Pseudomonas risk: piperacillin-tazobactam or cefepime + fluoroquinolone"],
+      "lifestyle_modifications": ["Rest and adequate hydration", "Smoking cessation", "Annual influenza vaccination", "Pneumococcal vaccination per guidelines"],
+      "monitoring": ["Clinical improvement expected within 48-72 hours of antibiotics", "Repeat chest X-ray at 6-8 weeks if high-risk (age >50, smoker) to confirm resolution", "Blood cultures if inpatient", "Procalcitonin to guide antibiotic duration"],
+      "referral_criteria": ["Pulmonology: non-resolving pneumonia, recurrent pneumonia", "Infectious disease: treatment failure, unusual organisms", "Hospital admission: CURB-65 >=2 or PSI Class IV-V"],
+      "red_flags": ["Sepsis (hypotension, altered mental status, organ dysfunction)", "Respiratory failure (SpO2 <90%, severe dyspnea)", "Multilobar infiltrates", "Cavitation on imaging", "Pleural effusion/empyema", "No improvement after 72h of appropriate antibiotics"]
+    },
+    "Migraine": {
+      "condition": "Migraine",
+      "first_line": ["Acute: NSAIDs (ibuprofen, naproxen) for mild-moderate attacks", "Acute: Triptans (sumatriptan, rizatriptan) for moderate-severe attacks", "Preventive (if >=4 headache days/month): topiramate, propranolol, amitriptyline"],
+      "second_line": ["Acute: combination analgesics, antiemetics (metoclopramide, ondansetron)", "Preventive: venlafaxine, valproate, candesartan", "CGRP monoclonal antibodies (erenumab, fremanezumab, galcanezumab)", "Gepants (ubrogepant, rimegepant) for acute treatment"],
+      "lifestyle_modifications": ["Regular sleep schedule", "Regular meals (avoid fasting)", "Hydration", "Stress management", "Regular aerobic exercise", "Identify and avoid triggers (food diary)", "Limit caffeine"],
+      "monitoring": ["Headache diary (frequency, severity, triggers, medication use)", "Monthly headache days", "Medication overuse monitoring (limit acute meds to <10-15 days/month)", "Side effects of preventive medications"],
+      "referral_criteria": ["Neurology: diagnostic uncertainty, treatment failure with 2+ preventive medications", "Emergency: thunderclap headache, worst headache of life, new neurological deficits", "Headache specialist: chronic daily headache, medication overuse headache"],
+      "red_flags": ["Thunderclap headache (sudden severe onset)", "New headache >50 years old", "Progressive headache pattern", "Neurological deficits", "Fever with headache", "Papilledema", "Headache after head trauma", "Headache with HIV or cancer"]
+    },
+    "Hypothyroidism": {
+      "condition": "Hypothyroidism",
+      "first_line": ["Levothyroxine replacement (1.6 mcg/kg/day ideal body weight)", "Start at full dose in young, healthy patients", "Start at lower dose (25-50 mcg) in elderly or cardiac disease patients"],
+      "second_line": ["Liothyronine (T3) add-on if persistent symptoms despite normal TSH (controversial)", "Desiccated thyroid extract (not preferred by most guidelines)", "Brand name levothyroxine if dose sensitivity or inconsistent generic formulations"],
+      "lifestyle_modifications": ["Take levothyroxine on empty stomach, 30-60 min before breakfast", "Separate from calcium, iron, and PPI by 4 hours", "Ensure adequate iodine intake", "Regular exercise"],
+      "monitoring": ["TSH 6-8 weeks after dose change", "TSH annually once stable", "Free T4 if central hypothyroidism", "Lipid panel (dyslipidemia may improve with treatment)", "Symptoms assessment"],
+      "referral_criteria": ["Endocrinology: thyroid nodule, suspected central hypothyroidism, pregnancy planning, refractory symptoms", "Persistent symptoms despite normal TSH"],
+      "red_flags": ["Myxedema coma (hypothermia, altered consciousness, bradycardia)", "Severe hypothyroidism with cardiac symptoms", "Thyroid nodule with suspicious features", "Rapid thyroid enlargement"]
+    },
+    "Urinary Tract Infection": {
+      "condition": "Urinary Tract Infection",
+      "first_line": ["Uncomplicated cystitis: nitrofurantoin 100mg BID x 5 days", "Alternative: TMP-SMX 160/800mg BID x 3 days (if local resistance <20%)", "Alternative: fosfomycin 3g single dose"],
+      "second_line": ["Fluoroquinolone (ciprofloxacin 250mg BID x 3 days) - reserve for pyelonephritis or complicated UTI", "Beta-lactam (amoxicillin-clavulanate 500mg TID x 5-7 days)", "Pyelonephritis: fluoroquinolone x 5-7 days or TMP-SMX x 14 days"],
+      "lifestyle_modifications": ["Adequate hydration", "Urinate after intercourse", "Wipe front to back", "Avoid spermicides", "Cranberry products (limited evidence)", "Vaginal estrogen in postmenopausal women"],
+      "monitoring": ["Symptom resolution in 2-3 days", "No test of cure needed for uncomplicated cystitis", "Repeat culture if symptoms persist >48h on antibiotics", "Post-treatment culture for complicated UTI or pyelonephritis"],
+      "referral_criteria": ["Urology: recurrent UTIs (>=3/year), anatomic abnormality, male UTI", "Infectious disease: multidrug-resistant organisms", "Hospital admission: pyelonephritis with sepsis, inability to take oral meds"],
+      "red_flags": ["Sepsis (fever, hypotension, tachycardia)", "Pyelonephritis (flank pain, high fever, rigors)", "Urinary obstruction", "UTI in pregnancy", "Male UTI (always considered complicated)"]
+    }
+  },
+  "recorded_diagnoses": {},
+  "recorded_differentials": {},
+  "recorded_prescriptions": {},
+  "recorded_referrals": {},
+  "recorded_follow_ups": {},
+  "ordered_labs": {},
+  "ordered_imaging": {}
 }

@@ -12,6 +12,7 @@ __author__ = "tau2-bench Team"
 from .core.kg_loader import PrimeKGLoader
 from .core.random_walk import PrimeKGRandomWalkPipeline, ConsultationTask
 from .core.task_generator import KGTaskGenerator
+from .core.llm_enrichment import ClinicalTaskEnricher, enrich_batch
 from .utils.tau2_converter import convert_to_tau2_format, batch_convert
 
 __all__ = [
@@ -19,6 +20,8 @@ __all__ = [
     'PrimeKGRandomWalkPipeline',
     'ConsultationTask',
     'KGTaskGenerator',
+    'ClinicalTaskEnricher',
+    'enrich_batch',
     'convert_to_tau2_format',
-    'batch_convert'
+    'batch_convert',
 ]
