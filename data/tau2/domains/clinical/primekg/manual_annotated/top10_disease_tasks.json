@@ -1,0 +1,2144 @@
+[
+    {
+        "id": "primekg_L3_acute_coronary_syndrome_3001",
+        "description": {
+            "purpose": "Clinical consultation - initial diagnosis with specialist referral (L3)",
+            "relevant_policies": null,
+            "notes": "PrimeKG enriched task. Disease: Acute Coronary Syndrome. Differentials: GERD, Acute pancreatitis, Pulmonary embolism, Costochondritis, Anxiety attack. Difficulty: L3. Seed: 3001. Scenario: Atypical presentation in young woman with epigastric pain, recent cocaine use, beta-blocker contraindication."
+        },
+        "user_scenario": {
+            "persona": "42-year-old female patient, education: college, occupation: marketing director",
+            "instructions": {
+                "domain": "internal_medicine",
+                "reason_for_call": "Doctor, I've had this terrible stomach pain since last night, I feel nauseous and sweaty, and I thought it was food poisoning but it's not getting better.",
+                "known_info": "Chief complaint: Epigastric pain with nausea and diaphoresis for 8 hours, not relieved by antacids. Vitals: {\"blood_pressure\": \"145/92 mmHg\", \"heart_rate\": \"110 bpm\", \"temperature\": \"37.0 C\", \"respiratory_rate\": \"20 breaths/min\", \"bmi\": \"26.5 kg/m2\"}. Current medications: Ethinyl estradiol/norgestimate (OCP) daily, Ibuprofen 400 mg PRN. Allergies: None.",
+                "unknown_info": "Acute Coronary Syndrome secondary to cocaine-induced vasospasm; OCP as additional risk factor",
+                "task_instructions": "You are Chen XX, a 42-year-old marketing director. You are assertive and impatient, used to being in control, and uncomfortable showing vulnerability. You came to the clinic thinking this is just bad food, but you're starting to get worried because the pain isn't going away.\n\nOpen with: 'Doctor, I've had this terrible stomach pain since last night, I feel nauseous and sweaty, and I thought it was food poisoning but it's not getting better.'\n\nEarly in the visit, volunteer: the pain is in your upper stomach area, it's a pressure-like ache that comes and goes but has been constant for the past few hours; you feel nauseated and vomited once; you're sweating more than usual; you took two ibuprofen and an antacid but neither helped; you have a important client presentation tomorrow and can't afford to be sick.\n\nIf asked about the pain characteristics, answer: 'It's like a heavy pressure, sometimes it spreads to my left shoulder and jaw. It got worse when I was walking up the stairs to the clinic.' (Only mention radiation if asked specifically about where the pain goes.)\n\nIf asked about recent substance use, initially deflect: 'I had some wine at dinner, nothing unusual.' If asked directly and non-judgmentally about cocaine or recreational drugs, hesitantly admit: 'Look... I was at a party Friday night. Some friends were doing coke. I tried a little. I don't usually do that. This was maybe the second time ever. Does that matter?' (This is key hidden information.)\n\nIf asked about current medications, answer that you take birth control pills and occasionally ibuprofen for headaches.\n\nIf asked about family history, answer: 'My dad had a heart attack at 58. But I'm only 42, and I'm a woman, so...' (Trails off.)\n\nIf asked about smoking, answer: 'I smoke socially, maybe 3-4 cigarettes a week, mostly at work events.'\n\nIf asked about stress, answer: 'Are you kidding? I run a marketing team. It's nonstop. I barely sleep. I live on coffee and takeout.'\n\nIf asked about chest pain specifically, answer: 'I wouldn't call it chest pain exactly. It's more like my stomach area. But now that you mention it, there is this tight feeling in my chest too. I thought it was just anxiety about the presentation.'\n\nExpress misconceptions: 'I'm way too young for a heart attack, right? And I'm a woman. This has to be gastritis or something. Can you just give me something for the stomach?'\n\nExpress concerns: 'If this is my heart, I can't have that. I have a company to run. And if anyone finds out about the... you know... the cocaine... please, this has to be confidential.'\n\nIf the clinician shows empathy and reassurance, soften: 'Thank you for not judging me. I'm really scared.'\n\nUnless specifically probed, do not mention: you also felt lightheaded and short of breath walking to the clinic; you've had similar but milder epigastric discomfort twice in the past month; you used cocaine again at a networking event about 2 weeks ago.\n\nDo not volunteer the following unless specifically asked: family history of early heart disease; exact quantity of cocaine used; the prior episodes of chest discomfort; social smoking history."
+            }
+        },
+        "ticket": null,
+        "initial_state": null,
+        "evaluation_criteria": {
+            "actions": [
+                {
+                    "action_id": "diagnose_1",
+                    "requestor": "assistant",
+                    "name": "record_diagnosis",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "diagnosis": "Acute Coronary Syndrome - likely cocaine-induced vasospasm with possible plaque rupture"
+                    },
+                    "compare_args": [
+                        "diagnosis"
+                    ]
+                },
+                {
+                    "action_id": "record_differential_1",
+                    "requestor": "assistant",
+                    "name": "record_differential",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "differentials": [
+                            "GERD with esophageal spasm",
+                            "Acute pancreatitis",
+                            "Pulmonary embolism",
+                            "Costochondritis",
+                            "Anxiety/panic attack"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "check_allergies_1",
+                    "requestor": "assistant",
+                    "name": "check_allergies",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "drug_name": "Aspirin"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_contraindications_1",
+                    "requestor": "assistant",
+                    "name": "check_contraindications",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "drug_name": "Metoprolol"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_drug_interactions_1",
+                    "requestor": "assistant",
+                    "name": "check_drug_interactions",
+                    "arguments": {
+                        "drug_list": [
+                            "ibuprofen",
+                            "aspirin",
+                            "cocaine",
+                            "ethinyl estradiol"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "order_lab_1",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "test_name": "troponin"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_2",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "test_name": "CBC"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_3",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "test_name": "BMP"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_4",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "test_name": "Coagulation Panel"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_1",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "drug_name": "Aspirin",
+                        "dose": "325 mg",
+                        "frequency": "once",
+                        "duration": "chew immediately"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_2",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "drug_name": "Atorvastatin",
+                        "dose": "80 mg",
+                        "frequency": "once daily",
+                        "duration": "ongoing"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "refer_1",
+                    "requestor": "assistant",
+                    "name": "refer_to_specialist",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "specialty": "Cardiology",
+                        "reason": "Suspected acute coronary syndrome requiring urgent cardiac catheterization and monitoring"
+                    },
+                    "compare_args": [
+                        "specialty"
+                    ]
+                },
+                {
+                    "action_id": "followup_1",
+                    "requestor": "assistant",
+                    "name": "create_follow_up_plan",
+                    "arguments": {
+                        "patient_id": "P016",
+                        "plan": "Urgent cardiology admission for monitoring and possible catheterization; serial troponins; continuous telemetry; avoid beta-blockers due to cocaine use; counsel on cocaine cessation and OCP risk; cardiology follow-up within 1 week after discharge",
+                        "timeframe": "immediate admission"
+                    },
+                    "compare_args": []
+                }
+            ],
+            "env_assertions": null,
+            "communicate_info": [
+                "Acute Coronary Syndrome"
+            ],
+            "nl_assertions": [
+                "Agent must ask about radiation of pain to shoulder, jaw, or arm as a sign of cardiac involvement.",
+                "Agent must ask about recent recreational drug use, specifically cocaine, in a non-judgmental manner.",
+                "Agent must recognize that epigastric pain with diaphoresis in a woman can be an atypical presentation of ACS.",
+                "Agent must ask about family history of premature coronary artery disease.",
+                "Agent must ask about oral contraceptive use as a cardiovascular risk factor.",
+                "Agent must recognize that cocaine use is a risk factor for ACS through coronary vasospasm and thrombosis.",
+                "Agent must recognize that beta-blockers are contraindicated in cocaine-associated ACS due to unopposed alpha-adrenergic stimulation worsening vasospasm.",
+                "Agent must order troponin to evaluate for myocardial injury.",
+                "Agent must refer urgently to cardiology for suspected ACS.",
+                "Agent must counsel the patient on cocaine cessation as a critical component of cardiovascular risk reduction.",
+                "Agent must address the patient's concern about confidentiality with empathy and reassurance.",
+                "Agent must NOT prescribe beta-blockers (metoprolol, propranolol, etc.) for this patient with recent cocaine use.",
+                "Agent must NOT discharge the patient without cardiac monitoring given ongoing symptoms and risk factors.",
+                "Agent must NOT dismiss the symptoms as gastritis or anxiety without ruling out ACS first."
+            ],
+            "reward_basis": [
+                "CLINICAL_PROCESS"
+            ],
+            "medical_criteria": null
+        }
+    },
+    {
+        "id": "primekg_L3_systemic_lupus_erythematosus_3002",
+        "description": {
+            "purpose": "Clinical consultation - initial diagnosis with specialist referral (L3)",
+            "relevant_policies": null,
+            "notes": "PrimeKG enriched task. Disease: Systemic Lupus Erythematosus. Differentials: Rheumatoid arthritis, Drug-induced lupus, Viral syndrome, Mixed connective tissue disease. Difficulty: L3. Seed: 3002. Scenario: Young woman with malar rash, arthritis, fatigue, and asymptomatic proteinuria."
+        },
+        "user_scenario": {
+            "persona": "26-year-old female patient, education: graduate school, occupation: biology PhD student",
+            "instructions": {
+                "domain": "internal_medicine",
+                "reason_for_call": "Doctor, my joints have been hurting for two months, especially my hands, and I have this rash on my face that won't go away. I'm so tired I can barely get through my lab work.",
+                "known_info": "Chief complaint: Bilateral hand and wrist joint pain, facial rash, and fatigue for 2 months. Vitals: {\"blood_pressure\": \"128/82 mmHg\", \"heart_rate\": \"78 bpm\", \"temperature\": \"37.3 C\", \"respiratory_rate\": \"16 breaths/min\", \"bmi\": \"21.2 kg/m2\"}. Current medications: Ibuprofen 400 mg as needed for joint pain, Ethinyl estradiol/norgestimate (OCP) daily. Allergies: None.",
+                "unknown_info": "Systemic Lupus Erythematosus with possible lupus nephritis",
+                "task_instructions": "You are Liu XX, a 26-year-old biology PhD student. You are analytical and detail-oriented but have been pushing through your symptoms because of an upcoming thesis deadline. You are worried but trying to rationalize your symptoms.\n\nOpen with: 'Doctor, my joints have been hurting for two months, especially my hands, and I have this rash on my face that won't go away. I'm so tired I can barely get through my lab work.'\n\nEarly in the visit, volunteer: both hands and wrists ache, worse in the mornings; the rash is across your cheeks and bridge of nose, it got really bad after a beach trip last month; you're exhausted all the time, sleeping 10 hours but still tired; your advisor noticed you've been missing lab meetings.\n\nIf asked about oral ulcers, answer: 'Now that you mention it, yes, I get these little sores in my mouth every few weeks. I thought it was from stress or not eating well.'\n\nIf asked about sun sensitivity, answer: 'Actually yes, after that beach day the rash flared up terribly and I felt awful for a week. I always burn easily but this was different.'\n\nIf asked about hair loss, answer: 'My hair has been thinning. I've been finding a lot on my pillow and in the shower drain. I thought it was stress from the PhD.'\n\nIf asked about cold sensitivity in fingers, answer: 'My fingers turn white and go numb when it's cold, especially in the lab with the AC. My roommate says it's Raynaud's. Is that related?'\n\nIf asked about urinary symptoms, answer: 'No pain or anything, but I've noticed my urine is sometimes really foamy. I figured I wasn't drinking enough water.' (This is important hidden information suggesting proteinuria.)\n\nIf asked about chest symptoms, answer: 'Occasionally my chest hurts when I take a deep breath. It's not constant.' (Suggests serositis.)\n\nIf asked about medications, list ibuprofen and OCP. If asked about other supplements, answer: 'I take some herbal supplements for energy - ginseng and vitamin D. Could that cause this?'\n\nUnless specifically probed, do not mention: you had a miscarriage at 10 weeks about 6 months ago; you've had two episodes of unexplained low-grade fever in the past 3 months; your ANA was positive 2 years ago during a health screening but no one followed up.\n\nExpress misconceptions: 'I looked up my symptoms and I'm worried it might be rheumatoid arthritis. Or could it be something I caught in the lab? I work with cell cultures.'\n\nExpress concerns: 'If I need long-term medication, how will that affect my fertility? My partner and I want to start a family in a few years. Also, will this affect my PhD timeline?'\n\nIf the clinician explains SLE clearly and addresses fertility concerns, respond: 'Okay, that's less scary than what I imagined. Thank you for being thorough.'\n\nDo not volunteer the following unless specifically asked: the positive ANA result from 2 years ago; the miscarriage; the foamy urine; the chest pain with deep breathing."
+            }
+        },
+        "ticket": null,
+        "initial_state": null,
+        "evaluation_criteria": {
+            "actions": [
+                {
+                    "action_id": "diagnose_1",
+                    "requestor": "assistant",
+                    "name": "record_diagnosis",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "diagnosis": "Systemic Lupus Erythematosus with suspected lupus nephritis"
+                    },
+                    "compare_args": [
+                        "diagnosis"
+                    ]
+                },
+                {
+                    "action_id": "record_differential_1",
+                    "requestor": "assistant",
+                    "name": "record_differential",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "differentials": [
+                            "Rheumatoid Arthritis",
+                            "Drug-induced Lupus",
+                            "Mixed Connective Tissue Disease",
+                            "Viral Syndrome"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "check_allergies_1",
+                    "requestor": "assistant",
+                    "name": "check_allergies",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "drug_name": "Hydroxychloroquine"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_contraindications_1",
+                    "requestor": "assistant",
+                    "name": "check_contraindications",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "drug_name": "Hydroxychloroquine"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_drug_interactions_1",
+                    "requestor": "assistant",
+                    "name": "check_drug_interactions",
+                    "arguments": {
+                        "drug_list": [
+                            "Ibuprofen",
+                            "Hydroxychloroquine",
+                            "Ethinyl estradiol"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "order_lab_1",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "test_name": "CBC"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_2",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "test_name": "ANA Panel"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_3",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "test_name": "Anti-dsDNA and Complement C3 C4"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_4",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "test_name": "Urinalysis with Microscopy"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_5",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "test_name": "Renal Function Panel"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_6",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "test_name": "ESR and CRP"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_1",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "drug_name": "Hydroxychloroquine",
+                        "dose": "200 mg",
+                        "frequency": "twice daily",
+                        "duration": "ongoing"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_2",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "drug_name": "Prednisone",
+                        "dose": "10 mg",
+                        "frequency": "once daily",
+                        "duration": "taper as directed by rheumatology"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "refer_1",
+                    "requestor": "assistant",
+                    "name": "refer_to_specialist",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "specialty": "Rheumatology",
+                        "reason": "Newly diagnosed SLE requiring specialist management of immunosuppressive therapy and monitoring"
+                    },
+                    "compare_args": [
+                        "specialty"
+                    ]
+                },
+                {
+                    "action_id": "refer_2",
+                    "requestor": "assistant",
+                    "name": "refer_to_specialist",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "specialty": "Nephrology",
+                        "reason": "Suspected lupus nephritis based on foamy urine and need for renal biopsy evaluation"
+                    },
+                    "compare_args": [
+                        "specialty"
+                    ]
+                },
+                {
+                    "action_id": "followup_1",
+                    "requestor": "assistant",
+                    "name": "create_follow_up_plan",
+                    "arguments": {
+                        "patient_id": "P017",
+                        "plan": "Rheumatology and Nephrology consults within 1-2 weeks; baseline eye exam before starting hydroxychloroquine; strict sun protection; avoid OCP if possible (discuss alternatives); monitor blood pressure and urine output; report any new rash, fever, chest pain, or decreased urine output immediately",
+                        "timeframe": "1-2 weeks"
+                    },
+                    "compare_args": []
+                }
+            ],
+            "env_assertions": null,
+            "communicate_info": [
+                "Systemic Lupus Erythematosus with suspected lupus nephritis"
+            ],
+            "nl_assertions": [
+                "Agent must ask about photosensitivity and its relationship to the facial rash.",
+                "Agent must ask about oral ulcers and their frequency.",
+                "Agent must ask about hair loss and alopecia.",
+                "Agent must ask about Raynaud's phenomenon and cold sensitivity in fingers.",
+                "Agent must ask about foamy urine as a sign of proteinuria and possible lupus nephritis.",
+                "Agent must ask about chest pain with deep breathing as a sign of serositis.",
+                "Agent must recognize that malar rash, symmetric arthritis, fatigue, and photosensitivity are classic features of SLE.",
+                "Agent must order urinalysis to screen for lupus nephritis in any patient with suspected SLE.",
+                "Agent must discuss the impact of OCP on SLE and consider alternative contraception.",
+                "Agent must address the patient's concerns about fertility and long-term medication effects.",
+                "Agent must recommend a baseline eye exam before initiating hydroxychloroquine therapy.",
+                "Agent must NOT prescribe hydroxychloroquine without arranging a baseline ophthalmologic examination.",
+                "Agent must NOT dismiss the patient's symptoms as stress-related without appropriate workup for autoimmune disease."
+            ],
+            "reward_basis": [
+                "CLINICAL_PROCESS"
+            ],
+            "medical_criteria": null
+        }
+    },
+    {
+        "id": "primekg_L2_pulmonary_embolism_3003",
+        "description": {
+            "purpose": "Clinical consultation - initial diagnosis with treatment (L2)",
+            "relevant_policies": null,
+            "notes": "PrimeKG enriched task. Disease: Pulmonary Embolism. Differentials: Pneumonia, Pneumothorax, Costochondritis, Musculoskeletal chest pain, Anxiety. Difficulty: L2. Seed: 3003. Scenario: Young woman on OCP with recent long-haul flight presenting with pleuritic chest pain and dyspnea."
+        },
+        "user_scenario": {
+            "persona": "35-year-old female patient, education: college, occupation: software engineer",
+            "instructions": {
+                "domain": "internal_medicine",
+                "reason_for_call": "Doctor, I suddenly got this sharp pain in my right side when I took a deep breath, and I feel like I can't catch my breath. It started this morning.",
+                "known_info": "Chief complaint: Acute onset right-sided pleuritic chest pain and shortness of breath for 6 hours. Vitals: {\"blood_pressure\": \"132/85 mmHg\", \"heart_rate\": \"105 bpm\", \"temperature\": \"37.1 C\", \"respiratory_rate\": \"24 breaths/min\", \"bmi\": \"22.8 kg/m2\"}. Current medications: Ethinyl estradiol/norgestimate (OCP) daily, Multivitamin daily. Allergies: None.",
+                "unknown_info": "Pulmonary Embolism secondary to OCP use and recent prolonged immobility",
+                "task_instructions": "You are Zhang XX, a 35-year-old software engineer. You are generally healthy and active, and this sudden breathing problem has you worried. You just returned from a business trip and thought you might have pulled a muscle, but the pain is getting worse.\n\nOpen with: 'Doctor, I suddenly got this sharp pain in my right side when I took a deep breath, and I feel like I can't catch my breath. It started this morning.'\n\nEarly in the visit, volunteer: the pain is sharp and gets much worse when you breathe in deeply or cough; you feel short of breath even sitting still; you noticed a slight cough this morning; the pain is on the right side of your chest.\n\nIf asked about recent travel, answer: 'I just got back yesterday from a 14-hour flight from Singapore. I was there for a week-long conference. I slept through most of the flight both ways.'\n\nIf asked about leg pain or swelling, answer: 'Now that you mention it, my left calf has been a little sore and swollen since this morning. I thought it was from sitting so long on the plane.'\n\nIf asked about medications, answer that you take birth control pills and a daily multivitamin.\n\nIf asked about pregnancy or menstrual history, answer: 'My periods are regular. I'm not pregnant, I take the pill consistently.'\n\nIf asked about smoking, answer: 'I've never smoked.'\n\nIf asked about family history of blood clots, answer: 'Not that I know of. My mom had varicose veins but no clots.' Unless specifically probed about clotting disorders in extended family, do not mention your maternal aunt who had a DVT after surgery.\n\nIf asked about hemoptysis, answer: 'I coughed up a tiny bit of blood-tinged sputum this morning. Is that bad?'\n\nExpress misconceptions: 'I thought this was just a pulled muscle from sleeping wrong on the plane. Or maybe a really bad cramp. I'm too young and healthy for anything serious, right?'\n\nExpress concerns: 'I have a huge project deadline next week. I really can't afford to be sick right now. And what does birth control have to do with this?'\n\nIf the clinician explains the connection between OCP, immobility, and blood clots clearly, respond: 'I had no idea the pill could do that. Should I stop taking it?'\n\nUnless specifically probed, do not mention: you had a similar but milder episode of calf pain 3 months ago after a long car ride; your maternal aunt had a DVT; you occasionally get migraines with aura."
+            }
+        },
+        "ticket": null,
+        "initial_state": null,
+        "evaluation_criteria": {
+            "actions": [
+                {
+                    "action_id": "diagnose_1",
+                    "requestor": "assistant",
+                    "name": "record_diagnosis",
+                    "arguments": {
+                        "patient_id": "P018",
+                        "diagnosis": "Pulmonary Embolism"
+                    },
+                    "compare_args": [
+                        "diagnosis"
+                    ]
+                },
+                {
+                    "action_id": "record_differential_1",
+                    "requestor": "assistant",
+                    "name": "record_differential",
+                    "arguments": {
+                        "patient_id": "P018",
+                        "differentials": [
+                            "Pneumonia",
+                            "Pneumothorax",
+                            "Costochondritis",
+                            "Musculoskeletal chest pain"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "check_allergies_1",
+                    "requestor": "assistant",
+                    "name": "check_allergies",
+                    "arguments": {
+                        "patient_id": "P018",
+                        "drug_name": "Rivaroxaban"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_contraindications_1",
+                    "requestor": "assistant",
+                    "name": "check_contraindications",
+                    "arguments": {
+                        "patient_id": "P018",
+                        "drug_name": "Rivaroxaban"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_1",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P018",
+                        "test_name": "D-dimer"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_2",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P018",
+                        "test_name": "troponin"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_3",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P018",
+                        "test_name": "CBC"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_4",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P018",
+                        "test_name": "BMP"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_imaging_1",
+                    "requestor": "assistant",
+                    "name": "order_imaging",
+                    "arguments": {
+                        "patient_id": "P018",
+                        "imaging_type": "CT",
+                        "body_region": "Chest"
+                    },
+                    "compare_args": [
+                        "imaging_type",
+                        "body_region"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_1",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P018",
+                        "drug_name": "Rivaroxaban",
+                        "dose": "15 mg",
+                        "frequency": "twice daily",
+                        "duration": "21 days then 20 mg once daily"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "followup_1",
+                    "requestor": "assistant",
+                    "name": "create_follow_up_plan",
+                    "arguments": {
+                        "patient_id": "P018",
+                        "plan": "Anticoagulation with rivaroxaban for at least 3 months; discontinue OCP and discuss alternative contraception; Doppler ultrasound of lower extremity to evaluate for DVT; return immediately for worsening dyspnea, chest pain, or hemoptysis",
+                        "timeframe": "1 week"
+                    },
+                    "compare_args": []
+                }
+            ],
+            "env_assertions": null,
+            "communicate_info": [
+                "Pulmonary Embolism"
+            ],
+            "nl_assertions": [
+                "Agent must ask about recent prolonged travel or immobility as a risk factor for venous thromboembolism.",
+                "Agent must ask about leg pain, swelling, or asymmetry suggesting deep vein thrombosis.",
+                "Agent must ask about current use of oral contraceptives and recognize the associated thromboembolic risk.",
+                "Agent must ask about hemoptysis as a symptom of pulmonary embolism.",
+                "Agent must recognize that pleuritic chest pain with dyspnea in a young woman on OCP with recent immobility is highly suspicious for PE.",
+                "Agent must order D-dimer and/or CT pulmonary angiography for diagnostic evaluation.",
+                "Agent must discuss the need to discontinue oral contraceptives and arrange alternative contraception.",
+                "Agent must initiate anticoagulation therapy promptly for suspected pulmonary embolism.",
+                "Agent must address the patient's concern about the project deadline with empathy while emphasizing the urgency of the condition.",
+                "Agent must NOT attribute the symptoms to a pulled muscle without evaluating for PE.",
+                "Agent must NOT continue oral contraceptives in a patient with confirmed venous thromboembolism."
+            ],
+            "reward_basis": [
+                "CLINICAL_PROCESS"
+            ],
+            "medical_criteria": null
+        }
+    },
+    {
+        "id": "primekg_L2_acute_pancreatitis_3004",
+        "description": {
+            "purpose": "Clinical consultation - initial diagnosis with treatment (L2)",
+            "relevant_policies": null,
+            "notes": "PrimeKG enriched task. Disease: Acute Pancreatitis. Differentials: Acute Cholecystitis, Peptic Ulcer Disease, GERD, Mesenteric Ischemia, Bowel Obstruction. Difficulty: L2. Seed: 3004. Scenario: Middle-aged man with heavy alcohol use presenting with severe epigastric pain radiating to the back."
+        },
+        "user_scenario": {
+            "persona": "48-year-old male patient, education: high school, occupation: construction worker",
+            "instructions": {
+                "domain": "internal_medicine",
+                "reason_for_call": "Doctor, my stomach is killing me. The pain started last night after dinner and it's going straight through to my back. I've been throwing up and I can't keep anything down.",
+                "known_info": "Chief complaint: Severe epigastric pain radiating to the back with nausea and vomiting for 12 hours. Vitals: {\"blood_pressure\": \"98/62 mmHg\", \"heart_rate\": \"118 bpm\", \"temperature\": \"37.8 C\", \"respiratory_rate\": \"22 breaths/min\", \"bmi\": \"28.3 kg/m2\"}. Current medications: Omeprazole 20 mg daily, Ibuprofen 600 mg PRN. Allergies: Codeine (causes severe nausea).",
+                "unknown_info": "Acute Pancreatitis - likely alcohol-induced, with signs of systemic involvement (tachycardia, relative hypotension)",
+                "task_instructions": "You are Wang XX, a 48-year-old construction worker. You are tough and not used to going to the doctor. The pain is the worst you've ever felt and you're starting to get scared. You drink heavily but are embarrassed about it.\n\nOpen with: 'Doctor, my stomach is killing me. The pain started last night after dinner and it's going straight through to my back. I've been throwing up and I can't keep anything down.'\n\nEarly in the visit, volunteer: the pain is in your upper stomach and bores straight through to your mid-back; it's constant and severe; you've vomited four times; the pain got worse after a large dinner last night; lying flat makes it worse and you feel slightly better sitting up and leaning forward.\n\nIf asked about alcohol use, initially minimize: 'I have a few beers after work like anyone else.' If asked more specifically about quantity, reluctantly admit: 'Fine... it's more like a six-pack most nights, and a bottle of whiskey on weekends. My wife's been on my case about it.'\n\nIf asked about recent binge drinking, answer: 'Yeah, last night was my buddy's birthday. We went hard. I probably had most of a bottle of bourbon.'\n\nIf asked about gallstones or prior abdominal issues, answer: 'They told me my gallbladder was fine last year when I had some stomach pain. I was supposed to follow up but never did.'\n\nIf asked about bowel movements, answer: 'I haven't gone in two days. My stomach's been kind of bloated.'\n\nIf asked about prior episodes, answer: 'I've had stomach aches like this maybe twice before in the past year, but never this bad. Usually goes away after a day.'\n\nIf asked about medications, list omeprazole and ibuprofen.\n\nExpress misconceptions: 'I figured I just ate something bad. My buddy got food poisoning last month and it felt like this. Just give me something for the pain and I'll go back to work.'\n\nExpress concerns: 'I can't miss work. I don't get paid sick leave. And my wife doesn't know I was drinking last night. Please don't tell her.'\n\nIf the clinician is non-judgmental about the alcohol use and explains pancreatitis clearly, respond: 'So my drinking actually caused this? I didn't think that much about it. What if I cut back, will this happen again?'\n\nUnless specifically probed, do not mention: you've had elevated liver enzymes on two previous lab tests; your father died of cirrhosis; you take ibuprofen daily for chronic back pain from construction work."
+            }
+        },
+        "ticket": null,
+        "initial_state": null,
+        "evaluation_criteria": {
+            "actions": [
+                {
+                    "action_id": "diagnose_1",
+                    "requestor": "assistant",
+                    "name": "record_diagnosis",
+                    "arguments": {
+                        "patient_id": "P019",
+                        "diagnosis": "Acute Pancreatitis - alcohol-induced"
+                    },
+                    "compare_args": [
+                        "diagnosis"
+                    ]
+                },
+                {
+                    "action_id": "record_differential_1",
+                    "requestor": "assistant",
+                    "name": "record_differential",
+                    "arguments": {
+                        "patient_id": "P019",
+                        "differentials": [
+                            "Acute Cholecystitis",
+                            "Peptic Ulcer Disease",
+                            "Mesenteric Ischemia",
+                            "Bowel Obstruction"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "check_allergies_1",
+                    "requestor": "assistant",
+                    "name": "check_allergies",
+                    "arguments": {
+                        "patient_id": "P019",
+                        "drug_name": "Hydromorphone"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_contraindications_1",
+                    "requestor": "assistant",
+                    "name": "check_contraindications",
+                    "arguments": {
+                        "patient_id": "P019",
+                        "drug_name": "Hydromorphone"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_1",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P019",
+                        "test_name": "Lipase"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_2",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P019",
+                        "test_name": "CMP"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_3",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P019",
+                        "test_name": "CBC"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_4",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P019",
+                        "test_name": "LFTs"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_imaging_1",
+                    "requestor": "assistant",
+                    "name": "order_imaging",
+                    "arguments": {
+                        "patient_id": "P019",
+                        "imaging_type": "CT",
+                        "body_region": "Abdomen"
+                    },
+                    "compare_args": [
+                        "imaging_type",
+                        "body_region"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_1",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P019",
+                        "drug_name": "Hydromorphone",
+                        "dose": "1 mg",
+                        "frequency": "every 4 hours as needed",
+                        "duration": "while hospitalized"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "followup_1",
+                    "requestor": "assistant",
+                    "name": "create_follow_up_plan",
+                    "arguments": {
+                        "patient_id": "P019",
+                        "plan": "Hospital admission for IV fluid resuscitation, NPO status, pain management, and monitoring; serial abdominal exams; alcohol cessation counseling; nutrition consultation; repeat labs in 24-48 hours; gastroenterology follow-up after discharge",
+                        "timeframe": "Immediate admission"
+                    },
+                    "compare_args": []
+                }
+            ],
+            "env_assertions": null,
+            "communicate_info": [
+                "Acute Pancreatitis"
+            ],
+            "nl_assertions": [
+                "Agent must ask about alcohol use quantity and frequency in a non-judgmental manner.",
+                "Agent must ask about recent binge drinking as a potential trigger for acute pancreatitis.",
+                "Agent must ask about the pain radiation pattern, specifically radiation to the back.",
+                "Agent must ask about positional relief, such as improvement when sitting up and leaning forward.",
+                "Agent must ask about prior episodes of similar abdominal pain.",
+                "Agent must recognize that severe epigastric pain radiating to the back with vomiting after heavy alcohol use is classic for acute pancreatitis.",
+                "Agent must order lipase as the primary diagnostic test for acute pancreatitis.",
+                "Agent must recognize the signs of systemic involvement (tachycardia, hypotension) suggesting moderate to severe pancreatitis.",
+                "Agent must provide alcohol cessation counseling as part of the management plan.",
+                "Agent must NOT prescribe codeine or opioids the patient is allergic to.",
+                "Agent must NOT dismiss the pain as simple food poisoning given the severity, radiation pattern, and alcohol history."
+            ],
+            "reward_basis": [
+                "CLINICAL_PROCESS"
+            ],
+            "medical_criteria": null
+        }
+    },
+    {
+        "id": "primekg_L3_heart_failure_decompensation_3005",
+        "description": {
+            "purpose": "Clinical consultation - acute decompensation with specialist referral (L3)",
+            "relevant_policies": null,
+            "notes": "PrimeKG enriched task. Disease: Acute Decompensated Heart Failure. Differentials: COPD Exacerbation, Pneumonia, Pulmonary Embolism, Acute Coronary Syndrome, Renal Failure. Difficulty: L3. Seed: 3005. Scenario: Elderly man with known HF presenting with acute decompensation after dietary non-compliance and possible digoxin toxicity."
+        },
+        "user_scenario": {
+            "persona": "71-year-old male patient, education: some college, occupation: retired accountant",
+            "instructions": {
+                "domain": "internal_medicine",
+                "reason_for_call": "Doctor, I can barely breathe. I woke up last night gasping for air and had to sit up in my recliner. My legs are so swollen I can't put my shoes on. I think something's really wrong.",
+                "known_info": "Chief complaint: Worsening dyspnea, orthopnea, and bilateral leg edema for 3 days. Vitals: {\"blood_pressure\": \"156/94 mmHg\", \"heart_rate\": \"52 bpm\", \"temperature\": \"36.8 C\", \"respiratory_rate\": \"26 breaths/min\", \"spo2\": \"91%\"}. Current medications: Furosemide 40 mg BID, Carvedilol 25 mg BID, Lisinopril 10 mg daily, Warfarin 5 mg daily, Metformin 500 mg BID, Digoxin 0.125 mg daily. Allergies: Penicillin, Iodine contrast dye.",
+                "unknown_info": "Acute Decompensated Heart Failure with possible digoxin toxicity (bradycardia, nausea) triggered by dietary sodium excess and possible renal impairment",
+                "task_instructions": "You are Robert W, a 71-year-old retired accountant. You've had heart failure for several years and generally manage it well, but you let your guard down at a family gathering. You're frightened because you've never felt this bad before.\n\nOpen with: 'Doctor, I can barely breathe. I woke up last night gasping for air and had to sit up in my recliner. My legs are so swollen I can't put my shoes on. I think something's really wrong.'\n\nEarly in the visit, volunteer: you've been getting more short of breath over the past 3 days; you can't lie flat without choking (need 3-4 pillows); you gained about 8 pounds in the past week; your legs are swollen up to your knees; you're coughing up frothy white stuff at night.\n\nIf asked about recent dietary changes, answer: 'Well... my granddaughter's birthday was four days ago. Big family party. I had ham, potato salad, some pickles, maybe a bit too much. And I had Chinese takeout twice this week. I know I shouldn't have, but...' (High sodium trigger.)\n\nIf asked about medication adherence, answer: 'I take all my pills every morning. The water pill makes me go to the bathroom a lot, so sometimes I skip the evening dose if I'm going out. Maybe three or four times this month.' (Non-compliance contributing to decompensation.)\n\nIf asked about nausea or visual changes, answer: 'Actually, I've been feeling queasy for the past two days and everything has a yellowish tint. And I threw up this morning. Is that related?' (Signs of digoxin toxicity.)\n\nIf asked about chest pain, answer: 'No sharp pain, just this heavy pressure feeling and I can't catch my breath.'\n\nIf asked about weight change, answer: 'My wife noticed I've gained weight. I was 225 last week and now the scale says 233. That's a lot in a week, isn't it?'\n\nIf asked about urinary output, answer: 'I'm not peeing as much as usual, even with the water pill. Maybe half of what I normally do.' (Suggests worsening renal function.)\n\nIf asked about dizziness or lightheadedness, answer: 'I get dizzy when I stand up quickly. Nearly fell getting out of bed this morning.'\n\nExpress misconceptions: 'I thought I was doing okay. I had a good few months. One party shouldn't make this much difference, should it?'\n\nExpress concerns: 'My father died of heart failure. He was 74. I'm 71. Am I going down the same path? And what if I need to go to the hospital? My wife can't drive and she has her own health problems.'\n\nIf the clinician explains the decompensation clearly and outlines a clear plan, respond: 'Okay, I understand now. The salt really did a number on me. And the digoxin might be making me sick? I'll do whatever you say, just please help me breathe.'\n\nUnless specifically probed, do not mention: you had a similar but milder episode 8 months ago; your kidney function has been gradually declining (creatinine was 1.8 three months ago); you sometimes take ibuprofen for back pain which can worsen HF and renal function."
+            }
+        },
+        "ticket": null,
+        "initial_state": null,
+        "evaluation_criteria": {
+            "actions": [
+                {
+                    "action_id": "diagnose_1",
+                    "requestor": "assistant",
+                    "name": "record_diagnosis",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "diagnosis": "Acute Decompensated Heart Failure with suspected digoxin toxicity"
+                    },
+                    "compare_args": [
+                        "diagnosis"
+                    ]
+                },
+                {
+                    "action_id": "record_differential_1",
+                    "requestor": "assistant",
+                    "name": "record_differential",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "differentials": [
+                            "COPD Exacerbation",
+                            "Pneumonia",
+                            "Pulmonary Embolism",
+                            "Acute Coronary Syndrome",
+                            "Acute Kidney Injury"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "check_allergies_1",
+                    "requestor": "assistant",
+                    "name": "check_allergies",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "drug_name": "Furosemide"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_contraindications_1",
+                    "requestor": "assistant",
+                    "name": "check_contraindications",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "drug_name": "Furosemide"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_drug_interactions_1",
+                    "requestor": "assistant",
+                    "name": "check_drug_interactions",
+                    "arguments": {
+                        "drug_list": [
+                            "Furosemide",
+                            "Carvedilol",
+                            "Lisinopril",
+                            "Digoxin",
+                            "Warfarin",
+                            "Metformin"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "order_lab_1",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "test_name": "BNP"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_2",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "test_name": "BMP"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_3",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "test_name": "troponin"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_4",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "test_name": "CBC"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_imaging_1",
+                    "requestor": "assistant",
+                    "name": "order_imaging",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "imaging_type": "X-ray",
+                        "body_region": "Chest"
+                    },
+                    "compare_args": [
+                        "imaging_type",
+                        "body_region"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_1",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "drug_name": "Furosemide",
+                        "dose": "80 mg",
+                        "frequency": "IV twice daily",
+                        "duration": "until euvolemic"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "refer_1",
+                    "requestor": "assistant",
+                    "name": "refer_to_specialist",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "specialty": "Cardiology",
+                        "reason": "Acute decompensated heart failure with possible digoxin toxicity requiring cardiac monitoring and medication adjustment"
+                    },
+                    "compare_args": [
+                        "specialty"
+                    ]
+                },
+                {
+                    "action_id": "followup_1",
+                    "requestor": "assistant",
+                    "name": "create_follow_up_plan",
+                    "arguments": {
+                        "patient_id": "P002",
+                        "plan": "Hospital admission for IV diuresis, cardiac telemetry, serial BMP for renal function and electrolytes; hold digoxin pending digoxin level; strict 2g sodium daily fluid restriction; daily weights; cardiology consultation; adjust HF medications upon stabilization; dietary counseling; reassess renal function before resuming metformin",
+                        "timeframe": "Immediate admission"
+                    },
+                    "compare_args": []
+                }
+            ],
+            "env_assertions": null,
+            "communicate_info": [
+                "Acute Decompensated Heart Failure"
+            ],
+            "nl_assertions": [
+                "Agent must ask about recent dietary sodium intake as a trigger for heart failure decompensation.",
+                "Agent must ask about medication adherence, specifically diuretic compliance.",
+                "Agent must ask about nausea, visual disturbances, or yellow-tinged vision as signs of digoxin toxicity.",
+                "Agent must ask about weight gain as an objective measure of fluid retention.",
+                "Agent must ask about urinary output changes suggesting worsening renal function.",
+                "Agent must recognize that bradycardia with nausea and visual changes in a patient on digoxin suggests digoxin toxicity.",
+                "Agent must recognize that rapid weight gain with worsening edema and orthopnea indicates acute decompensated heart failure.",
+                "Agent must order BNP and BMP to assess heart failure severity and renal function.",
+                "Agent must hold digoxin and check a digoxin level given signs of toxicity.",
+                "Agent must address the patient's fear about his father's death from heart failure with empathy.",
+                "Agent must NOT use iodine-based contrast for imaging given the patient's allergy.",
+                "Agent must NOT continue metformin without checking renal function given suspected acute kidney injury."
+            ],
+            "reward_basis": [
+                "CLINICAL_PROCESS"
+            ],
+            "medical_criteria": null
+        }
+    },
+    {
+        "id": "primekg_L2_graves_disease_3006",
+        "description": {
+            "purpose": "Clinical consultation - initial diagnosis with treatment (L2)",
+            "relevant_policies": null,
+            "notes": "PrimeKG enriched task. Disease: Graves Disease. Differentials: Anxiety Disorder, Toxic Nodular Goiter, Subacute Thyroiditis, Pheochromocytoma, Hyperthyroidism other causes. Difficulty: L2. Seed: 3006. Scenario: Young woman with weight loss, palpitations, tremor, and anxiety mimicking psychiatric illness."
+        },
+        "user_scenario": {
+            "persona": "31-year-old female patient, education: graduate school, occupation: marketing analyst",
+            "instructions": {
+                "domain": "internal_medicine",
+                "reason_for_call": "Doctor, I feel like I'm losing my mind. My heart races all the time, I can't stop shaking, and I've lost 15 pounds without trying. My therapist said I should see a medical doctor.",
+                "known_info": "Chief complaint: Palpitations, tremor, unintentional weight loss, and anxiety for 6 weeks. Vitals: {\"blood_pressure\": \"148/88 mmHg\", \"heart_rate\": \"112 bpm\", \"temperature\": \"37.4 C\", \"respiratory_rate\": \"20 breaths/min\", \"bmi\": \"19.1 kg/m2\"}. Current medications: Sertraline 50 mg daily (started 4 weeks ago), Multivitamin daily. Allergies: Amoxicillin (rash).",
+                "unknown_info": "Graves' Disease - hyperthyroidism presenting with anxiety and weight loss, initially misdiagnosed as primary anxiety disorder",
+                "task_instructions": "You are Li XX, a 31-year-old marketing analyst. You've been feeling progressively worse for two months. Your therapist started you on sertraline for anxiety, but it hasn't helped. You're scared something is seriously wrong.\n\nOpen with: 'Doctor, I feel like I'm losing my mind. My heart races all the time, I can't stop shaking, and I've lost 15 pounds without trying. My therapist said I should see a medical doctor.'\n\nEarly in the visit, volunteer: your heart pounds constantly, even when you're sitting still; your hands shake so much you can barely type at work; you've gone from 135 to 120 pounds in 6 weeks despite eating normally; you feel hot all the time when everyone else is comfortable; you can't sleep more than 4-5 hours a night.\n\nIf asked about neck swelling or discomfort, answer: 'My neck does feel kind of full and tight, especially when I wear collared shirts. My sister mentioned it looked puffy last week.' (Suggests goiter.)\n\nIf asked about eye changes, answer: 'My eyes have been bothering me. They feel dry and gritty, and my boyfriend says they look like they're bulging out. I thought it was allergies.' (Suggests Graves' ophthalmopathy.)\n\nIf asked about menstrual changes, answer: 'My periods have gotten really light and short. I used to have 5-day periods, now it's barely 2 days.' (Consistent with hyperthyroidism.)\n\nIf asked about bowel habits, answer: 'I'm going to the bathroom more often, like 3-4 times a day. It's not diarrhea exactly, just more frequent.' (Increased motility from hyperthyroidism.)\n\nIf asked about exercise or activity tolerance, answer: 'I used to run 3 miles every other day. Now I get winded walking up a flight of stairs. And my muscles feel weak, especially my thighs.' (Proximal myopathy.)\n\nIf asked about family history, answer: 'My mom has hypothyroidism and takes medication for it. My aunt on her side had some kind of thyroid problem too.' (Family history of autoimmune thyroid disease.)\n\nIf asked about stress or emotional state, answer: 'I cry easily, I'm irritable, and I feel panicked for no reason. That's why my therapist started me on sertraline. But it's been 4 weeks and nothing has changed except now I also have no appetite.'\n\nExpress misconceptions: 'I thought this was just burnout from work. Or maybe the sertraline is causing the weight loss? My therapist says anxiety can cause physical symptoms.'\n\nExpress concerns: 'What if it's a brain tumor? Or cancer? The weight loss is really scaring me. And my therapist already diagnosed me with anxiety - could she be wrong?'\n\nIf the clinician explains Graves' disease clearly, respond: 'A thyroid problem? That would explain so much. My mom always said to get my thyroid checked but I thought she was just being a worried mom.'\n\nUnless specifically probed, do not mention: you had a miscarriage 8 months ago; you've been trying to get pregnant; you occasionally feel your heart skip beats."
+            }
+        },
+        "ticket": null,
+        "initial_state": null,
+        "evaluation_criteria": {
+            "actions": [
+                {
+                    "action_id": "diagnose_1",
+                    "requestor": "assistant",
+                    "name": "record_diagnosis",
+                    "arguments": {
+                        "patient_id": "P020",
+                        "diagnosis": "Graves' Disease - Hyperthyroidism"
+                    },
+                    "compare_args": [
+                        "diagnosis"
+                    ]
+                },
+                {
+                    "action_id": "record_differential_1",
+                    "requestor": "assistant",
+                    "name": "record_differential",
+                    "arguments": {
+                        "patient_id": "P020",
+                        "differentials": [
+                            "Anxiety Disorder",
+                            "Toxic Nodular Goiter",
+                            "Subacute Thyroiditis",
+                            "Pheochromocytoma"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "check_allergies_1",
+                    "requestor": "assistant",
+                    "name": "check_allergies",
+                    "arguments": {
+                        "patient_id": "P020",
+                        "drug_name": "Methimazole"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_contraindications_1",
+                    "requestor": "assistant",
+                    "name": "check_contraindications",
+                    "arguments": {
+                        "patient_id": "P020",
+                        "drug_name": "Methimazole"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_drug_interactions_1",
+                    "requestor": "assistant",
+                    "name": "check_drug_interactions",
+                    "arguments": {
+                        "drug_list": [
+                            "Methimazole",
+                            "Sertraline",
+                            "Propranolol"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "order_lab_1",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P020",
+                        "test_name": "thyroid_panel"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_2",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P020",
+                        "test_name": "CBC"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_3",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P020",
+                        "test_name": "CMP"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_1",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P020",
+                        "drug_name": "Methimazole",
+                        "dose": "10 mg",
+                        "frequency": "three times daily",
+                        "duration": "until thyroid function normalized"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_2",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P020",
+                        "drug_name": "Propranolol",
+                        "dose": "20 mg",
+                        "frequency": "three times daily",
+                        "duration": "for symptomatic control"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "followup_1",
+                    "requestor": "assistant",
+                    "name": "create_follow_up_plan",
+                    "arguments": {
+                        "patient_id": "P020",
+                        "plan": "Repeat thyroid function tests in 4-6 weeks; CBC in 2 weeks to monitor for agranulocytosis; endocrinology referral for long-term management (radioactive iodine vs continued antithyroid medication); discuss pregnancy planning implications; ophthalmology referral if eye symptoms persist; gradual sertraline taper may be considered once thyroid function normalizes",
+                        "timeframe": "2-4 weeks"
+                    },
+                    "compare_args": []
+                }
+            ],
+            "env_assertions": null,
+            "communicate_info": [
+                "Graves' Disease",
+                "Hyperthyroidism"
+            ],
+            "nl_assertions": [
+                "Agent must ask about eye symptoms including bulging, dryness, or grittiness suggesting Graves' ophthalmopathy.",
+                "Agent must ask about neck swelling or fullness suggesting goiter.",
+                "Agent must ask about heat intolerance as a classic symptom of hyperthyroidism.",
+                "Agent must ask about menstrual changes as a manifestation of thyroid dysfunction.",
+                "Agent must ask about family history of thyroid disease.",
+                "Agent must recognize that weight loss with increased appetite, tremor, tachycardia, and anxiety suggest hyperthyroidism rather than primary psychiatric illness.",
+                "Agent must order thyroid function tests (TSH, Free T4, Free T3) as the primary diagnostic workup.",
+                "Agent must recognize that Graves' disease is the most common cause of hyperthyroidism in young women.",
+                "Agent must discuss the potential interaction between Graves' disease and pregnancy planning.",
+                "Agent must NOT assume the symptoms are purely psychiatric given the significant weight loss and physical signs.",
+                "Agent must NOT prescribe sertraline dose increase without evaluating for underlying medical causes."
+            ],
+            "reward_basis": [
+                "CLINICAL_PROCESS"
+            ],
+            "medical_criteria": null
+        }
+    },
+    {
+        "id": "primekg_L2_drug_induced_liver_injury_3007",
+        "description": {
+            "purpose": "Clinical consultation - initial diagnosis with treatment (L2)",
+            "relevant_policies": null,
+            "notes": "PrimeKG enriched task. Disease: Drug-Induced Liver Injury with Acute Interstitial Nephritis. Differentials: Viral Hepatitis, Autoimmune Hepatitis, Alcoholic Hepatitis, Choledocholithiasis. Difficulty: L2. Seed: 3007. Scenario: Patient on long-term PPI develops jaundice and renal impairment after adding NSAID."
+        },
+        "user_scenario": {
+            "persona": "56-year-old female patient, education: some college, occupation: retired nurse",
+            "instructions": {
+                "domain": "internal_medicine",
+                "reason_for_call": "Doctor, my skin has turned yellow and my urine looks like dark tea. I've been feeling awful for about a week - tired, nauseous, and my whole body itches. I'm a retired nurse and I know jaundice is not normal.",
+                "known_info": "Chief complaint: Jaundice, dark urine, pruritus, fatigue, and nausea for 1 week. Vitals: {\"blood_pressure\": \"128/78 mmHg\", \"heart_rate\": \"82 bpm\", \"temperature\": \"37.5 C\", \"respiratory_rate\": \"18 breaths/min\", \"bmi\": \"24.6 kg/m2\"}. Current medications: Omeprazole 40 mg daily (for 3 years), Ibuprofen 600 mg three times daily (started 3 weeks ago for back pain), Buspirone 10 mg BID, Calcium carbonate PRN. Allergies: Erythromycin (GI upset).",
+                "unknown_info": "Drug-Induced Liver Injury from omeprazole (chronic) exacerbated by recent addition of ibuprofen, with concurrent Acute Interstitial Nephritis",
+                "task_instructions": "You are Liu XX, a 56-year-old retired nurse. You have medical knowledge which makes you both more articulate about your symptoms and more anxious. You started taking ibuprofen for back pain a few weeks ago and now you're jaundiced. You're worried it might be hepatitis or something worse.\n\nOpen with: 'Doctor, my skin has turned yellow and my urine looks like dark tea. I've been feeling awful for about a week - tired, nauseous, and my whole body itches. I'm a retired nurse and I know jaundice is not normal.'\n\nEarly in the visit, volunteer: you first noticed your eyes looked yellow about a week ago; your urine has been dark brown; your skin itches everywhere, especially at night; you've lost your appetite and feel nauseated after meals; your stools have become pale and clay-colored.\n\nIf asked about new medications, answer: 'I started taking ibuprofen 600 mg three times a day about three weeks ago. I threw my back out gardening. The omeprazole I've been on for years for my reflux.'\n\nIf asked about over-the-counter supplements, answer: 'I've been taking milk thistle for my liver for about a month. A friend at the senior center recommended it. And I started turmeric capsules around the same time for my back instead of increasing the ibuprofen.' (Additional hepatotoxic potential from supplements.)\n\nIf asked about alcohol use, answer: 'I have a glass of wine with dinner most nights. Nothing excessive. Maybe two on weekends.'\n\nIf asked about viral hepatitis risk factors, answer: 'I'm a retired nurse, so I've had all my hepatitis vaccines. No tattoos, no IV drug use. I was careful with needle sticks during my career.'\n\nIf asked about urinary changes, answer: 'Now that you mention it, I've been urinating less and it looks really concentrated even though I'm drinking plenty of water. And I've had some dull pain in my lower back on both sides.' (Suggests renal involvement / AIN.)\n\nIf asked about fever or rash, answer: 'I had a low-grade fever a few days ago, 99.8, and I noticed a faint pink rash on my chest and arms that comes and goes.' (Triad of AIN: fever, rash, eosinophilia.)\n\nIf asked about recent travel or sick contacts, answer: 'No travel. No one around me has been sick.'\n\nExpress misconceptions: 'As a nurse, I've seen jaundice before. I was thinking viral hepatitis, but I've been vaccinated. Could the milk thistle have caused this? Or maybe I caught something from one of my grandkids?' \n\nExpress concerns: 'What if this is liver failure? My neighbor died of liver cancer last year. And I need my kidneys - my mother was on dialysis for the last three years of her life. I can't go through that.'\n\nIf the clinician identifies the drug-induced mechanism and explains it clearly, respond: 'So the omeprazole I've been taking for years could suddenly cause liver problems? And the ibuprofen made it worse? I never would have guessed. Should I stop everything right now?'\n\nUnless specifically probed, do not mention: you also take an over-the-counter sleeping pill (diphenhydramine) nightly; you had mildly elevated ALT (48) on a routine lab 6 months ago that was not followed up; your mother had polycystic kidney disease."
+            }
+        },
+        "ticket": null,
+        "initial_state": null,
+        "evaluation_criteria": {
+            "actions": [
+                {
+                    "action_id": "diagnose_1",
+                    "requestor": "assistant",
+                    "name": "record_diagnosis",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "diagnosis": "Drug-Induced Liver Injury with Acute Interstitial Nephritis"
+                    },
+                    "compare_args": [
+                        "diagnosis"
+                    ]
+                },
+                {
+                    "action_id": "record_differential_1",
+                    "requestor": "assistant",
+                    "name": "record_differential",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "differentials": [
+                            "Viral Hepatitis",
+                            "Autoimmune Hepatitis",
+                            "Alcoholic Hepatitis",
+                            "Choledocholithiasis"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "check_allergies_1",
+                    "requestor": "assistant",
+                    "name": "check_allergies",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "drug_name": "Prednisone"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_contraindications_1",
+                    "requestor": "assistant",
+                    "name": "check_contraindications",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "drug_name": "Prednisone"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_drug_interactions_1",
+                    "requestor": "assistant",
+                    "name": "check_drug_interactions",
+                    "arguments": {
+                        "drug_list": [
+                            "Omeprazole",
+                            "Ibuprofen",
+                            "Buspirone",
+                            "Prednisone",
+                            "Famotidine"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "order_lab_1",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "test_name": "LFTs"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_2",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "test_name": "CMP"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_3",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "test_name": "CBC"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_4",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "test_name": "urinalysis"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_5",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "test_name": "inflammatory_markers"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_1",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "drug_name": "Prednisone",
+                        "dose": "40 mg",
+                        "frequency": "once daily",
+                        "duration": "2-4 weeks then taper"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_2",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "drug_name": "Famotidine",
+                        "dose": "20 mg",
+                        "frequency": "twice daily",
+                        "duration": "ongoing as PPI alternative"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "followup_1",
+                    "requestor": "assistant",
+                    "name": "create_follow_up_plan",
+                    "arguments": {
+                        "patient_id": "P021",
+                        "plan": "Discontinue omeprazole, ibuprofen, milk thistle, and turmeric immediately; Prednisone taper for AIN; repeat LFTs and CMP in 1 week; urinalysis with eosinophils; monitor for signs of liver failure; hepatology consult if LFTs do not improve in 2 weeks; report any worsening jaundice, confusion, or bleeding",
+                        "timeframe": "1 week"
+                    },
+                    "compare_args": []
+                }
+            ],
+            "env_assertions": null,
+            "communicate_info": [
+                "Drug-Induced Liver Injury"
+            ],
+            "nl_assertions": [
+                "Agent must ask about all recent medication changes, including over-the-counter drugs and supplements.",
+                "Agent must ask about herbal supplements and alternative medicines that may cause hepatotoxicity.",
+                "Agent must ask about urinary changes to evaluate for concurrent renal involvement.",
+                "Agent must ask about fever and rash as part of the acute interstitial nephritis triad.",
+                "Agent must ask about stool color changes as a sign of cholestasis.",
+                "Agent must recognize the hepatotoxic potential of PPIs and NSAIDs, especially in combination.",
+                "Agent must order LFTs, CMP, and urinalysis to evaluate both hepatic and renal function.",
+                "Agent must identify and discontinue the offending medications promptly.",
+                "Agent must consider corticosteroids for suspected drug-induced interstitial nephritis.",
+                "Agent must NOT prescribe hepatotoxic medications without checking liver function first.",
+                "Agent must NOT dismiss the jaundice as benign given the medication history and systemic symptoms."
+            ],
+            "reward_basis": [
+                "CLINICAL_PROCESS"
+            ],
+            "medical_criteria": null
+        }
+    },
+    {
+        "id": "primekg_L3_inflammatory_bowel_disease_3008",
+        "description": {
+            "purpose": "Clinical consultation - initial diagnosis with specialist referral (L3)",
+            "relevant_policies": null,
+            "notes": "PrimeKG enriched task. Disease: Crohn's Disease. Differentials: Ulcerative Colitis, Infectious Colitis, Irritable Bowel Syndrome, Celiac Disease, Colorectal Cancer. Difficulty: L3. Seed: 3008. Scenario: Young man with chronic bloody diarrhea, abdominal pain, weight loss, and extraintestinal manifestations."
+        },
+        "user_scenario": {
+            "persona": "28-year-old male patient, education: college, occupation: graphic designer",
+            "instructions": {
+                "domain": "internal_medicine",
+                "reason_for_call": "Doctor, I've had diarrhea with blood for two months now. My stomach cramps are getting worse, I've lost weight, and I keep getting these weird sores in my mouth and pain in my knees. My primary doctor said it's probably IBS but it's getting worse.",
+                "known_info": "Chief complaint: Chronic bloody diarrhea, abdominal cramping, weight loss, oral ulcers, and joint pain for 2 months. Vitals: {\"blood_pressure\": \"118/72 mmHg\", \"heart_rate\": \"88 bpm\", \"temperature\": \"37.6 C\", \"respiratory_rate\": \"16 breaths/min\", \"bmi\": \"21.0 kg/m2 (down from 23.5)\"}. Current medications: Loperamide PRN, Omeprazole 20 mg daily, Multivitamin. Allergies: None known.",
+                "unknown_info": "Crohn's Disease with extraintestinal manifestations (oral aphthous ulcers, peripheral arthritis)",
+                "task_instructions": "You are Chen X, a 28-year-old graphic designer. You've been dealing with worsening GI symptoms for two months and your primary doctor brushed it off as IBS. You're frustrated, losing weight, and the extra symptoms (mouth sores, joint pain) are scaring you.\n\nOpen with: 'Doctor, I've had diarrhea with blood for two months now. My stomach cramps are getting worse, I've lost weight, and I keep getting these weird sores in my mouth and pain in my knees. My primary doctor said it's probably IBS but it's getting worse.'\n\nEarly in the visit, volunteer: you have 6-8 bowel movements per day, many with visible blood and mucus; crampy pain in your lower right abdomen; you've lost about 15 pounds; the pain is worse after eating; you feel tired all the time.\n\nIf asked about the blood in stool, answer: 'It's bright red, mixed in with the stool. Sometimes there's a lot. At first it was just streaks but now it's every time.'\n\nIf asked about oral ulcers, answer: 'I get these painful sores in my mouth every couple of weeks. They're on my gums and the inside of my cheeks. My dentist said they're aphthous ulcers but couldn't explain why I keep getting them.' (Extraintestinal manifestation.)\n\nIf asked about joint pain, answer: 'My knees and ankles ache and swell, especially in the morning. It migrates - one week it's the left knee, next week it's the right ankle. I thought it was from being less active.' (Peripheral arthritis - extraintestinal manifestation.)\n\nIf asked about skin problems, answer: 'I have these tender red bumps on my shins that come and go. My doctor said they were insect bites but they keep coming back.' (Erythema nodosum - extraintestinal manifestation.)\n\nIf asked about perianal symptoms, answer: 'This is embarrassing, but I've had some pain and discharge near my... rectum. Like a small boil that never fully heals.' (Perianal fistula - characteristic of Crohn's.)\n\nIf asked about eye symptoms, answer: 'My right eye was red and painful last month. The eye doctor gave me drops and said it was episcleritis. It went away but now the left eye is starting to feel irritated.' (Episcleritis - extraintestinal manifestation.)\n\nIf asked about fever, answer: 'I've been running low-grade fevers on and off, around 99.5 to 100. I just feel flu-ish.'\n\nIf asked about family history, answer: 'My aunt on my mom's side has something called ulcerative colitis. And my cousin was just diagnosed with celiac disease.' (Family history of IBD.)\n\nExpress misconceptions: 'My doctor said IBS is stress-related and I should eat more fiber. But fiber makes my diarrhea worse. And IBS shouldn't cause blood in your stool, right? I looked it up.'\n\nExpress concerns: 'I'm scared it might be cancer. My grandfather died of colon cancer. And this is affecting my work - I can't do client meetings when I'm running to the bathroom every hour. What if I need surgery and I end up with a bag?'\n\nIf the clinician explains Crohn's disease and distinguishes it from IBS clearly, respond: 'So this isn't just IBS? There's actual inflammation? That actually makes me feel better - at least there's a real diagnosis and treatment. I was starting to think I was crazy.'\n\nUnless specifically probed, do not mention: you had iron deficiency anemia diagnosed 4 months ago; you occasionally smoke marijuana to help with appetite and pain; you had an episode of painful red eye (uveitis) 6 months ago treated by an ophthalmologist."
+            }
+        },
+        "ticket": null,
+        "initial_state": null,
+        "evaluation_criteria": {
+            "actions": [
+                {
+                    "action_id": "diagnose_1",
+                    "requestor": "assistant",
+                    "name": "record_diagnosis",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "diagnosis": "Crohn's Disease with extraintestinal manifestations"
+                    },
+                    "compare_args": [
+                        "diagnosis"
+                    ]
+                },
+                {
+                    "action_id": "record_differential_1",
+                    "requestor": "assistant",
+                    "name": "record_differential",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "differentials": [
+                            "Ulcerative Colitis",
+                            "Infectious Colitis",
+                            "Irritable Bowel Syndrome",
+                            "Celiac Disease"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "check_allergies_1",
+                    "requestor": "assistant",
+                    "name": "check_allergies",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "drug_name": "Mesalamine"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_contraindications_1",
+                    "requestor": "assistant",
+                    "name": "check_contraindications",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "drug_name": "Mesalamine"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_drug_interactions_1",
+                    "requestor": "assistant",
+                    "name": "check_drug_interactions",
+                    "arguments": {
+                        "drug_list": [
+                            "Mesalamine",
+                            "Prednisone",
+                            "Omeprazole"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "order_lab_1",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "test_name": "CBC"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_2",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "test_name": "CMP"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_3",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "test_name": "inflammatory_markers"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_4",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "test_name": "iron_studies"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_imaging_1",
+                    "requestor": "assistant",
+                    "name": "order_imaging",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "imaging_type": "CT",
+                        "body_region": "Abdomen"
+                    },
+                    "compare_args": [
+                        "imaging_type",
+                        "body_region"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_1",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "drug_name": "Mesalamine",
+                        "dose": "800 mg",
+                        "frequency": "three times daily",
+                        "duration": "ongoing"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_2",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "drug_name": "Prednisone",
+                        "dose": "40 mg",
+                        "frequency": "once daily",
+                        "duration": "taper over 8 weeks"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "refer_1",
+                    "requestor": "assistant",
+                    "name": "refer_to_specialist",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "specialty": "Gastroenterology",
+                        "reason": "Suspected Crohn's disease requiring colonoscopy with biopsy for definitive diagnosis and specialist management of immunomodulatory therapy"
+                    },
+                    "compare_args": [
+                        "specialty"
+                    ]
+                },
+                {
+                    "action_id": "followup_1",
+                    "requestor": "assistant",
+                    "name": "create_follow_up_plan",
+                    "arguments": {
+                        "patient_id": "P022",
+                        "plan": "Urgent gastroenterology referral for colonoscopy and biopsy; Prednisone taper for acute inflammation; Mesalamine maintenance therapy; dietary modification (low residue diet during flare); iron supplementation; ophthalmology follow-up for eye symptoms; monitor weight and blood counts; report worsening bleeding, fever, or inability to tolerate oral intake",
+                        "timeframe": "1-2 weeks"
+                    },
+                    "compare_args": []
+                }
+            ],
+            "env_assertions": null,
+            "communicate_info": [
+                "Crohn's Disease"
+            ],
+            "nl_assertions": [
+                "Agent must ask about the characteristics of bloody stool including frequency, amount, and color.",
+                "Agent must ask about extraintestinal manifestations including oral ulcers, joint pain, skin lesions, and eye inflammation.",
+                "Agent must ask about perianal disease as a distinguishing feature of Crohn's disease.",
+                "Agent must ask about family history of inflammatory bowel disease and autoimmune conditions.",
+                "Agent must ask about the relationship between eating and symptom exacerbation.",
+                "Agent must recognize that bloody diarrhea with weight loss, extraintestinal manifestations, and perianal disease is NOT consistent with IBS.",
+                "Agent must recognize the pattern of extraintestinal manifestations (oral ulcers, arthritis, erythema nodosum, episcleritis) suggesting inflammatory bowel disease.",
+                "Agent must order inflammatory markers and CBC to assess disease activity and anemia.",
+                "Agent must refer to gastroenterology for definitive diagnosis with colonoscopy and biopsy.",
+                "Agent must validate the patient's frustration about the previous IBS diagnosis and explain the difference clearly.",
+                "Agent must NOT dismiss bloody diarrhea as IBS without appropriate workup for inflammatory bowel disease."
+            ],
+            "reward_basis": [
+                "CLINICAL_PROCESS"
+            ],
+            "medical_criteria": null
+        }
+    },
+    {
+        "id": "primekg_L3_lung_cancer_paraneoplastic_3009",
+        "description": {
+            "purpose": "Clinical consultation - initial diagnosis with specialist referral (L3)",
+            "relevant_policies": null,
+            "notes": "PrimeKG enriched task. Disease: Lung Cancer with SIADH (paraneoplastic syndrome). Differentials: COPD Exacerbation, Pneumonia, Pulmonary Fibrosis, Tuberculosis, Metastatic Disease. Difficulty: L3. Seed: 3009. Scenario: Chronic smoker with COPD presenting with new persistent cough, hemoptysis, weight loss, and hyponatremia from SIADH."
+        },
+        "user_scenario": {
+            "persona": "67-year-old male patient, education: high school, occupation: retired factory worker",
+            "instructions": {
+                "domain": "internal_medicine",
+                "reason_for_call": "Doctor, my cough won't go away this time. I've had COPD for years but this is different - I'm coughing up blood, I've lost 20 pounds, and last week I was so confused my wife almost called 911. The ER doctor said my sodium was dangerously low.",
+                "known_info": "Chief complaint: Progressive cough with hemoptysis, weight loss, fatigue, and recent episode of confusion with severe hyponatremia. Vitals: {\"blood_pressure\": \"138/82 mmHg\", \"heart_rate\": \"90 bpm\", \"temperature\": \"37.0 C\", \"respiratory_rate\": \"20 breaths/min\", \"spo2\": \"93%\"}. Current medications: Tiotropium 18 mcg inhaled daily, Fluticasone/Salmeterol 250/50 inhaled BID, Albuterol PRN, Prednisone 10 mg daily, Alendronate 70 mg weekly. Allergies: Aspirin (GI bleeding).",
+                "unknown_info": "Small Cell Lung Cancer with paraneoplastic SIADH causing hyponatremia",
+                "task_instructions": "You are David T, a 67-year-old retired factory worker. You've smoked 2 packs a day for 45 years and have COPD. You know something is different this time but you're in denial. Your wife has been begging you to see a doctor for weeks.\n\nOpen with: 'Doctor, my cough won't go away this time. I've had COPD for years but this is different - I'm coughing up blood, I've lost 20 pounds, and last week I was so confused my wife almost called 911. The ER doctor said my sodium was dangerously low.'\n\nEarly in the visit, volunteer: your usual COPD cough has changed - it's deeper and more persistent; you started coughing up blood-tinged sputum about 3 weeks ago; you've lost about 20 pounds in 2 months without trying; you're exhausted and can barely walk to the mailbox without getting winded; your wife noticed you were confused and disoriented last week, which is why you went to the ER.\n\nIf asked about smoking history, answer: 'I've been smoking since I was 15. Two packs a day for most of my life. I cut down to about a pack a day last year. I know I should quit.'\n\nIf asked about the ER visit, answer: 'My sodium was 116. They gave me some kind of IV and I felt better. They said to follow up. They did a chest X-ray and said there was something there but I'd need a CT scan.'\n\nIf asked about finger or nail changes, answer: 'My wife says my fingertips look different - wider or something. And my nails are kind of curved down at the tips.' (Digital clubbing.)\n\nIf asked about voice changes or swallowing, answer: 'My voice has been hoarse for about a month. I thought it was from the coughing. And sometimes food feels like it gets stuck when I swallow.' (Possible recurrent laryngeal nerve involvement.)\n\nIf asked about chest pain, answer: 'I have this aching in my right shoulder and upper back that doesn't go away. Pain medicine doesn't help much.' (Possible Pancoast tumor or chest wall invasion.)\n\nIf asked about bone pain, answer: 'My lower back has been hurting for a few weeks, worse at night. I figured it was just getting old.' (Possible bone metastasis.)\n\nIf asked about night sweats or fever, answer: 'I wake up drenched in sweat some nights. No fever that I've noticed.'\n\nIf asked about occupational exposures, answer: 'I worked in a chemical plant for 30 years. We dealt with asbestos and all kinds of solvents. They gave us masks but nobody really used them.' (Additional risk factors.)\n\nExpress misconceptions: 'It's probably just a bad COPD flare. I get those. And the sodium thing - they said it was because I drink too much water. I've been drinking more because I'm always thirsty.'\n\nExpress concerns: 'My wife is terrified it's cancer. She lost her brother to lung cancer two years ago. I keep telling her it's just my COPD but... I'm starting to worry too. If it is cancer, is it too late?'\n\nIf the clinician is honest but compassionate about the concerning findings, respond: 'I appreciate you being straight with me. I've been avoiding this for a while. Whatever it is, I want to know. My wife deserves that much.'\n\nUnless specifically probed, do not mention: you've had two courses of antibiotics for 'pneumonia' in the past 6 months that never fully cleared; you had a chest X-ray 8 months ago that showed a 'spot' but you never followed up; your father died of lung cancer at age 72."
+            }
+        },
+        "ticket": null,
+        "initial_state": null,
+        "evaluation_criteria": {
+            "actions": [
+                {
+                    "action_id": "diagnose_1",
+                    "requestor": "assistant",
+                    "name": "record_diagnosis",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "diagnosis": "Lung Cancer - suspected Small Cell Lung Cancer with paraneoplastic SIADH"
+                    },
+                    "compare_args": [
+                        "diagnosis"
+                    ]
+                },
+                {
+                    "action_id": "record_differential_1",
+                    "requestor": "assistant",
+                    "name": "record_differential",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "differentials": [
+                            "COPD Exacerbation",
+                            "Pneumonia",
+                            "Pulmonary Fibrosis",
+                            "Tuberculosis"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "check_allergies_1",
+                    "requestor": "assistant",
+                    "name": "check_allergies",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "drug_name": "Tolvaptan"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_contraindications_1",
+                    "requestor": "assistant",
+                    "name": "check_contraindications",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "drug_name": "Tolvaptan"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_drug_interactions_1",
+                    "requestor": "assistant",
+                    "name": "check_drug_interactions",
+                    "arguments": {
+                        "drug_list": [
+                            "Prednisone",
+                            "Tolvaptan",
+                            "Tiotropium",
+                            "Fluticasone",
+                            "Alendronate"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "order_lab_1",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "test_name": "CMP"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_2",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "test_name": "CBC"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_3",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "test_name": "inflammatory_markers"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_imaging_1",
+                    "requestor": "assistant",
+                    "name": "order_imaging",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "imaging_type": "CT",
+                        "body_region": "Chest"
+                    },
+                    "compare_args": [
+                        "imaging_type",
+                        "body_region"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_1",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "drug_name": "Tolvaptan",
+                        "dose": "15 mg",
+                        "frequency": "once daily",
+                        "duration": "until sodium stabilizes"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "refer_1",
+                    "requestor": "assistant",
+                    "name": "refer_to_specialist",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "specialty": "Pulmonology",
+                        "reason": "Suspected lung mass requiring bronchoscopy, biopsy, and staging"
+                    },
+                    "compare_args": [
+                        "specialty"
+                    ]
+                },
+                {
+                    "action_id": "refer_2",
+                    "requestor": "assistant",
+                    "name": "refer_to_specialist",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "specialty": "Oncology",
+                        "reason": "Suspected small cell lung cancer requiring tissue diagnosis, staging, and oncology management"
+                    },
+                    "compare_args": [
+                        "specialty"
+                    ]
+                },
+                {
+                    "action_id": "followup_1",
+                    "requestor": "assistant",
+                    "name": "create_follow_up_plan",
+                    "arguments": {
+                        "patient_id": "P003",
+                        "plan": "Urgent CT chest with contrast for mass characterization and staging; fluid restriction for SIADH management; tolvaptan with close sodium monitoring; pulmonology for bronchoscopy and biopsy; oncology for staging and treatment planning; smoking cessation program; bone scan if bone pain persists; serial sodium checks daily until stable; discuss goals of care with patient and family",
+                        "timeframe": "Urgent - within 1 week"
+                    },
+                    "compare_args": []
+                }
+            ],
+            "env_assertions": null,
+            "communicate_info": [
+                "Lung Cancer",
+                "SIADH"
+            ],
+            "nl_assertions": [
+                "Agent must ask about changes in the character of chronic cough in a patient with known COPD.",
+                "Agent must ask about hemoptysis and its duration and pattern.",
+                "Agent must ask about unexplained weight loss as a red flag for malignancy.",
+                "Agent must ask about digital clubbing as a sign of chronic pulmonary disease or malignancy.",
+                "Agent must ask about hoarseness and dysphagia as potential signs of recurrent laryngeal nerve involvement.",
+                "Agent must ask about bone pain as a potential sign of metastatic disease.",
+                "Agent must recognize that new hemoptysis, weight loss, and changed cough in a long-term smoker with COPD warrants urgent malignancy workup.",
+                "Agent must recognize that severe hyponatremia with a lung mass suggests SIADH as a paraneoplastic syndrome.",
+                "Agent must recognize that SIADH is classically associated with Small Cell Lung Cancer.",
+                "Agent must address the patient's denial and fear about a potential cancer diagnosis with empathy and honesty.",
+                "Agent must NOT attribute hemoptysis and weight loss to a COPD exacerbation without ruling out malignancy.",
+                "Agent must NOT correct hyponatremia too rapidly given the risk of osmotic demyelination syndrome."
+            ],
+            "reward_basis": [
+                "CLINICAL_PROCESS"
+            ],
+            "medical_criteria": null
+        }
+    },
+    {
+        "id": "primekg_L3_bacterial_meningitis_3010",
+        "description": {
+            "purpose": "Clinical consultation - emergency diagnosis with specialist referral (L3)",
+            "relevant_policies": null,
+            "notes": "PrimeKG enriched task. Disease: Bacterial Meningitis. Differentials: Viral Meningitis, Encephalitis, Subarachnoid Hemorrhage, Migraine, Brain Abscess. Difficulty: L3. Seed: 3010. Scenario: College student presenting with fever, severe headache, photophobia, neck stiffness, and altered mental status."
+        },
+        "user_scenario": {
+            "persona": "20-year-old male patient, education: some college, occupation: college sophomore",
+            "instructions": {
+                "domain": "internal_medicine",
+                "reason_for_call": "Doctor, I have the worst headache of my life and I can't move my neck. I've been throwing up and the light is killing my eyes. My roommate brought me in because I was confused and talking nonsense this morning.",
+                "known_info": "Chief complaint: Severe headache, fever, neck stiffness, photophobia, nausea/vomiting, and confusion for 12 hours. Vitals: {\"blood_pressure\": \"110/68 mmHg\", \"heart_rate\": \"120 bpm\", \"temperature\": \"39.4 C (103 F)\", \"respiratory_rate\": \"22 breaths/min\", \"spo2\": \"97%\"}. Current medications: None. Allergies: Trimethoprim-sulfamethoxazole (rash).",
+                "unknown_info": "Bacterial Meningitis - likely meningococcal given rapid onset, petechial rash, and college setting",
+                "task_instructions": "You are Alex W, a 20-year-old college sophomore. You were fine yesterday but woke up feeling like you had the flu. Over the past 12 hours you've gotten rapidly worse. You're normally healthy and this is terrifying. Your roommate is with you and can help answer questions if you're too confused.\n\nOpen with: 'Doctor, I have the worst headache of my life and I can't move my neck. I've been throwing up and the light is killing my eyes. My roommate brought me in because I was confused and talking nonsense this morning.'\n\nEarly in the visit, volunteer: the headache started last night as a dull ache but this morning it was explosive; your neck is so stiff you can't touch your chin to your chest; bright lights make the headache much worse; you've vomited 4 times; you felt hot and the thermometer read 103; your roommate said you were talking gibberish around 6 AM.\n\nIf asked about rash, answer: 'My roommate noticed some tiny red-purple spots on my legs and arms this morning. They don't fade when I press on them. Is that bad?' (Petechial rash - hallmark of meningococcal meningitis.)\n\nIf asked about recent illness or contacts, answer: 'Two people in my dorm have been sick this week with sore throats and fevers. And there was a meningitis case at another college in our city last month - they sent out a campus-wide email about it.'\n\nIf asked about vaccination history, answer: 'I got the meningitis vaccine before freshman year. The school required it. But I missed my booster last year because I was studying abroad.' (Possible incomplete vaccination.)\n\nIf asked about headache characteristics, answer: 'It's like my head is going to explode. It's everywhere, not just one side. It throbs with my heartbeat and any movement makes it worse.'\n\nIf asked about recent activities, answer: 'I was at a frat party two nights ago. Lots of people, shared drinks, you know how it is. And I've been studying for finals, barely sleeping.'\n\nIf asked about other symptoms, answer: 'My muscles ache all over and I've been shivering even though I have a fever. And I feel really, really tired, like I could fall asleep right here.'\n\nIf asked about drug or alcohol use, answer: 'I had a few beers at the party. No drugs. I don't do that stuff.'\n\nIf your confusion or mental status is assessed, answer: 'I know my name is Alex, I'm at the health center, it's... wait, what day is it? Thursday? No, Wednesday. And I'm 20, born August 15, and my mom's name is... yes, I know it, it's on the tip of my tongue... Sarah.' (Mild confusion but still oriented to person and approximately to time.)\n\nExpress misconceptions: 'I thought it was just a bad hangover or the flu going around the dorm. My roommate's mom is a nurse and she told him to drag me here. I figured I was being dramatic.'\n\nExpress concerns: 'My roommate showed me a picture of the spots on my legs and I'm scared. My mom is going to freak out. Can you call her? And am I going to be okay? I have a final exam on Friday.'\n\nIf the clinician acts urgently and explains the seriousness, respond: 'Meningitis? Like, brain infection meningitis? Oh my god. Please do whatever you need to do. Just make it stop.'\n\nUnless specifically probed, do not mention: you had an ear infection treated with amoxicillin 3 weeks ago; you had a baseline headache the day before the severe headache started; your younger sibling had febrile seizures as a child."
+            }
+        },
+        "ticket": null,
+        "initial_state": null,
+        "evaluation_criteria": {
+            "actions": [
+                {
+                    "action_id": "diagnose_1",
+                    "requestor": "assistant",
+                    "name": "record_diagnosis",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "diagnosis": "Bacterial Meningitis - suspected Meningococcal"
+                    },
+                    "compare_args": [
+                        "diagnosis"
+                    ]
+                },
+                {
+                    "action_id": "record_differential_1",
+                    "requestor": "assistant",
+                    "name": "record_differential",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "differentials": [
+                            "Viral Meningitis",
+                            "Encephalitis",
+                            "Subarachnoid Hemorrhage",
+                            "Brain Abscess"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "check_allergies_1",
+                    "requestor": "assistant",
+                    "name": "check_allergies",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "drug_name": "Ceftriaxone"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_contraindications_1",
+                    "requestor": "assistant",
+                    "name": "check_contraindications",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "drug_name": "Ceftriaxone"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "check_drug_interactions_1",
+                    "requestor": "assistant",
+                    "name": "check_drug_interactions",
+                    "arguments": {
+                        "drug_list": [
+                            "Ceftriaxone",
+                            "Vancomycin",
+                            "Dexamethasone"
+                        ]
+                    },
+                    "compare_args": []
+                },
+                {
+                    "action_id": "order_lab_1",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "test_name": "CBC"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_2",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "test_name": "BMP"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_3",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "test_name": "inflammatory_markers"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_lab_4",
+                    "requestor": "assistant",
+                    "name": "order_lab_test",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "test_name": "blood_glucose"
+                    },
+                    "compare_args": [
+                        "test_name"
+                    ]
+                },
+                {
+                    "action_id": "order_imaging_1",
+                    "requestor": "assistant",
+                    "name": "order_imaging",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "imaging_type": "CT",
+                        "body_region": "Head"
+                    },
+                    "compare_args": [
+                        "imaging_type",
+                        "body_region"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_1",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "drug_name": "Ceftriaxone",
+                        "dose": "2 g",
+                        "frequency": "IV every 12 hours",
+                        "duration": "7-10 days"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_2",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "drug_name": "Vancomycin",
+                        "dose": "1 g",
+                        "frequency": "IV every 12 hours",
+                        "duration": "pending culture results"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "prescribe_3",
+                    "requestor": "assistant",
+                    "name": "prescribe_medication",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "drug_name": "Dexamethasone",
+                        "dose": "10 mg",
+                        "frequency": "IV every 6 hours",
+                        "duration": "4 days"
+                    },
+                    "compare_args": [
+                        "drug_name"
+                    ]
+                },
+                {
+                    "action_id": "refer_1",
+                    "requestor": "assistant",
+                    "name": "refer_to_specialist",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "specialty": "Infectious Disease",
+                        "reason": "Suspected bacterial meningitis requiring urgent lumbar puncture, targeted antimicrobial therapy, and infection control measures including contact tracing"
+                    },
+                    "compare_args": [
+                        "specialty"
+                    ]
+                },
+                {
+                    "action_id": "refer_2",
+                    "requestor": "assistant",
+                    "name": "refer_to_specialist",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "specialty": "Neurology",
+                        "reason": "Bacterial meningitis with altered mental status requiring neurological monitoring and potential management of complications"
+                    },
+                    "compare_args": [
+                        "specialty"
+                    ]
+                },
+                {
+                    "action_id": "followup_1",
+                    "requestor": "assistant",
+                    "name": "create_follow_up_plan",
+                    "arguments": {
+                        "patient_id": "P023",
+                        "plan": "Immediate hospital admission with isolation precautions; empiric antibiotics (ceftriaxone, vancomycin) plus dexamethasone before or with first antibiotic dose; CT head before lumbar puncture given altered mental status; lumbar puncture for CSF analysis (cell count, protein, glucose, gram stain, culture); notify public health for meningococcal case reporting; chemoprophylaxis for close contacts (roommate, dorm contacts); serial neurological checks; ICU monitoring for mental status changes",
+                        "timeframe": "Immediate admission"
+                    },
+                    "compare_args": []
+                }
+            ],
+            "env_assertions": null,
+            "communicate_info": [
+                "Bacterial Meningitis"
+            ],
+            "nl_assertions": [
+                "Agent must recognize the classic triad of fever, neck stiffness, and altered mental status as bacterial meningitis.",
+                "Agent must ask about petechial or purpuric rash as a hallmark of meningococcal meningitis.",
+                "Agent must ask about recent sick contacts, especially in communal living settings like dormitories.",
+                "Agent must ask about vaccination history including meningococcal vaccination status.",
+                "Agent must assess mental status and orientation as a baseline for monitoring deterioration.",
+                "Agent must recognize that the combination of fever, severe headache, photophobia, and neck stiffness constitutes a medical emergency.",
+                "Agent must initiate empiric antibiotic therapy urgently without waiting for lumbar puncture results.",
+                "Agent must administer dexamethasone before or with the first dose of antibiotics for suspected bacterial meningitis.",
+                "Agent must recognize the need for CT head before lumbar puncture in a patient with altered mental status.",
+                "Agent must arrange contact prophylaxis for close contacts in a suspected meningococcal case.",
+                "Agent must NOT delay antibiotics for imaging or lumbar puncture in suspected bacterial meningitis.",
+                "Agent must NOT dismiss the symptoms as a viral illness or hangover given the red flag features."
+            ],
+            "reward_basis": [
+                "CLINICAL_PROCESS"
+            ],
+            "medical_criteria": null
+        }
+    }
+]
