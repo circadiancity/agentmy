@@ -1,0 +1,78 @@
+# Changelog
+
+## [0.3.0](https://github.com/circadiancity/agentmy/compare/v0.2.0...v0.3.0) (2026-04-19)
+
+
+### Features
+
+* 11,907 enriched clinical tasks from PrimeKG with OSCE evaluation ([6c1cce1](https://github.com/circadiancity/agentmy/commit/6c1cce1900203a7ea9866a77f9e3503c9ccec97d))
+* add 18 individual medical task JSON files ([6ace349](https://github.com/circadiancity/agentmy/commit/6ace3498cfaa5df6ecb6909441d65a62720f3300))
+* add 7 structural improvements to medical task generator ([36c30ba](https://github.com/circadiancity/agentmy/commit/36c30baf8d16c0c2fb373b1a7e01aeaceaeee474))
+* add automated evaluation infrastructure for agent benchmark ([eacf43e](https://github.com/circadiancity/agentmy/commit/eacf43e54858d0f3c068e917a62765c1de9a6956))
+* add clinical domain tools to tools-data.json ([a599669](https://github.com/circadiancity/agentmy/commit/a599669df54ac6b677e2fe352be96937c8da54bf))
+* add English translation of diabetes v3.0 benchmark task ([7fcb922](https://github.com/circadiancity/agentmy/commit/7fcb922f5ac4b4528f987bf723b3b2a71d9037ac))
+* add execution layer — action space, observation function, scoring, agent API ([a524de7](https://github.com/circadiancity/agentmy/commit/a524de7c230d5c845b70ac29143a1b3b8f58f8d0))
+* add manually designed paroxysmal AF diagnostic task ([2f554b4](https://github.com/circadiancity/agentmy/commit/2f554b4adbebab1f85d7c6275dfa96a2fcec03f3))
+* add medical benchmark task examples with progressive difficulty ([8b1e69e](https://github.com/circadiancity/agentmy/commit/8b1e69ec97b7bf8c2cd4be1bb2019c5962abd8d6))
+* add optimal merged task dataset combining all advantages ([0d15055](https://github.com/circadiancity/agentmy/commit/0d15055def776d764b40eda38f3e0056fc6d2e4c))
+* add quality threshold filtering system (0-30 point scale) ([5720428](https://github.com/circadiancity/agentmy/commit/5720428087d924508521dfa8b24d979e07ef49af))
+* add tool usage evaluation dimension to diabetes v3.0 task ([73210a5](https://github.com/circadiancity/agentmy/commit/73210a5946cbe2109d5c5ea8ae0a1c77f63d160c))
+* add verification, calibration, benchmark protocol, determinism ([6603d2c](https://github.com/circadiancity/agentmy/commit/6603d2ca2c9dda7bd1f511bb1ea278ad505cc4c0))
+* capability discrimination test — 3 agents × 5 tasks, all criteria met ([1882ee0](https://github.com/circadiancity/agentmy/commit/1882ee08c83b7c440736950ea1c366562eeb2858))
+* conditional entropy-reduction replaces static info_value ([8cc61dc](https://github.com/circadiancity/agentmy/commit/8cc61dc6f47df59eb60f93b27bb661e6d221acfc))
+* confounder-dominant early presentation with true signal delay ([264ebc4](https://github.com/circadiancity/agentmy/commit/264ebc40f3ce9d907e71158267370c342c624622))
+* dual-version reference dialogues (minimal + gold standard) ([6f8dc1c](https://github.com/circadiancity/agentmy/commit/6f8dc1c0d987a9a286f737c0d0e17dc821826e4a))
+* executable evaluator + symptom floor + pilot validation ([7d057c0](https://github.com/circadiancity/agentmy/commit/7d057c0828e782769e72f6c1859293ce54e119f3))
+* full determinism under seed — local RNG, reproducibility hash, byte-identical test ([5dc1dbf](https://github.com/circadiancity/agentmy/commit/5dc1dbf983c854ff713a719cd812653d337e6088))
+* generate 150 benchmark tasks (v3 deterministic) ([7a911f9](https://github.com/circadiancity/agentmy/commit/7a911f96d7e77823f853977296f3d12b1132ebef))
+* gradient information value scoring — tier-derived values replace binary reveal ([ad1312e](https://github.com/circadiancity/agentmy/commit/ad1312ea04d327d4ec76ebe68370c141c1f7415f))
+* hard constraints replace soft penalties — evidence nullification, severity as info constraint ([7f05da8](https://github.com/circadiancity/agentmy/commit/7f05da847e705dbf7c1e3a2da6784c96a817f900))
+* multi-path diagnosis — ≥2 valid reasoning paths with evidence-gated scoring ([e7f1eb1](https://github.com/circadiancity/agentmy/commit/e7f1eb1cc75d94a87dfa66164b5806cb197d2f38))
+* partially reversible, path-dependent evaluation — trust decay, DIAGNOSE lock, path exclusivity ([d346694](https://github.com/circadiancity/agentmy/commit/d346694dfefea0ac745533601726676587549e8f))
+* path-dependent information revelation with prerequisite gates ([fe197cb](https://github.com/circadiancity/agentmy/commit/fe197cb54249af31183c369d4bbb2cd2db3daae4))
+* recoverable 3-state revelation gates — soft_locked recovery via open-ended questions ([2bd180e](https://github.com/circadiancity/agentmy/commit/2bd180ef6d5cde326f25a4d63886c3e5d0ac4e4b))
+* refactor medical domain with tool classification and evaluation metrics ([c8b50e6](https://github.com/circadiancity/agentmy/commit/c8b50e693945f0086fa98cbd27ce4cdee8ae00ee))
+* regenerate medical tasks with new format ([ecc67d6](https://github.com/circadiancity/agentmy/commit/ecc67d6c1d7dd0e15b25de061bbd6b74a60f4473))
+* rewrite reference_dialogue as complete gold standard (80 turns) ([0ebc28a](https://github.com/circadiancity/agentmy/commit/0ebc28ae87afd0603826775008960e70f5df1ebb))
+* rule-based agent simulation for confounder dominance validation ([c2b82e0](https://github.com/circadiancity/agentmy/commit/c2b82e064c60ecc8b331c19ff86a357346878c54))
+* stochastic Beta-distributed likelihoods replace fixed 0.9/0.1 ([3d79de6](https://github.com/circadiancity/agentmy/commit/3d79de602618edbb7528283c63f4dac7f9bcfbfe))
+* structural uncertainty + post-generation difficulty calibration ([a0d49a7](https://github.com/circadiancity/agentmy/commit/a0d49a7326ad89fb28d4920def9a511571d1e968))
+* temporal decision environment — severity progression, trajectory scoring, irrecoverable paths ([ebf5349](https://github.com/circadiancity/agentmy/commit/ebf53494d509f6e21682ab8af04c0483f5980a16))
+* update all 10,011 clinical tasks with new medical format ([27ebb78](https://github.com/circadiancity/agentmy/commit/27ebb78aa6c8e809b27d89b512a77e8222e84069))
+* v2.7 medical task suite — rich task generator with progressive reveal, disease templates, treatment scenarios ([0799cc4](https://github.com/circadiancity/agentmy/commit/0799cc48c35469c0c0adf5c2b7cc6b7cc685d1ba))
+* v3.0 tools + evaluation overhaul — tool_registry, imaging, clinical profiles ([9ecc9d7](https://github.com/circadiancity/agentmy/commit/9ecc9d7182967a7029cf8c03bf2e8a6d8e64b4bb))
+* v3.1 critical evaluation reliability fixes ([bb0b442](https://github.com/circadiancity/agentmy/commit/bb0b442f8b8c97690e5c66213f91e5324e53080b))
+* v3.2 science, reproducibility, and fairness improvements ([18e4601](https://github.com/circadiancity/agentmy/commit/18e4601e0eed5ee3257444fb79bd0c59b7585a15))
+* v3.3 simplification, quantification, and implementation fixes ([1c2eea1](https://github.com/circadiancity/agentmy/commit/1c2eea15db7f7db286a16eeb68be21e1dd152265))
+* v3.4 methodological rigor - uncertainty, anti-patterns, honest limitations ([fee049c](https://github.com/circadiancity/agentmy/commit/fee049cffe660672bea3e8a4800538904ab16c30))
+* v3.5 multi-path correctness, semantic eval, real-world difficulty ([212cfa5](https://github.com/circadiancity/agentmy/commit/212cfa5df36ee4506da3f8087274328bccf30817))
+* v4.0 paradigm shift — 5-layer evaluation system architecture ([c1034cb](https://github.com/circadiancity/agentmy/commit/c1034cb9402ec4b6ba35dca5b48153b9eebadb7a))
+* v4.1 practical fixes — runnable randomness, penalties, semantic scoring ([a597e3a](https://github.com/circadiancity/agentmy/commit/a597e3aad445a7dc999c0d60f4f90412c2b5ff2f))
+* v4.2 reliability fixes — adaptive eval, dual scoring, calibration ([a1c93d3](https://github.com/circadiancity/agentmy/commit/a1c93d3484b7ce089ec23d07610a5d57ffb2d333))
+* v4.3 tau-bench alignment — pass@k, tool integration, executable simulator, OpenAI schema ([9580d0a](https://github.com/circadiancity/agentmy/commit/9580d0a1032948f9b850a499ddc8f452ff3b3619))
+* weighted-penalty process scoring with low-gain and redundancy sanctions ([271d17f](https://github.com/circadiancity/agentmy/commit/271d17f51e9c5f2745418508f0a7b3df923c3352))
+
+
+### Bug Fixes
+
+* 4 critical structural improvements to lean task format ([41b9547](https://github.com/circadiancity/agentmy/commit/41b9547d279eef115b44e264fb1d14a1b56574ee))
+* 4 upgrades — verifiable process_score, derived solution_space, ([3587bde](https://github.com/circadiancity/agentmy/commit/3587bded18d75f53c3fc97e09df0bc6850213184))
+* 5 upgrades — solution_space, cognitive_noise, ASK tiers, process_score, baseline ([eba5eb3](https://github.com/circadiancity/agentmy/commit/eba5eb3c78ebb236c8377a01c25233642439ca20))
+* 7 structural upgrades for benchmark-grade executability ([22d3302](https://github.com/circadiancity/agentmy/commit/22d3302a72f820e64e084560bc5982e08210ae46))
+* 9 benchmark review fixes — FP, FN, NR issues resolved ([5823a33](https://github.com/circadiancity/agentmy/commit/5823a330b009130d0051b6c2013c38a07466bf0a))
+* add missing dialogue examples to interaction_timing entries ([2893b7c](https://github.com/circadiancity/agentmy/commit/2893b7c8994af932de1483bda3103fc1d3df31de))
+* discriminative value replaces tier-based info_value ([ff43258](https://github.com/circadiancity/agentmy/commit/ff432585e3701f027e5c4cc3880214d1870df0d7))
+* resolve 5 remaining consistency issues ([a6458aa](https://github.com/circadiancity/agentmy/commit/a6458aaa80a202cdd2e40e89d5f526ef9e941343))
+* resolve 6 consistency and deduplication issues ([893ebab](https://github.com/circadiancity/agentmy/commit/893ebab74d9500404c260c700df4b0f1cd41ff67))
+* resolve benchmark JSON design and consistency issues ([79a3042](https://github.com/circadiancity/agentmy/commit/79a3042660efc3acb5f56f07eab64a4f0d9320a4))
+* resolve GitHub Actions test failures ([40cc423](https://github.com/circadiancity/agentmy/commit/40cc423a9478365355d88eed31c6167998c01a20))
+* resolve remaining consistency issues in benchmark JSON ([a051e19](https://github.com/circadiancity/agentmy/commit/a051e19635d26a058538708ba4cd9ba8e536fbb9))
+* structural and evaluation consistency improvements ([5ac7361](https://github.com/circadiancity/agentmy/commit/5ac7361ac07a652b7ba0d10698fc2dbb4bd637fa))
+* unify validation_rules structure across tools ([4fd1617](https://github.com/circadiancity/agentmy/commit/4fd161709f6e8ba13dcec663fc1d5372c4cff86d))
+* update task converter to use new medical models ([83e1063](https://github.com/circadiancity/agentmy/commit/83e10634c35e49c290ee9e8464ebf8b161a54e66))
+
+
+### Documentation
+
+* correct medical dialogues README with actual dataset status ([bdc9a18](https://github.com/circadiancity/agentmy/commit/bdc9a18a7c99cf90e045a9d03eef01cb2ed89067))
+* update .gitignore with note about from_scratch.json relocation ([3ff0d0b](https://github.com/circadiancity/agentmy/commit/3ff0d0b03b00eea7e355917aa13f34ea9cb8f00e))
